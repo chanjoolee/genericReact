@@ -1,0 +1,14 @@
+{
+    "include": ["src","craco.config.js"],
+    "exclude": ["node_modules","public"],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "module": "CommonJS",
+        "paths": {
+            "@/*":["src/*"],
+            "@lib/*": ["src/common/lib/*"],
+            "@pages/*": ["src/pages/*"],
+            "@generic/*": ["src/generic/*"]
+        }
+    }
+}
