@@ -2,18 +2,19 @@ import React from 'react';
 import ReactDOM , { render } from 'react-dom';
 import './index.css';
 import App from './App';
-import createStore  from './store/store';
+// import createStore  from './store/store';
+import store  from './store/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
-let indexstore = null;
-createStore().then((store) => {
-    indexstore = store;
-});
+// let indexstore = null;
+// createStore().then((store) => {
+//     indexstore = store;
+// });
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={indexstore}>
+    <Provider store={store}>
       <App />
     </Provider>
   </React.StrictMode>,

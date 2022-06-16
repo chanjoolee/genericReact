@@ -9,6 +9,7 @@
             "@lib/*": ["src/common/lib/*"],
             "@pages/*": ["src/pages/*"],
             "@generic/*": ["src/generic/*"]
+            "@tabs/*": ["src/tabs/*"]
         }
     }
 }

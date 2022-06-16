@@ -1,6 +1,6 @@
-import React , { useState }from 'react';
+import React , { useState } from 'react';
 import ReactDOM from 'react-dom';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import './index.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import {
@@ -10,11 +10,12 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { TabContainer } from '@tabs/container/tabs';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const LayoutSide1 = () => {
+const LayoutSide1 = () => { 
   const [state, setState] = useState({
       collapsed: false,
   });
@@ -29,11 +30,13 @@ const LayoutSide1 = () => {
     console.log(collapsed);
     setState({ collapsed });
   };
-
+  window.toggle = toggle;
 
   const { collapsed } = state;
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <>
+    <Layout style={{ minHeight: '100px' }}>
+      
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className="logo" />
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
@@ -71,6 +74,7 @@ const LayoutSide1 = () => {
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
       </Layout>
     </Layout>
+    </>
   );
   
 }

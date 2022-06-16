@@ -2,7 +2,7 @@ import { watchUnsplash as genericWatchUnsplash } from "../generic/state/saga";
 
 
 const rootSaga = [
-  genericWatchUnsplash(),
+  // genericWatchUnsplash(),
   // ...rootSagaBos
 ];
 

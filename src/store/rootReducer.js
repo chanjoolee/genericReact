@@ -3,7 +3,7 @@ import genericReducer from '../generic/state';
 
 const rootReducer = {
   tabs : tabsReducer , 
-  generic : genericReducer
+  // generic : genericReducer
 };
 
 export default rootReducer;

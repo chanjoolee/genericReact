@@ -34,6 +34,7 @@ const reducers = {
     }
   } ,
   setValues : (state, {payload}) => {
+    
     _.forEach(payload, (v,i) => {
         _.update(state, v.key
             , function (){

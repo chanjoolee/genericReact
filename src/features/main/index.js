@@ -1,6 +1,6 @@
 import React , { useState } from 'react';
 import ReactDOM from 'react-dom';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css'
 import './index.css';
 import { Layout, Menu, Breadcrumb} from 'antd';
 import {

@@ -4,7 +4,7 @@ import { pageDefaultSize } from 'src/generic/constant';
 import _ from 'lodash';
 import { schemaGeneric } from '@generic/schemaGeneric';
 
-const columns = require("@generic/column.json");
+const columns = require("@generic/columns_tdcs.json");
 const columns1 = [];
 
 const ROOT_SLICE_NAME = 'generic';
