@@ -4,7 +4,7 @@ import { pageDefaultSize } from 'src/generic/constant';
 import _ from 'lodash';
 import { schemaGeneric } from '@generic/schemaGeneric';
 
-const columns = require("@generic/columns_tdcs.json");
+const columns = require("@generic/columns_tdcs_0620.json");
 const columns1 = [];
 
 const ROOT_SLICE_NAME = 'generic';
@@ -62,9 +62,9 @@ const initialState = {
 }
 
 const sagaAction = {
-    fetchInitialInfo: createAction(`${SLICE_NAME}/fetchInitialInfo`),
-    getListPage: createAction(`${SLICE_NAME}/getListPage`),
-    save: createAction(`${SLICE_NAME}/save`),
+    fetchInitialInfo: createAction(`${ROOT_SLICE_NAME}/fetchInitialInfo`),
+    getListPage: createAction(`${ROOT_SLICE_NAME}/getListPage`),
+    save: createAction(`${ROOT_SLICE_NAME}/save`),
 
 }
 
@@ -239,7 +239,7 @@ const reducers = {
         delete state.instances[instanceId];
     },
     setInitialInfo : (state , {payload : {instanceId, entityId , tableName, codeList, openType, uiType, editType , callInstanceId}}) => {
-        let newinstance = _.cloneDeep(state.basice);
+        let newinstance = _.cloneDeep(state.basic);
         newinstance.id = instanceId;
         state.instances[instanceId] = newinstance;
         newinstance.entityInfo.entityId = entityId;
@@ -316,13 +316,14 @@ const reducers = {
 
 
 const slice = createSlice({
-    name : SLICE_NAME ,
+    name : ROOT_SLICE_NAME ,
     initialState , 
     reducers,
 });
 
 export const getStateAll = (state) => state;
-export const getState = (state) => state[ROOT_SLICE_NAME][SLICE_NAME];
+// export const getState = (state) => state[ROOT_SLICE_NAME][SLICE_NAME];
+export const getState = (state) => state[ROOT_SLICE_NAME];
 export const actions = {
     ...slice.actions,
     ...sagaAction

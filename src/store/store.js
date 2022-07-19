@@ -4,10 +4,11 @@ import { all } from 'redux-saga/effects'
 import createSagaMiddleware  from 'redux-saga';
 import logger from 'redux-logger';
 
-import tabsReducer from '../tabs/state/index';
+import tabsReducer from '@tabs/state/index';
 // import genericReducer from '../generic/state/index';
 import genericReducer from '@generic/state/index';
 
+// 20220714 : combine  reducer는 현재로서는 사용안함.
 
 // const devMode = process.env.NODE_ENV === 'development';
 // const sagaMiddleware = createSagaMiddleware();

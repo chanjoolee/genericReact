@@ -8,6 +8,7 @@ module.exports = {
             '@generic': path.resolve(__dirname, 'src/generic'),
             '@tabs': path.resolve(__dirname, 'src/tabs'),
             '@lib': path.resolve(__dirname, 'src/common/lib'),
+            '@hooks': path.resolve(__dirname, 'src/hooks'),
             '@': path.resolve(__dirname, 'src'),
         },
         // configure: (config, { paths }) => {

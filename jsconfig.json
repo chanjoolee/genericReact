@@ -7,8 +7,9 @@
         "paths": {
             "@/*":["src/*"],
             "@lib/*": ["src/common/lib/*"],
+            "@hooks/*": ["src/hooks/*"],
             "@pages/*": ["src/pages/*"],
-            "@generic/*": ["src/generic/*"]
+            "@generic/*": ["src/generic/*"],
             "@tabs/*": ["src/tabs/*"]
         }
     }

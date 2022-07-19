@@ -2,19 +2,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Card, Spin } from 'antd'; 
 import { useDispatch, useSelector } from 'react-redux'; 
 import { getState, actions } from '../state';
-import { LayoutType1, LayoutType3 } from '@components/layout'; 
-import TabContentHeader from '@components/layout/TabContentHeader';
-import CommonModal from '@components/modal/CommonModal'; 
-import { Button } from '@components/formItem'; 
-import DataArea from './DataArea'; 
+import LayoutSearchRows  from '@generic/component/layout/LayoutSearchRows'; 
+// import CommonModal from '@components/modal/CommonModal'; 
+import { Button } from 'antd'; 
+// import DataArea from './DataArea'; 
 import SearchFilterContainer from './SearchFilterContainer';
-import Detail from './Detail'; 
-import DetailPage from "@generic/container/DetailPage"; 
+// import Detail from '@generic/component/Detail'; 
+// import DetailPage from "@generic/container/DetailPage"; 
 import SearchPage from '@generic/container/SearchPage'; 
-import { schemaBos } from '../../../schemaBos'; 
+import { schemaGeneric } from '@generic/schemaGeneric.js'; 
 import moment from 'moment'; 
 import _ from 'lodash';
-import '../../generic.css';
+import '@generic/generic.css';
 
 const SearchList = (props) => {
     const dispatch = useDispatch(); 
@@ -28,12 +27,14 @@ const SearchList = (props) => {
         setInstanceId(vInstanceId); 
         setTimeout(() => { 
             dispatch( 
-                actions.fetchInitialInfo({
+                // backend 가 설정 될때 까지 saga 보류
+                // actions.fetchInitialInfo({
+                actions.setInitialInfo({
                     instanceId: vInstanceId, 
                     entityId: props.initParams.entityId, 
                     tableName: props.initParams.entityId, 
                     // tab, modal : default tab 
-                    openType: props.initParams.openType ? props.initParams.openType : 'tab', 
+                    openType:    props.initParams.openType ? props.initParams.openType : 'tab', 
                     uitype : props.initParams.uiType ?props.initParams.uiType : 'list',
                     callInstanceId: props.initParams.callInstanced 
                 }),            
@@ -60,22 +61,15 @@ const SearchList = (props) => {
     return (
         <>
             {thisInstance && thisInstance.onload && thisInstance.openType === 'tab' && (
-                <LayoutType3 
-                    header={(() => { 
-                        if (thisInstance.openType === 'tab'){
-                            return <TabContentHeader />; } 
-                        else {
-                            return null;
-                        }
-                    })()} 
+                <LayoutSearchRows 
                     searchFilter={
                         <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
                     }
-                    rowsections={[
-                        {
-                            cards: [<DataArea entityId={props.initParams.entityId} instanceId={instanceId} /> ]
-                        },
-                    ]}
+                    // rowsections={[
+                    //     {
+                    //         cards: [<DataArea entityId={props.initParams.entityId} instanceId={instanceId} /> ]
+                    //     },
+                    // ]}
                 />
             )}
             {thisInstance && thisInstance.onload && thisInstance.openType === 'modal' && (
@@ -83,7 +77,7 @@ const SearchList = (props) => {
                     <div> 
                         <Spin spinning={false}>
                             <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
-                            <DataArea entityId={props.initParams.entityId} instanceId={instanceId} /> 
+                            {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
                         </Spin> 
                     </div> 
                 </>
@@ -94,58 +88,60 @@ const SearchList = (props) => {
                         <div style={{display: 'none'}}> 
                             <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} /> 
                         </div>
-                        <DataArea entityId={props.initParams.entityId} instanceId={instanceId} /> 
+                        {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
                     </Spin> 
                 </div>            
             )} 
             {thisInstance && thisInstance.onload && thisInstance.openModal.visible &&  (
-                <CommonModal
-                    title={thisInstance.openModal.initParams.entityNm} 
-                    width={(() => { 
-                        if(thisInstance.openModal.uiType === 'list'){
-                            return 1300; }
-                        else{
-                            return window.Modalwidth.sm;
-                        }
-                    })()} 
-                    draggable={true} 
-                    visible={thisInstance.openModal.visible} 
-                    className="modalGrid" 
-                    onCancel={() => { 
-                        let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
-                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
-                        ];            
-                        dispatch(actions.setValues(values));
-                    }}
-                    onok={() => { 
-                        let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
-                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
-                        ];
-                        dispatch(actions.setValues(values));
-                    }}
-                    footer={thisInstance.openModal.uiType ==='detail' && []}
-                >
-                    {thisInstance.openModal.uiType==='list' && (
-                        <SearchPage 
-                            initParams={(() => {
-                                let param = _.cloneDeep(thisInstance.openModal.initParams); 
-                                param.callInstanceId = instanceId;
-                                return param; 
-                            })()}
-                        />
-                    )}
-                    {thisInstance.openModal.uiType=== 'detail' && (
-                        <DetailPage initParams={(() => {
-                            let param = _.cloneDeep(thisInstance.openModal.initParams); 
-                                param.callinstanceId = instanceId;
-                                return param; 
-                            })()} 
-                            ref={detailRef}
-                        />
-                    )}
-                </CommonModal>
+                <>
+                </>
+                // <CommonModal
+                //     title={thisInstance.openModal.initParams.entityNm} 
+                //     width={(() => { 
+                //         if(thisInstance.openModal.uiType === 'list'){
+                //             return 1300; }
+                //         else{
+                //             return window.Modalwidth.sm;
+                //         }
+                //     })()} 
+                //     draggable={true} 
+                //     visible={thisInstance.openModal.visible} 
+                //     className="modalGrid" 
+                //     onCancel={() => { 
+                //         let values = [
+                //             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
+                //             { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
+                //         ];            
+                //         dispatch(actions.setValues(values));
+                //     }}
+                //     onok={() => { 
+                //         let values = [
+                //             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
+                //             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
+                //         ];
+                //         dispatch(actions.setValues(values));
+                //     }}
+                //     footer={thisInstance.openModal.uiType ==='detail' && []}
+                // >
+                //     {thisInstance.openModal.uiType==='list' && (
+                //         <SearchPage 
+                //             initParams={(() => {
+                //                 let param = _.cloneDeep(thisInstance.openModal.initParams); 
+                //                 param.callInstanceId = instanceId;
+                //                 return param; 
+                //             })()}
+                //         />
+                //     )}
+                //     {thisInstance.openModal.uiType=== 'detail' && (
+                //         <DetailPage initParams={(() => {
+                //             let param = _.cloneDeep(thisInstance.openModal.initParams); 
+                //                 param.callinstanceId = instanceId;
+                //                 return param; 
+                //             })()} 
+                //             ref={detailRef}
+                //         />
+                //     )}
+                // </CommonModal>
             )}
         </>
     );

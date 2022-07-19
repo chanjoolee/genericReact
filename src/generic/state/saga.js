@@ -10,7 +10,9 @@ import { schemaGeneric } from '../schemaGeneric';
 
 function* fetchInitialInfo({ payload} ) {
   const state = yield select((state) => getState(state)); 
-  let vCommonCodes = _.filter(schemaGeneric.commonCodeList,{entityId : payload.entityId }); 
+  // backend가 설정될때 까지 보류
+  // let vCommonCodes = _.filter(schemaGeneric.commonCodeList,{entityId : payload.entityId }); 
+  let vCommonCodes = [];
   if(vCommonCodes.length > 0 ) { 
     const { isSuccess, data } = yield call(callApi, {
       url: '/offer/common/getCommonComboList', 
@@ -21,6 +23,8 @@ function* fetchInitialInfo({ payload} ) {
         })
       }
     });
+
+  
     
     if (isSuccess && data) { 
       yield put(

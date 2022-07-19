@@ -5,7 +5,15 @@ import { isDOMComponent } from 'react-dom/test-utils';
 const SLICE_NAME = 'tabs';
 const initialState = {
   activeKey : 'Main',
-  panes : [{title : '메인', key : 'Main', initParams : {}}],
+  panes : [
+    {
+      title : '메인', 
+      key : 'Main', 
+      content : 'Content of Main' ,
+      closable : false ,
+      initParams : {}
+    }
+  ],
   activeMenuData : [],
   tabsLimitCount : 10 
 }
@@ -43,12 +51,12 @@ const reducers = {
         );
     });
   },
-  add : (state , action) => {
+  add : (state , {payload}) => {
     let flag = true;
-    state.activeKey = action.payload.activeKey;
+    state.activeKey = payload.activeKey;
     state.panes.forEach((item, idx) => {
-      if (item.key == action.payload.activeKey) {
-        if (action.payload.pane.initParams) {
+      if (item.key == payload.activeKey) {
+        if (payload.pane.initParams) {
           state.panes[idx] = item;
         }
         flag = false;
@@ -56,7 +64,7 @@ const reducers = {
     });
 
     if (flag) {
-      state.panes.push(action.payload.pane);
+      state.panes.push(payload.pane);
     }
   }, 
   change : (state, action) => {

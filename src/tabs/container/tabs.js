@@ -1,69 +1,81 @@
 import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux'; 
 import 'antd/dist/antd.css';
-import '@tabs/index.css';
+import '@tabs/tabs.css';
 import { Tabs } from 'antd';
+import { actions , getState } from '@tabs/state';
+import { actions as actions_generic , getState as getState_generic } from '@generic/state';
+import _ from 'lodash';
+
 
 const { TabPane } = Tabs;
-const initialPanes = [
-  {
-    title: 'Tab 1',
-    content: 'Content of Tab 1',
-    key: '1',
-  },
-  {
-    title: 'Tab 2',
-    content: 'Content of Tab 2',
-    key: '2',
-  },
-  {
-    title: 'Tab 3',
-    content: 'Content of Tab 3',
-    key: '3',
-    closable: false,
-  },
-];
+
 
 const TabContainer = () => {
-  const [activeKey, setActiveKey] = useState(initialPanes[0].key);
-  const [panes, setPanes] = useState(initialPanes);
+  const dispatch = useDispatch();
   const newTabIndex = useRef(0);
 
+  const thisState = useSelector((state) => getState(state)); 
+  const genericState = useSelector((state) => getState_generic(state)); 
+  if ( thisState != null )  
+    window.state_tabs = thisState;
+
   const onChange = (newActiveKey) => {
-    setActiveKey(newActiveKey);
+    // setActiveKey(newActiveKey);
+    dispatch(actions.setValue2('activeKey', newActiveKey));
   };
 
   const add = () => {
-    const newActiveKey = `newTab${newTabIndex.current++}`;
-    const newPanes = [...panes];
-    newPanes.push({
-      title: 'New Tab',
-      content: 'Content of new Tab',
-      key: newActiveKey,
-    });
-    setPanes(newPanes);
-    setActiveKey(newActiveKey);
+    // maxkey 
+    let uniqKey = _.uniqueId();
+    let payload = {
+      activeKey : uniqKey ,
+      pane  : {
+        title: 'New Tab',
+        content: 'Content of new Tab',     
+        key : uniqKey,
+        closable : true ,
+        initParams : {}
+      }
+    }
+    dispatch(actions.add(payload));
+    // const newActiveKey = `newTab${newTabIndex.current++}`;
+    // const newPanes = [...panes];
+    // newPanes.push({
+    //   title: 'New Tab',
+    //   content: 'Content of new Tab',
+    //   key: newActiveKey,
+    // });
+    // setPanes(newPanes);
+    // setActiveKey(newActiveKey);
   };
 
   const remove = (targetKey) => {
-    let newActiveKey = activeKey;
+    let newActiveKey = thisState.activeKey;
     let lastIndex = -1;
-    panes.forEach((pane, i) => {
+    thisState.panes.forEach((pane, i) => {
       if (pane.key === targetKey) {
         lastIndex = i - 1;
       }
     });
-    const newPanes = panes.filter((pane) => pane.key !== targetKey);
+    let deletePane = _.find(thisState.panes , {key: targetKey});
+
+    const newPanes = thisState.panes.filter((pane) => pane.key !== targetKey);
 
     if (newPanes.length && newActiveKey === targetKey) {
       if (lastIndex >= 0) {
         newActiveKey = newPanes[lastIndex].key;
       } else {
         newActiveKey = newPanes[0].key;
-      }
+      } 
     }
+    let values = [
+      {key : 'panes', value : newPanes},
+      {key : 'activeKey', value : newActiveKey}
+    ]
 
-    setPanes(newPanes);
-    setActiveKey(newActiveKey);
+    dispatch(actions.setValues(values));
+    // dispatch(actions_generic.deleteInstance());
   };
 
   const onEdit = (targetKey, action) => {
@@ -75,8 +87,8 @@ const TabContainer = () => {
   };
 
   return (
-    <Tabs type="editable-card" onChange={onChange} activeKey={activeKey} onEdit={onEdit}>
-      {panes.map((pane) => (
+    <Tabs type="editable-card" onChange={onChange} activeKey={thisState.activeKey} onEdit={onEdit}>
+      {thisState.panes.map((pane) => (
         <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
           {pane.content}
         </TabPane>

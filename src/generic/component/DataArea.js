@@ -8,7 +8,7 @@ import Pagination from '@components/grid/Pagenation';
 import {RowAddButton, RowDeleteButton, DownLoadButton, SaveButton } from '@components/button'; 
 import _ from 'lodash'; 
 import Detail from './Detail'; 
-import { schemaBos, mergeCols } from '@pages/bos/common/generic/schemaBos'; 
+import { schemaGeneric, mergeCols  } from '@generic/schemaGeneric.js'; 
 import Item from 'antd/lib/list/Item';
 
 const DataArea = ({entityId , instanceId, ...restProps}) => {

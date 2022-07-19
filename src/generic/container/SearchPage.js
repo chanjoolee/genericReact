@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, uselocation } from 'react-router-dom'; 
-import SearchList from '../component/SearchList';
+import SearchList from '@generic/component/SearchList';
 
 const SearchPage = (props) => {
   // const search = useLocation().search; 
