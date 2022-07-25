@@ -5,7 +5,7 @@ import { getState, actions } from '../state';
 import LayoutSearchRows  from '@generic/component/layout/LayoutSearchRows'; 
 // import CommonModal from '@components/modal/CommonModal'; 
 import { Button } from 'antd'; 
-// import DataArea from './DataArea'; 
+import DataArea from '@generic/component/DataArea'; 
 import SearchFilterContainer from './SearchFilterContainer';
 // import Detail from '@generic/component/Detail'; 
 // import DetailPage from "@generic/container/DetailPage"; 
@@ -64,6 +64,9 @@ const SearchList = (props) => {
                 <LayoutSearchRows 
                     searchFilter={
                         <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
+                    }
+                    rowsections={
+                    <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />
                     }
                     // rowsections={[
                     //     {

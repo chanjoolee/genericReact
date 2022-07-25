@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'; 
-import { actions, getState } from '../state'; 
+import { actions, getState } from '@generic/state'; 
 import { useDispatch, useSelector } from 'react-redux'; 
-import Ibsheet from '@components/grid/IbSheet'; 
-import TitleSub from '@components/layout/TitleSub'; 
+// import Ibsheet from '@components/grid/IbSheet'; 
+import { Table } from 'antd';
+// import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd'; 
-import Pagination from '@components/grid/Pagenation'; 
-import {RowAddButton, RowDeleteButton, DownLoadButton, SaveButton } from '@components/button'; 
+// import Pagination from '@components/grid/Pagenation'; 
+// import {RowAddButton, RowDeleteButton, DownLoadButton, SaveButton } from '@components/button'; 
 import _ from 'lodash'; 
-import Detail from './Detail'; 
+// import Detail from '@generic/component/Details'; 
 import { schemaGeneric, mergeCols  } from '@generic/schemaGeneric.js'; 
 import Item from 'antd/lib/list/Item';
 
 const DataArea = ({entityId , instanceId, ...restProps}) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [sheetReady, setSheetReady] = useState(false);
   const list = useSelector((state) => getState(state).instances[instanceId].list); 
   const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
@@ -111,50 +113,43 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
     }
   }, [list]);
 
+  const fetchData = (params = {}) => {
+    setLoading(true);
+    // fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(params))}`)
+    fetch(`https://randomuser.me/api?`)
+      .then((res) => res.json())
+      .then(({ results }) => {
+        // setData(results);
+        let values =[
+          { key: 'instances.' + instanceId + '.list', value: results }, 
+          { key: 'instances.' + instanceId + '.pageInfo', value: {...params.pagination,total: 200} },
+        ];
+        dispatch(actions.setValues(values));
+        setLoading(false);
+        // setPagination({
+        //   ...params.pagination,
+        //   total: 200, // 200 is mock data, you should read it from server
+        //   // total: data.totalCount,
+        // });
+      });
+  };
   // 페이지 변경 이벤트 
   const onPageInfoChange = (pageNumber, pageSize) => {
     dispatch(actions.setPageInfo({ instanceId, pageNumber, pageSize }));
+  };
+  const handleTableChange = (newPagination, filters, sorter) => {
+    fetchData({
+      sortField: sorter.field,
+      sortOrder: sorter.order,
+      pagination: newPagination,
+      ...filters,
+    });
   };
   const contextMenuClick = () => {
     console.log('contextMenuClick');
   };
 
 
-  const options = { 
-    Def : { 
-      Row: {
-        CanFormula: 1, 
-        CalcOrder : 'contextMenu'
-      },
-    },
-    // sheet 공통설정 (Cols 설정보다 우선순위 높음)) 
-    Cfg: {
-      CanEdit: 1, 
-      IgnoreFocused: 0, //
-    },
-    Events : { 
-      onRowload : function (evtParam) {
-        const { sheet, row, eventName } =  evtParam; 
-      },
-      onRenderFinish: function (evtParam) { 
-        // 엑셀 양식 관련 내용 숨김
-        const { sheet, row, eventName} = evtParam; 
-        console.log("onRenderFinish");
-      },
-      onRowAdd: function (evtParam) {
-        const { sheet , row, eventName} = evtParam; 
-        console.log("onRowAdd");
-      },
-      // onAfterRowAdd : function(paramObject) { 
-      // console.log("onAfter RowAdd”);
-      // }
-    },
-    LeftCols : _.concat(
-      {Extend: window.IB_Preset.STATUS, Nome: 'status'}, 
-      leftCols
-    ),
-    Cols: cols
-  }
 
   const openModalAdd = () => { 
     let initParams = {
@@ -177,7 +172,7 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
   
   return (
     <Card style={{border: 0 }}>
-      <TitleSub title={(() => { 
+      <Card title={(() => { 
         if(thisInstance.openType === 'tab') {
           return thisInstance.entityInfo.entity;
         }
@@ -202,26 +197,16 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
         }
       })()}
     >
-      <Ibsheet 
-        onLoadIbSheet={(sheet) => {
-          thisSheet.current = sheet; 
-          // 그리드 로드 완료 state true변경 
-          setSheetReady(true); 
-          if (list && list.length > 0) {
-            sheet.loadSearchData({data:list, sync:true});
-          }
-        }}
-        options={options} 
-        data={[]} 
-        style={{ height: 'auto' }}
+       <Table
+        columns={cols}
+        rowKey={(record) => record.login.uuid}
+        dataSource={list}
+        pagination={pageInfo}
+        loading={loading}
+        onChange={handleTableChange}
       />
     </div> 
-    <Pagination
-      total={listTotalCount} 
-      current={pageInfo.pagellumber} 
-      pageSize={pageInfo.pageSize} 
-      onChange={onPageInfoChange}
-    />
+
     
     </Card>
   );

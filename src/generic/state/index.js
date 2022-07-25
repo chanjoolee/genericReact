@@ -90,7 +90,7 @@ const makeSheetCols = (instance) => {
 
     let cols = _.map(entityObject.cols , (v,k) => {
         let vRtn = {
-            Header : v.column_comment ,
+            title : v.column_comment ,
             dbColumnComment : v.column_comment , 
             Type : (() => {
                 switch (v.data_type){
@@ -102,7 +102,7 @@ const makeSheetCols = (instance) => {
                     default : return 'Text';                                                                                                    
                 }
             })()
-            ,  Name : _.camelCase(v.column_name)
+            , dataIndex : _.camelCase(v.column_name)
             , dbColumnName : v.column_name
         };
         // find codeList

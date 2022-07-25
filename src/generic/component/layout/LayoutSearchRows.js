@@ -18,6 +18,7 @@ const LayoutSearchRows = ({searchFilter , rowsections }) => {
   return (
     <>
     {searchFilter}
+    {rowsections}
     </>
   );
 };
