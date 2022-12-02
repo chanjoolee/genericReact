@@ -104,6 +104,7 @@ const makeSheetCols = (instance) => {
             })()
             , dataIndex : _.camelCase(v.column_name)
             , dbColumnName : v.column_name
+            , width : 120
         };
         // find codeList
         let vCommonCode = _.find(schemaGeneric.commonCodeList, {

@@ -11,6 +11,7 @@ import _ from 'lodash';
 // import Detail from '@generic/component/Details'; 
 import { schemaGeneric, mergeCols  } from '@generic/schemaGeneric.js'; 
 import Item from 'antd/lib/list/Item';
+import qs from 'qs';
 
 const DataArea = ({entityId , instanceId, ...restProps}) => {
   const dispatch = useDispatch();
@@ -113,10 +114,16 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
     }
   }, [list]);
 
+  const getRandomuserParams = (params) => ({
+    results: params.pagination?.pageSize,
+    page: params.pagination?.current,
+    ...params,
+  });
+  
   const fetchData = (params = {}) => {
     setLoading(true);
-    // fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(params))}`)
-    fetch(`https://randomuser.me/api?`)
+    fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(params))}`)
+    // fetch(`https://randomuser.me/api?`)
       .then((res) => res.json())
       .then(({ results }) => {
         // setData(results);
@@ -171,24 +178,44 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
   };
   
   return (
-    <Card style={{border: 0 }}>
-      <Card title={(() => { 
+    <>
+    {/* <Card 
+        style={{border: 0 }} 
+        title={(() => { 
         if(thisInstance.openType === 'tab') {
-          return thisInstance.entityInfo.entity;
+          return thisInstance.entityInfo.entityNm;
         }
       })()} 
-      utilsGroupRight={
-        <>
-          <Button onClick={(e) => {
-            openModalAdd();
-          }}
-          >
-            추가 
-          </Button> 
-        </>
-      }
+      // utilsGroupRight={
+      //   <>
+      //     <Button onClick={(e) => {
+      //       openModalAdd();
+      //     }}
+      //     >
+      //       추가 
+      //     </Button> 
+      //   </>
+      // }
+    >
+    <Table
+        columns={cols}
+        rowKey={(record) => record.login.uuid}
+        dataSource={list}
+        pagination={pageInfo}
+        loading={loading}
+        onChange={handleTableChange}
     />
-    <div className="wrap-sheet" 
+    </Card> */}
+    <Table
+        columns={cols}
+        rowKey={(record) => record.login.uuid}
+        dataSource={list}
+        pagination={pageInfo}
+        loading={loading}
+        onChange={handleTableChange}
+        scroll={{ x: 'max-content' }}
+    />
+    {/* <div className="wrap-sheet" 
       style= {(() => {
         if(thisInstance.openType === 'tab'){
           return { height: '650px' , minheight: '200px' };
@@ -205,10 +232,12 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
         loading={loading}
         onChange={handleTableChange}
       />
-    </div> 
+    </div>  */}
+    </>
+
 
     
-    </Card>
+    
   );
 };
 

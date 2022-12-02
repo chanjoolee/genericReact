@@ -1,5 +1,5 @@
-import tabsReducer from '../tabs/state';
-import genericReducer from '../generic/state';
+import tabsReducer from '@tabs/state';
+import genericReducer from '@generic/state';
 
 const rootReducer = {
   tabs : tabsReducer , 

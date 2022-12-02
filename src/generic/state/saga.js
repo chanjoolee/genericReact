@@ -6,7 +6,7 @@ import { actions } from '.';
 import _ from 'lodash'; 
 import { useSelector} from 'react-redux'; 
 import { getState} from '.'; 
-import { schemaGeneric } from '../schemaGeneric';
+import { schemaGeneric } from '@generic/schemaGeneric';
 
 function* fetchInitialInfo({ payload} ) {
   const state = yield select((state) => getState(state)); 
