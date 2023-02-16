@@ -1,9 +1,9 @@
-import tabsReducer from '@tabs/state';
-import genericReducer from '@generic/state';
+import tabsReducer from '@tabs/state/index';
+import genericReducer from '@generic/state/index';
 
 const rootReducer = {
   tabs : tabsReducer , 
-  // generic : genericReducer
+  generic : genericReducer
 };
 
 export default rootReducer;
