@@ -1,12 +1,15 @@
-import SyntaxHighlighter from "react-syntax-highlighter";
+import SyntaxHighlighter, { PrismLight } from "react-syntax-highlighter";
 import {
   docco,
   dracula,
   github,
 } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { darcula as darcula1 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from "react-markdown";
+import { useState } from "react";
 
 function CodeBlock() {
+  const [collapsed, setCollapsed] = useState(false);
   const xmlCode = `
   <?xml version="1.0" encoding="UTF-8"?>
   <catalog>
@@ -49,9 +52,21 @@ function CodeBlock() {
           }
         `}
       </SyntaxHighlighter>
-      <SyntaxHighlighter language="xml" style={dracula}>
-        {xmlCode}
-      </SyntaxHighlighter>
+      <div>
+        <button onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? "Expand" : "Collapse"}
+        </button>
+        <PrismLight
+          language="xml"
+          style={darcula1}
+          showLineNumbers={!collapsed}
+          startingLineNumber={1}
+          lineNumberStyle={{ minWidth: "2em" }}
+          wrapLines={true}
+        >
+          {xmlCode}
+        </PrismLight>
+      </div>
 
       <SyntaxHighlighter language="html" style={github}>
         {'<a href="https://www.example.com">Example Link</a>'}

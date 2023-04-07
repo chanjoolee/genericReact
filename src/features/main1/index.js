@@ -16,6 +16,7 @@ import { actions, getState } from "@tabs/state";
 import _ from "lodash";
 import SearchPage from "@generic/container/SearchPage";
 import CodeBlock from "@/sample/codeBlock";
+import Collapse from "@/sample/collapse";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -66,7 +67,7 @@ const LayoutSide1 = () => {
     };
     dispatch(actions.add(payload));
   };
-  const menuClickSample = ({ item, key, keyPath, domEvent }) => {
+  const menuClickSample = ({ item, key, keyPath, domEvent }, content) => {
     let find_pane = _.find(tabState.panes, (pane) => {
       return pane.key === key;
     });
@@ -77,11 +78,14 @@ const LayoutSide1 = () => {
     // maxkey
 
     let uniqKey = key; // _.uniqueId();
+    // let content = item.props.elementRef.current.getAttribute("component");
+    // if ()
+
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: "코드블럭",
-        content: <CodeBlock initParams={{}} />,
+        title: item.props.elementRef.current.textContent,
+        content: content,
         key: uniqKey,
         closable: true,
         initParams: {},
@@ -131,8 +135,21 @@ const LayoutSide1 = () => {
               </Menu.Item>
             </SubMenu>
             <SubMenu key="sub3" icon={<TeamOutlined />} on title="Sample">
-              <Menu.Item key="20" onClick={menuClickSample}>
+              <Menu.Item
+                key="20"
+                onClick={(param) => {
+                  menuClickSample(param, <CodeBlock />);
+                }}
+              >
                 코드블럭연습
+              </Menu.Item>
+              <Menu.Item
+                key="21"
+                onClick={(param) => {
+                  menuClickSample(param, <Collapse />);
+                }}
+              >
+                Collapse
               </Menu.Item>
             </SubMenu>
             <Menu.Item key="9" icon={<FileOutlined />}>
