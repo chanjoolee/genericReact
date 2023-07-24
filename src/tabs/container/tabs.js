@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
+import { useDispatch, useSelector } from 'react-redux';
 import 'antd/dist/antd.css';
 import '@tabs/tabs.css';
 import { Tabs } from 'antd';
-import { actions , getState } from '@tabs/state';
-import { actions as actions_generic , getState as getState_generic } from '@generic/state';
+import { actions, getState } from '@tabs/state';
+import { actions as actions_generic, getState as getState_generic } from '@/generic/state/stateSearch';
 import _ from 'lodash';
 
 
@@ -15,9 +15,9 @@ const TabContainer = () => {
   const dispatch = useDispatch();
   const newTabIndex = useRef(0);
 
-  const thisState = useSelector((state) => getState(state)); 
-  const genericState = useSelector((state) => getState_generic(state)); 
-  if ( thisState != null )  
+  const thisState = useSelector((state) => getState(state));
+  const genericState = useSelector((state) => getState_generic(state));
+  if (thisState != null)
     window.state_tabs = thisState;
 
   const onChange = (newActiveKey) => {
@@ -29,13 +29,13 @@ const TabContainer = () => {
     // maxkey 
     let uniqKey = _.uniqueId();
     let payload = {
-      activeKey : uniqKey ,
-      pane  : {
+      activeKey: uniqKey,
+      pane: {
         title: 'New Tab',
-        content: 'Content of new Tab',     
-        key : uniqKey,
-        closable : true ,
-        initParams : {}
+        content: 'Content of new Tab',
+        key: uniqKey,
+        closable: true,
+        initParams: {}
       }
     }
     dispatch(actions.add(payload));
@@ -58,7 +58,7 @@ const TabContainer = () => {
         lastIndex = i - 1;
       }
     });
-    let deletePane = _.find(thisState.panes , {key: targetKey});
+    let deletePane = _.find(thisState.panes, { key: targetKey });
 
     const newPanes = thisState.panes.filter((pane) => pane.key !== targetKey);
 
@@ -67,11 +67,11 @@ const TabContainer = () => {
         newActiveKey = newPanes[lastIndex].key;
       } else {
         newActiveKey = newPanes[0].key;
-      } 
+      }
     }
     let values = [
-      {key : 'panes', value : newPanes},
-      {key : 'activeKey', value : newActiveKey}
+      { key: 'panes', value: newPanes },
+      { key: 'activeKey', value: newActiveKey }
     ]
 
     dispatch(actions.setValues(values));

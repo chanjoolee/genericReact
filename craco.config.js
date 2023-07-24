@@ -2,8 +2,11 @@ const path = require('path');
 const cracoAlias = require('craco-alias');
 
 module.exports = {
+    devServer: {
+        port: 5000, // Specify your desired port number here
+    },
     webpack: {
-        alias : {
+        alias: {
             // '@pages': path.resolve(__dirname, 'src/pages/'),
             '@generic': path.resolve(__dirname, 'src/generic'),
             '@tabs': path.resolve(__dirname, 'src/tabs'),
@@ -17,16 +20,16 @@ module.exports = {
 
         //   }
     },
-    plugins : [
+    plugins: [
         {
             plugin: cracoAlias,
-            options : {
+            options: {
                 source: "jsconfig",
                 baseUrl: "."
             }
         }
     ],
     eslint: {
-        configure: (eslintConfig = '.eslintrc.js') => eslintConfig 
+        configure: (eslintConfig = '.eslintrc.js') => eslintConfig
     }
 }

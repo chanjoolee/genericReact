@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react'; 
-import { useDispatch, useSelector } from 'react-redux'; 
-import useMounted from 'Chooks/useMounted'; 
-import { getState, actions } from '../state'; 
-import { LayoutType1, LayoutType3 } from '@components/layout'; 
-import TabContentHeader from '@components/layout/TabContentHeader'; 
-import CommonModal from '@components/modal/CommonModal'; 
-import Detail from '../layout/searchList/component/Detail'; 
-import { schemaBos } from '../schemaBos'; 
-import moment from 'moment'; 
-import _ from 'lodash'; 
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import useMounted from 'Chooks/useMounted';
+import { getState, actions } from '../state/stateSearch';
+import { LayoutType1, LayoutType3 } from '@components/layout';
+import TabContentHeader from '@components/layout/TabContentHeader';
+import CommonModal from '@components/modal/CommonModal';
+import Detail from '../layout/searchList/component/Detail';
+import { schemaBos } from '../schemaBos';
+import moment from 'moment';
+import _ from 'lodash';
 import '../layout/generic.css';
 
 const DetailPage = (props) => {
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const [instanceId, setInstanceId] = useState();
-  const thisState = useSelector((state) => getState(state)); 
+  const thisState = useSelector((state) => getState(state));
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   useMounted(() => {
     // search(); 
@@ -26,26 +26,26 @@ const DetailPage = (props) => {
   };
 
   useEffect(() => {
-    let vInstanceId = moment().format('YYYYMMDDHHmmssSSS'); 
-    if(thisState.instances.vInstanceId == null) {
+    let vInstanceId = moment().format('YYYYMMDDHHmmssSSS');
+    if (thisState.instances.vInstanceId == null) {
       vInstanceId += _.uniqueId(".");
     }
-    setInstanceId(vInstanceId); 
-    dispatch( 
+    setInstanceId(vInstanceId);
+    dispatch(
       actions.fetchInitialInfo({
-        instanceId: vInstanceId, 
-        entityId: props.initParams.entityId, 
-        tableName: props.initParams.entityId, 
+        instanceId: vInstanceId,
+        entityId: props.initParams.entityId,
+        tableName: props.initParams.entityId,
         // tab, modal default tab 
-        openType: props.initParams.openType ? props.initParams.openType : 'tab', 
-        uiType : props.initParams.uiType ? props.initParams.uiType : 'list' ,
+        openType: props.initParams.openType ? props.initParams.openType : 'tab',
+        uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
         editType: props.initParams.editType ? props.initParams.editType : 'edit',
-       callInstanceId : props.initParams.callinstanceId
+        callInstanceId: props.initParams.callinstanceId
       }),
-    ); 
+    );
     return () => {
       // dispatch(actions.initState()); 
-      dispatch(actions.deleteInstance({instanceId: vInstanceId}));
+      dispatch(actions.deleteInstance({ instanceId: vInstanceId }));
     };
   }, [dispatch]);
 
@@ -54,7 +54,7 @@ const DetailPage = (props) => {
     <>
       {thisInstance && thisInstance.onload && (
         <>
-        <Detail entityId={props.initParams.entityId} instanceId={instanceId} initParams={props.initParans} ref={props.ref}/>
+          <Detail entityId={props.initParams.entityId} instanceId={instanceId} initParams={props.initParans} ref={props.ref} />
         </>
       )}
     </>

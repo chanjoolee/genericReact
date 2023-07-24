@@ -1,56 +1,56 @@
-import callApi from '@lib/callApi'; 
-import { message as antMessage } from 'antd'; 
-import { all, call, put, takeLatest ,takeEvery, select } from 'redux-saga/effects'; 
-import { actions } from '.'; 
+import callApi from '@lib/callApi';
+import { message as antMessage } from 'antd';
+import { all, call, put, takeLatest, takeEvery, select } from 'redux-saga/effects';
+import { actions } from './stateSearch';
 // import { modalMessage } from '@lib/messageUtil'; 
-import _ from 'lodash'; 
-import { useSelector} from 'react-redux'; 
-import { getState} from '.'; 
+import _ from 'lodash';
+import { useSelector } from 'react-redux';
+import { getState } from './stateSearch';
 import { schemaGeneric } from '@generic/schemaGeneric';
 
-function* fetchInitialInfo({ payload} ) {
-  const state = yield select((state) => getState(state)); 
+function* fetchInitialInfo({ payload }) {
+  const state = yield select((state) => getState(state));
   // backend가 설정될때 까지 보류
   // let vCommonCodes = _.filter(schemaGeneric.commonCodeList,{entityId : payload.entityId }); 
   let vCommonCodes = [];
-  if(vCommonCodes.length > 0 ) { 
+  if (vCommonCodes.length > 0) {
     const { isSuccess, data } = yield call(callApi, {
-      url: '/offer/common/getCommonComboList', 
-      method: 'post', 
-      data: { 
-        commonCode: _.map(vCommonCodes, (v,k) => {
-          return {cdGrpid: v.code_group_id};
+      url: '/offer/common/getCommonComboList',
+      method: 'post',
+      data: {
+        commonCode: _.map(vCommonCodes, (v, k) => {
+          return { cdGrpid: v.code_group_id };
         })
       }
     });
 
-  
-    
-    if (isSuccess && data) { 
+
+
+    if (isSuccess && data) {
       yield put(
         actions.setInitialInfo({
-          instanceId : payload.instanceId, 
-          entityId : payload.entityId, 
-          tableName : payload.tableName ,
-          codelist: data, 
-          openType : payload.openType , 
-          uiType : payload.uiType ,
-          editType: payload.editType, 
-          callInstanceId : payload.callInstanceId
+          instanceId: payload.instanceId,
+          entityId: payload.entityId,
+          tableName: payload.tableName,
+          codelist: data,
+          openType: payload.openType,
+          uiType: payload.uiType,
+          editType: payload.editType,
+          callInstanceId: payload.callInstanceId
         })
       );
     }
-  }else{ 
+  } else {
     yield put(
       actions.setInitialInfo({
-        instanceId : payload.instanceId, 
-        entityId : payload.entityId, 
-        tableName : payload.tableName, 
-        codeList: [], 
-        openType : payload.openType , 
-        uiType : payload.uiType, 
+        instanceId: payload.instanceId,
+        entityId: payload.entityId,
+        tableName: payload.tableName,
+        codeList: [],
+        openType: payload.openType,
+        uiType: payload.uiType,
         editType: payload.editType,
-        callInstanceId: payload.callInstanceId 
+        callInstanceId: payload.callInstanceId
       }),
     );
   }
@@ -58,47 +58,47 @@ function* fetchInitialInfo({ payload} ) {
 
 
 function* getListPage({ payload }) {
-  let searchFilter = yield select((state) => getState(state).instances[payload.instanceId].searchFilter); 
-  let pageInfo = yield select((state) => getState(state).instances[payload.instanceId].pageInfo); 
+  let searchFilter = yield select((state) => getState(state).instances[payload.instanceId].searchFilter);
+  let pageInfo = yield select((state) => getState(state).instances[payload.instanceId].pageInfo);
   let instance = yield select((state) => getState(state).instances[payload.instanceId]);
-  let {isSuccess, data } = yield call(callApi, {
-    url: '/offer/generic/getListPage', 
-    method: 'post', 
+  let { isSuccess, data } = yield call(callApi, {
+    url: '/offer/generic/getListPage',
+    method: 'post',
     // data: payload, 
-    params: pageInfo, 
+    params: pageInfo,
     data: searchFilter,
   });
 
   if (isSuccess & data) {
-  
-    let values = []; 
-    if(instance.uiType === 'list'){ 
+
+    let values = [];
+    if (instance.uiType === 'list') {
       values.push({
-        key: 'instances.' +  payload.instanceId + '.list', 
-        value : data.list
+        key: 'instances.' + payload.instanceId + '.list',
+        value: data.list
       });
       values.push({
-        key : 'instances.' + payload.instanceId + '.listTotalCount', 
-        value : data.totalCnt
+        key: 'instances.' + payload.instanceId + '.listTotalCount',
+        value: data.totalCnt
       });
-    }else if (instance.uiType === 'detail') { 
-      values.push({ 
-        key : 'instances.' + payload.instanceId + 'list',
-        value : data.list 
-      }); 
+    } else if (instance.uiType === 'detail') {
       values.push({
-        key : 'instances.' + payload.instanceId + '.editType' ,
-        value: 'edit' 
-      }); 
-      values.push({
-        key : 'instances.' + payload.instanceId + '.listTotalcount' ,
-        value : data.totalCnt 
+        key: 'instances.' + payload.instanceId + 'list',
+        value: data.list
       });
-    
-      if(data.list.length > 0 ) {
-        values.push({ 
-          key: 'instances.' + payload.instanceId ,
-          value: data.list[0] 
+      values.push({
+        key: 'instances.' + payload.instanceId + '.editType',
+        value: 'edit'
+      });
+      values.push({
+        key: 'instances.' + payload.instanceId + '.listTotalcount',
+        value: data.totalCnt
+      });
+
+      if (data.list.length > 0) {
+        values.push({
+          key: 'instances.' + payload.instanceId,
+          value: data.list[0]
         });
       }
     }
@@ -108,25 +108,25 @@ function* getListPage({ payload }) {
 }
 
 function* save({ payload }) {
-  const instance = yield select((state) => getState(state).instances[payload.instanceId]); 
+  const instance = yield select((state) => getState(state).instances[payload.instanceId]);
   // ui 타입에 따라 url 조정 
-  let url = 'save'; 
-  if(payload.editType === 'insert') {
+  let url = 'save';
+  if (payload.editType === 'insert') {
     // detail insert 
     url = 'insert';
   }
   const { isSuccess, data, resultCode, message } = yield call(callApi, {
-    url: '/offer/generic/' + url, 
-    method: 'post', 
+    url: '/offer/generic/' + url,
+    method: 'post',
     data: payload,
   });
-  
+
   if (isSuccess && resultCode >= 0) {
     // message.success(i18n.t('message.save')); 
-    antMessage.success('저장이 완료되었습니다.'); 
-    yield put(actions.getListPage({instanceId : payload.instanceId})) 
+    antMessage.success('저장이 완료되었습니다.');
+    yield put(actions.getListPage({ instanceId: payload.instanceId }))
     // getAnplDsplWithdrawPage(); 
-  }else { 
+  } else {
     // modalMessage({
     //   title: '오류', 
     //   content: message, 
@@ -135,12 +135,12 @@ function* save({ payload }) {
   }
 }
 
-export function* watchUnsplash() { 
+export function* watchUnsplash() {
   yield all([
-    takeEvery(actions.fetchInitialInfo, fetchInitialInfo), 
-    takeEvery(actions.getListPage, getListPage), 
-    takeEvery(actions.setSearchFilter, getListPage), 
-    takeEvery(actions.setPageInfo, getListPage), 
+    takeEvery(actions.fetchInitialInfo, fetchInitialInfo),
+    takeEvery(actions.getListPage, getListPage),
+    takeEvery(actions.setSearchFilter, getListPage),
+    takeEvery(actions.setPageInfo, getListPage),
     takeEvery(actions.save, save),
   ]);
 }

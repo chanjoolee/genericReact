@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getState } from "../state";
+import { getState } from "../state/stateSearch";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Col, Row } from "antd";
 import useMounted from "@hooks/useMounted";
-import { actions } from "@generic/state";
+import { actions } from "@/generic/state/stateSearch";
 import _ from "lodash";
-import { schemaGeneric , addCustomSearchFilters } from "@generic/schemaGeneric.js";
+import { schemaGeneric, addCustomSearchFilters } from "@generic/schemaGeneric.js";
 import callApi from "@lib/callApi";
 
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
@@ -175,35 +175,35 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
           componentName = "FormItem";
         }
         if (componentName === "FormItem") {
-            let targetColumn = _.find(targetEntity.cols, {
-                column_name: col.name,
+          let targetColumn = _.find(targetEntity.cols, {
+            column_name: col.name,
+          });
+          let nameColumn = _.cloneDeep(targetColumn);
+          // let label - targetColumn.column_comment;
+          if (targetColumn.name_column != null) {
+            nameColumn = _.find(targetEntity.cols, {
+              column_name: targetColumn.name_column,
             });
-            let nameColumn = _.cloneDeep(targetColumn);
-            // let label - targetColumn.column_comment;
-            if (targetColumn.name_column != null) {
-                nameColumn = _.find(targetEntity.cols, {
-                column_name: targetColumn.name_column,
-                });
-            }
+          }
 
-            let component = (
-                <Col span={8} key={i}>
-                <Form.Item
-                    type="Text"
-                    label={nameColumn.column_comment}
-                    name={_.camelCase("" + targetColumn.column_name)}
-                    // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
-                >
-                    <Input
-                    placeholder={nameColumn.column_comment + " 을 입력해 주세요."}
-                    />
-                </Form.Item>
-                </Col>
-            );
-            searchFilter.push({
-                component: component,
-                targetColumn: targetColumn,
-            });
+          let component = (
+            <Col span={8} key={i}>
+              <Form.Item
+                type="Text"
+                label={nameColumn.column_comment}
+                name={_.camelCase("" + targetColumn.column_name)}
+              // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
+              >
+                <Input
+                  placeholder={nameColumn.column_comment + " 을 입력해 주세요."}
+                />
+              </Form.Item>
+            </Col>
+          );
+          searchFilter.push({
+            component: component,
+            targetColumn: targetColumn,
+          });
 
           if (initParams.filters) {
             let v_filter = _.find(initParams.filters, {
@@ -218,7 +218,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       });
     });
 
-    searchFilter = addCustomSearchFilters(searchFilter,entityId );
+    searchFilter = addCustomSearchFilters(searchFilter, entityId);
 
 
   };
@@ -227,11 +227,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     let count = searchFilter.length;
     const children = [];
 
-    
-    for (let i = 0; i < count; i++) {   
-        children.push(
-            searchFilter[i].component    
-        );
+
+    for (let i = 0; i < count; i++) {
+      children.push(
+        searchFilter[i].component
+      );
     }
 
     return children;

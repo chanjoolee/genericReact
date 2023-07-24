@@ -1,116 +1,116 @@
-import React, { useState, useEffect, useRef } from 'react'; 
-import { actions, getState } from '@generic/state'; 
-import { useDispatch, useSelector } from 'react-redux'; 
+import React, { useState, useEffect, useRef } from 'react';
+import { actions, getState } from '@/generic/state/stateSearch';
+import { useDispatch, useSelector } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
 import { Table } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
-import { Card, Button } from 'antd'; 
+import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
 // import {RowAddButton, RowDeleteButton, DownLoadButton, SaveButton } from '@components/button'; 
-import _ from 'lodash'; 
+import _ from 'lodash';
 // import Detail from '@generic/component/Details'; 
-import { schemaGeneric, mergeCols  } from '@generic/schemaGeneric.js'; 
+import { schemaGeneric, mergeCols } from '@generic/schemaGeneric.js';
 import Item from 'antd/lib/list/Item';
 import qs from 'qs';
 
-const DataArea = ({entityId , instanceId, ...restProps}) => {
+const DataArea = ({ entityId, instanceId, ...restProps }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [sheetReady, setSheetReady] = useState(false);
-  const list = useSelector((state) => getState(state).instances[instanceId].list); 
+  const list = useSelector((state) => getState(state).instances[instanceId].list);
   const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
   const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
-  const thisInstance = useSelector((state) => getState(state).instances[instanceId]); 
+  const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const cols = useSelector((state) => {
-    let vState = getState(state); 
-    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols); 
+    let vState = getState(state);
+    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
     vCols = mergeCols(vCols, thisInstance.entityInfo.entityId);
     return vCols;
     // getState(state).instances[instanceId).entityInfo.cols 
-  }); 
+  });
   const leftCols = useSelector((state) => {
-    let vState = getState(state); 
-    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.leftcols); 
-    _.forEach(vCols, function(col,k){ 
+    let vState = getState(state);
+    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.leftcols);
+    _.forEach(vCols, function (col, k) {
       // console.log('colcolcol') 
-      if(col.Name === 'contextMenu'){
-        _.forEach(col.contextMenu.Items, function(item, kk) { 
-          if(item.Name != null) { 
-            item.OnClick = function(obj) {
-              let _this = this; 
-              let sheet = this.Owner.Sheet; 
-              let row = _this.Owner.Row; 
-              let entityId = _this.Name; 
+      if (col.Name === 'contextMenu') {
+        _.forEach(col.contextMenu.Items, function (item, kk) {
+          if (item.Name != null) {
+            item.OnClick = function (obj) {
+              let _this = this;
+              let sheet = this.Owner.Sheet;
+              let row = _this.Owner.Row;
+              let entityId = _this.Name;
               let initParams = {
-                entityId: entityId, 
-                entity : _this.Text ,
-                openType: 'modal', 
+                entityId: entityId,
+                entity: _this.Text,
+                openType: 'modal',
                 ulType: 'list'
               };
               let vOpenUiType = 'list';
-              
+
               // instance.openModal = true; 
               // instance.initParams = initParams; 
-              let filters = []; 
-              if(this.uiType === 'list') { 
-                vOpenUiType = 'list'; 
-                _.forEach(_this.Relation.to.cols, (col,k) => { 
+              let filters = [];
+              if (this.uiType === 'list') {
+                vOpenUiType = 'list';
+                _.forEach(_this.Relation.to.cols, (col, k) => {
                   let vol = {
-                    col : col.name ,
-                    value : row[_.camelCase(_this.Relation.from.cols[k]['name'])]
+                    col: col.name,
+                    value: row[_.camelCase(_this.Relation.from.cols[k]['name'])]
                   };
                   filters.push(vol);
                 });
-              }    
-                  // 
-              if( _this.uiType === 'detail') {
+              }
+              // 
+              if (_this.uiType === 'detail') {
                 initParams = {
-                  entityid : _this.entityid, 
-                  entitym: _this.entitym, 
+                  entityid: _this.entityid,
+                  entitym: _this.entitym,
                   openType: 'modal',
-                  uiType : 'detail' 
-                }; 
+                  uiType: 'detail'
+                };
                 vOpenUiType = 'detail';
-                filters = []; 
-                let keys = _.filter(thisInstance.entityInfo.dbCols,{column_key: "PRI"}); 
-                _.forEach(keys, (col, k) => { 
+                filters = [];
+                let keys = _.filter(thisInstance.entityInfo.dbCols, { column_key: "PRI" });
+                _.forEach(keys, (col, k) => {
                   let vCol = {
-                    col: _.camelCase(col.column_name) ,
-                    dbColumnName : col.column_name, 
+                    col: _.camelCase(col.column_name),
+                    dbColumnName: col.column_name,
                     value: row[_.camelCase(col.column_name)]
                   };
-                  filters.push(vCol); 
+                  filters.push(vCol);
                 });
               }
-              initParams.filters = filters; 
+              initParams.filters = filters;
               let values = [
-                { key: 'instances.' + instanceId + '.openModal.visible', value: true }, 
-                { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType}, 
-                { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams}
+                { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
               ];
-              dispatch(actions.setValues(values)); 
+              dispatch(actions.setValues(values));
               return true;
-              }
             }
-                    
-          }); 
-          col.OnClick = (evtParam) => {
-            // const { sheet, row, col } - evtParam; 
-            var pos = { Align: 'right below' }; 
-            evtParam.sheet.showMenu(evtParam.row, evtParam.col, col.contextMenu, pos, null, null); 
-            return true;
-          };
-        }
-      });
+          }
 
-      return vCols; 
-      //  getState(state). instances[instance Id).entityinfo.cols
+        });
+        col.OnClick = (evtParam) => {
+          // const { sheet, row, col } - evtParam; 
+          var pos = { Align: 'right below' };
+          evtParam.sheet.showMenu(evtParam.row, evtParam.col, col.contextMenu, pos, null, null);
+          return true;
+        };
+      }
+    });
+
+    return vCols;
+    //  getState(state). instances[instance Id).entityinfo.cols
   });
 
   const thisSheet = useRef(null);
   useEffect(() => {
     if (thisSheet.current) {
-      thisSheet.current.loadSearchData({data: list, sync:true});
+      thisSheet.current.loadSearchData({ data: list, sync: true });
     }
   }, [list]);
 
@@ -119,17 +119,17 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
     page: params.pagination?.current,
     ...params,
   });
-  
+
   const fetchData = (params = {}) => {
     setLoading(true);
     fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(params))}`)
-    // fetch(`https://randomuser.me/api?`)
+      // fetch(`https://randomuser.me/api?`)
       .then((res) => res.json())
       .then(({ results }) => {
         // setData(results);
-        let values =[
-          { key: 'instances.' + instanceId + '.list', value: results }, 
-          { key: 'instances.' + instanceId + '.pageInfo', value: {...params.pagination,total: 200} },
+        let values = [
+          { key: 'instances.' + instanceId + '.list', value: results },
+          { key: 'instances.' + instanceId + '.pageInfo', value: { ...params.pagination, total: 200 } },
         ];
         dispatch(actions.setValues(values));
         setLoading(false);
@@ -158,28 +158,28 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
 
 
 
-  const openModalAdd = () => { 
+  const openModalAdd = () => {
     let initParams = {
-      entityId: thisInstance.entityInfo.entityId, 
-      entitylin : thisInstance.entityInfo.entityNm, 
-      openType : 'modal', 
-      uiType : 'detail', 
-      editType: 'insert', 
-      callinstanceId : thisInstance.id
+      entityId: thisInstance.entityInfo.entityId,
+      entitylin: thisInstance.entityInfo.entityNm,
+      openType: 'modal',
+      uiType: 'detail',
+      editType: 'insert',
+      callinstanceId: thisInstance.id
     };
-    let vOpenUiType = 'detail'; 
-    let values =[
-      { key: 'instances.' + instanceId + '.openModal.visible', value: true }, 
+    let vOpenUiType = 'detail';
+    let values = [
+      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
       { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams} 
+      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
     ];
     // 모달창띄우기 
     dispatch(actions.setValues(values));
   };
-  
+
   return (
     <>
-    {/* <Card 
+      {/* <Card 
         style={{border: 0 }} 
         title={(() => { 
         if(thisInstance.openType === 'tab') {
@@ -206,7 +206,7 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
         onChange={handleTableChange}
     />
     </Card> */}
-    <Table
+      <Table
         columns={cols}
         rowKey={(record) => record.login.uuid}
         dataSource={list}
@@ -214,8 +214,8 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
         loading={loading}
         onChange={handleTableChange}
         scroll={{ x: 'max-content' }}
-    />
-    {/* <div className="wrap-sheet" 
+      />
+      {/* <div className="wrap-sheet" 
       style= {(() => {
         if(thisInstance.openType === 'tab'){
           return { height: '650px' , minheight: '200px' };
@@ -236,8 +236,8 @@ const DataArea = ({entityId , instanceId, ...restProps}) => {
     </>
 
 
-    
-    
+
+
   );
 };
 
