@@ -4,7 +4,7 @@ import { pageDefaultSize } from 'src/generic/constant';
 import _ from 'lodash';
 import { schemaGeneric } from '@generic/schemaGeneric';
 
-const columns = require("@generic/columns_tdcs_0620.json");
+const columns = require("@generic/columns_inventory.json");
 const columns1 = [];
 
 const ROOT_SLICE_NAME = 'generic';
@@ -62,9 +62,9 @@ const initialState = {
 }
 
 const sagaAction = {
-    fetchInitialInfo: createAction(`${ROOT_SLICE_NAME}/fetchInitialInfo`),
-    getListPage: createAction(`${ROOT_SLICE_NAME}/getListPage`),
-    save: createAction(`${ROOT_SLICE_NAME}/save`),
+    fetchInitialInfo: createAction(`${ROOT_SLICE_NAME}/${SLICE_NAME}/fetchInitialInfo`),
+    getListPage: createAction(`${ROOT_SLICE_NAME}/${SLICE_NAME}/getListPage`),
+    save: createAction(`${ROOT_SLICE_NAME}/${SLICE_NAME}/save`),
 
 }
 
@@ -109,14 +109,14 @@ const makeSheetCols = (instance) => {
         // find codeList
         let vCommonCode = _.find(schemaGeneric.commonCodeList, {
             entityId: instance.entityInfo.entityId,
-            column_name: v.column_name
+            columnName: v.columnName
         });
         if (vCommonCode != null) {
             vRtn.Type = 'Enum';
-            vRtn.Enum = instance.codeList.enum[vCommonCode.code_group_id];
-            vRtn.EnumKeys = instance.codeList.enumKeys[vCommonCode.code_group_id];
-            vRtn.codeGroupId = vCommonCode.code_group_id;
-            vRtn.codeGroupNm = vCommonCode.code_group_nm;
+            vRtn.Enum = instance.codeList.enum[vCommonCode.codeCategory];
+            vRtn.EnumKeys = instance.codeList.enumKeys[vCommonCode.codeCategory];
+            vRtn.codeGroupId = vCommonCode.codeCategory;
+            vRtn.codeGroupNm = vCommonCode.codeCategoryNm;
         }
 
         if (_.includes(['RGSR_ID', 'RGST_DTM', 'UPPR_ID', 'UPD_DTM'], v.column_name)) {
@@ -249,8 +249,8 @@ const reducers = {
 
         _.forEach(codeList, (code, i) => {
             if (code.length > 0) {
-                newinstance.codeList.enum[code[0].codeGroupId] = _.join([''].concat(_.flatMap(code, 'label')), '|');
-                newinstance.codeList.enum[code[0].codeGroupId] = _.join([''].concat(_.flatMap(code, 'cmnCd')), '|');
+                newinstance.codeList.enum[code.codeCategory] = _.join([''].concat(_.flatMap(code.list, 'codeId')), '|');
+                newinstance.codeList.enumKeys[code.codeCategory] = _.join([''].concat(_.flatMap(code.list, 'codeNm')), '|');
             }
         });
         makeSheetCols(newinstance);

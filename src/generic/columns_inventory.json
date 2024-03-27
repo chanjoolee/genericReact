@@ -1,0 +1,497 @@
+[
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "YYYYMM",
+		"column_comment" : "YYYYMM",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "WARE_HOUSE_CD",
+		"column_comment" : "WARE_HOUSE_CD",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "ITEM_CD",
+		"column_comment" : "ITEM_CD",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "PRE_QTY",
+		"column_comment" : "PRE_QTY",
+		"ordinal_position" : 4,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "CUR_QTY",
+		"column_comment" : "CUR_QTY",
+		"ordinal_position" : 5,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 6,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_BOOK",
+		"table_comment" : "INVENTORY_BOOK",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 7,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CATEGORY",
+		"table_comment" : "INVENTORY_CMM_CATEGORY",
+		"column_name" : "CODE_CATEGORY",
+		"column_comment" : "CODE_CATEGORY",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CATEGORY",
+		"table_comment" : "INVENTORY_CMM_CATEGORY",
+		"column_name" : "CODE_CATEGORY_NM",
+		"column_comment" : "CODE_CATEGORY_NM",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CATEGORY",
+		"table_comment" : "INVENTORY_CMM_CATEGORY",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 3,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CATEGORY",
+		"table_comment" : "INVENTORY_CMM_CATEGORY",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 4,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CD",
+		"table_comment" : "INVENTORY_CMM_CD",
+		"column_name" : "CODE_CATEGORY",
+		"column_comment" : "CODE_CATEGORY",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CD",
+		"table_comment" : "INVENTORY_CMM_CD",
+		"column_name" : "CODE_ID",
+		"column_comment" : "CODE_ID",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CD",
+		"table_comment" : "INVENTORY_CMM_CD",
+		"column_name" : "CODE_NM",
+		"column_comment" : "CODE_NM",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CD",
+		"table_comment" : "INVENTORY_CMM_CD",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 4,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_CD",
+		"table_comment" : "INVENTORY_CMM_CD",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 5,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_USE",
+		"table_comment" : "INVENTORY_CMM_USE",
+		"column_name" : "TABLE_NAME",
+		"column_comment" : "TABLE_NAME",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_CMM_USE",
+		"table_comment" : "INVENTORY_CMM_USE",
+		"column_name" : "COLUMN_NAME",
+		"column_comment" : "COLUMN_NAME",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_CMM_USE",
+		"table_comment" : "INVENTORY_CMM_USE",
+		"column_name" : "CODE_CATEGORY",
+		"column_comment" : "CODE_CATEGORY",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_USE",
+		"table_comment" : "INVENTORY_CMM_USE",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 4,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_CMM_USE",
+		"table_comment" : "INVENTORY_CMM_USE",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 5,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "ITEM_CD",
+		"column_comment" : "ITEM_CD",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "ORDER_NO",
+		"column_comment" : "ORDER_NO",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "INOUT_TIME",
+		"column_comment" : "INOUT_TIME",
+		"ordinal_position" : 3,
+		"data_type" : "date",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "IN_OUT_CD",
+		"column_comment" : "IN_OUT_CD",
+		"ordinal_position" : 4,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "QTY",
+		"column_comment" : "QTY",
+		"ordinal_position" : 5,
+		"data_type" : "int",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 6,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 7,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_IN_OUT",
+		"table_comment" : "INVENTORY_IN_OUT",
+		"column_name" : "WARE_HOUSE_CD",
+		"column_comment" : "WARE_HOUSE_CD",
+		"ordinal_position" : 8,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "ITEM_CD",
+		"column_comment" : "ITEM_CD",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "ITEM_NAME",
+		"column_comment" : "ITEM_NAME",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "DESCRIPTION",
+		"column_comment" : "DESCRIPTION",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 4,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 5,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "item_cd",
+		"column_comment" : "item_cd",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "description",
+		"column_comment" : "description",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"column_name" : "item_name",
+		"column_comment" : "item_name",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ITEM_CD",
+		"column_comment" : "ITEM_CD",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ORDER_NO",
+		"column_comment" : "ORDER_NO",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ORDER_QTY",
+		"column_comment" : "ORDER_QTY",
+		"ordinal_position" : 3,
+		"data_type" : "int",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ORDER_PRICE",
+		"column_comment" : "ORDER_PRICE",
+		"ordinal_position" : 4,
+		"data_type" : "double",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ORDER_AMT",
+		"column_comment" : "ORDER_AMT",
+		"ordinal_position" : 5,
+		"data_type" : "double",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "ORDER_TIME",
+		"column_comment" : "ORDER_TIME",
+		"ordinal_position" : 6,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 7,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_ORDER",
+		"table_comment" : "INVENTORY_ORDER",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 8,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_TAB_COLS",
+		"table_comment" : "INVENTORY_TAB_COLS",
+		"column_name" : "TABLE_NAME",
+		"column_comment" : "TABLE_NAME",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_TAB_COLS",
+		"table_comment" : "INVENTORY_TAB_COLS",
+		"column_name" : "COLUMN_NAME",
+		"column_comment" : "COLUMN_NAME",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_TAB_COLS",
+		"table_comment" : "INVENTORY_TAB_COLS",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 3,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_TAB_COLS",
+		"table_comment" : "INVENTORY_TAB_COLS",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 4,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "WARE_HOUSE_CD",
+		"column_comment" : "WARE_HOUSE_CD",
+		"ordinal_position" : 1,
+		"data_type" : "varchar",
+		"column_key" : "PRI"
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "WARE_HOUSE_NM",
+		"column_comment" : "WARE_HOUSE_NM",
+		"ordinal_position" : 2,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "WARE_DESC",
+		"column_comment" : "WARE_DESC",
+		"ordinal_position" : 3,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "LWARE_OCATION",
+		"column_comment" : "LWARE_OCATION",
+		"ordinal_position" : 4,
+		"data_type" : "varchar",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "INS_DT",
+		"column_comment" : "INS_DT",
+		"ordinal_position" : 5,
+		"data_type" : "date",
+		"column_key" : ""
+	},
+	{
+		"table_name" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"column_name" : "MOD_DT",
+		"column_comment" : "MOD_DT",
+		"ordinal_position" : 6,
+		"data_type" : "date",
+		"column_key" : ""
+	}
+]

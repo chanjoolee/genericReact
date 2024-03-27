@@ -15,7 +15,7 @@ export default function callApi(
     },
     config
 ){
-    let api_url = BASE_URL + 'api' + url;
+    let api_url = BASE_URL + '' + url;
     return axios({
         method: method,
         url: api_url,
@@ -34,12 +34,13 @@ export default function callApi(
     .then((response) => {
         console.log('response : ' , response);
         const {payload , resultCode , message } = response.data;
+        
 
         return {
             isSuccess: true,
-            data: payload , 
-            resultCode ,
-            message ,
+            data: response.data , 
+            resultCode : response.status,
+            message : response.statusText ,
             response,
         };
     })

@@ -134,6 +134,15 @@ const LayoutSide1 = () => {
                 통합조직관리
               </Menu.Item>
             </SubMenu>
+            <SubMenu key="sub4" icon={<TeamOutlined />} on title="INVENTORY">
+              <Menu.Item
+                key="31"
+                entityId="INVENTORY_IN_OUT"
+                onClick={menuClick}
+              >
+                창고입출고
+              </Menu.Item>
+            </SubMenu>
             <SubMenu key="sub3" icon={<TeamOutlined />} on title="Sample">
               <Menu.Item
                 key="20"

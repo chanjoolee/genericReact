@@ -23,13 +23,12 @@ const SearchList = (props) => {
     useEffect(() => {
         let vInstanceId = moment().format('YYYYMMDDHHmmssSSS') + _.uniqueId("_");
 
-
         setInstanceId(vInstanceId);
         setTimeout(() => {
             dispatch(
                 // backend 가 설정 될때 까지 saga 보류
-                // actions.fetchInitialInfo({
-                actions.setInitialInfo({
+                actions.fetchInitialInfo({
+                // actions.setInitialInfo({
                     instanceId: vInstanceId,
                     entityId: props.initParams.entityId,
                     tableName: props.initParams.entityId,
