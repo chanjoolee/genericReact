@@ -83,7 +83,7 @@ function* getListPage({ payload }) {
   let pageInfo = yield select((state) => getState(state).instances[payload.instanceId].pageInfo);
   let instance = yield select((state) => getState(state).instances[payload.instanceId]);
   let { isSuccess, data } = yield call(callApi, {
-    url: '/offer/generic/getListPage',
+    url: '/generic/getListPage',
     method: 'post',
     // data: payload, 
     params: pageInfo,
