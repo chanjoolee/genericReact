@@ -125,7 +125,11 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
     dispatch(actions.setPageInfo({
       instanceId,
-      ...newPagination
+      ...newPagination,
+      // showTotal: (total, range) => {
+      //   console.log(range);
+      //   return `total ${total}` ;
+      // },
     }));
 
   };

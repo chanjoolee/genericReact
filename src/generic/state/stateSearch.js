@@ -44,7 +44,11 @@ const initialState = {
             pageSize: pageDefaultSize,
             defaultPageSize: 10,
             showSizeChanger: true,
-            total: 0
+            total: 0,
+            showTotal: (total, range) => {
+                console.log(range);
+                return `Total ${total}` ;
+            },
         },
         // 어떤형식으로 호출하는가
         openType: '', // tab, modal , embeded
@@ -140,6 +144,8 @@ const makeSheetCols = (instance) => {
         return vRtn;
 
     });
+
+    // 첫번째 컬럼에 번호를 추가한다.
 
     // parent info
     // find parents
@@ -309,11 +315,11 @@ const reducers = {
         });
     },
     setSearchFilter: (state, { payload: { instanceId, ...rest } }) => {
-        state.instances[instanceId].searchFilter = rest;
+        state.instances[instanceId].searchFilter = { ...state.instances[instanceId].searchFilter , ...rest };
         state.instances[instanceId].pageInfo.current = 1;
     },
     setPageInfo: (state, { payload: { instanceId, ...rest } }) => {
-        state.instances[instanceId].pageInfo = rest
+        state.instances[instanceId].pageInfo = { ...state.instances[instanceId].pageInfo, ...rest }
     }
 };
 
