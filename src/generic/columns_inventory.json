@@ -3,7 +3,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "YYYYMM",
-		"column_comment" : "YYYYMM",
+		"column_comment" : "연월",
 		"ordinal_position" : 1,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -12,7 +12,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "WARE_HOUSE_CD",
-		"column_comment" : "WARE_HOUSE_CD",
+		"column_comment" : "창고",
 		"ordinal_position" : 2,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -21,7 +21,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "ITEM_CD",
-		"column_comment" : "ITEM_CD",
+		"column_comment" : "품목코드",
 		"ordinal_position" : 3,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -30,7 +30,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "PRE_QTY",
-		"column_comment" : "PRE_QTY",
+		"column_comment" : "이전수량",
 		"ordinal_position" : 4,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -39,7 +39,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "CUR_QTY",
-		"column_comment" : "CUR_QTY",
+		"column_comment" : "현재수량",
 		"ordinal_position" : 5,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -48,7 +48,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "INS_DT",
-		"column_comment" : "INS_DT",
+		"column_comment" : "입력일",
 		"ordinal_position" : 6,
 		"data_type" : "date",
 		"column_key" : ""
@@ -57,7 +57,7 @@
 		"table_name" : "INVENTORY_BOOK",
 		"table_comment" : "INVENTORY_BOOK",
 		"column_name" : "MOD_DT",
-		"column_comment" : "MOD_DT",
+		"column_comment" : "수정일",
 		"ordinal_position" : 7,
 		"data_type" : "date",
 		"column_key" : ""
@@ -192,7 +192,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "ITEM_CD",
-		"column_comment" : "ITEM_CD",
+		"column_comment" : "품목코드",
 		"ordinal_position" : 1,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -201,7 +201,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "ORDER_NO",
-		"column_comment" : "ORDER_NO",
+		"column_comment" : "주문번호",
 		"ordinal_position" : 2,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -210,7 +210,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "INOUT_TIME",
-		"column_comment" : "INOUT_TIME",
+		"column_comment" : "시간",
 		"ordinal_position" : 3,
 		"data_type" : "date",
 		"column_key" : "PRI"
@@ -219,7 +219,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "IN_OUT_CD",
-		"column_comment" : "IN_OUT_CD",
+		"column_comment" : "입출력타입",
 		"ordinal_position" : 4,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -228,7 +228,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "QTY",
-		"column_comment" : "QTY",
+		"column_comment" : "수량",
 		"ordinal_position" : 5,
 		"data_type" : "int",
 		"column_key" : ""
@@ -237,7 +237,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "INS_DT",
-		"column_comment" : "INS_DT",
+		"column_comment" : "입력일",
 		"ordinal_position" : 6,
 		"data_type" : "date",
 		"column_key" : ""
@@ -246,7 +246,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "MOD_DT",
-		"column_comment" : "MOD_DT",
+		"column_comment" : "수정일",
 		"ordinal_position" : 7,
 		"data_type" : "date",
 		"column_key" : ""
@@ -255,7 +255,7 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "WARE_HOUSE_CD",
-		"column_comment" : "WARE_HOUSE_CD",
+		"column_comment" : "창고",
 		"ordinal_position" : 8,
 		"data_type" : "varchar",
 		"column_key" : ""
