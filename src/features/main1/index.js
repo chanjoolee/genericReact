@@ -50,15 +50,16 @@ const LayoutSide1 = () => {
     }
     // maxkey
     let initParams = {
-      entityId: item.props.elementRef.current.getAttribute("entityId"),
+      // entityId: item.props.elementRef.current.getAttribute("entityId"),
+      entityId: item.props.entityId,
       openType: "tab",
-      uitype: "list",
+      uiType: "list",
     };
     let uniqKey = key; // _.uniqueId();
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: item.props.elementRef.current.textContent,
+        title: item.props.title,
         content: <SearchPage initParams={initParams} />,
         key: uniqKey,
         closable: true,
@@ -84,7 +85,7 @@ const LayoutSide1 = () => {
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: item.props.elementRef.current.textContent,
+        title: item.props.title,
         content: content,
         key: uniqKey,
         closable: true,
@@ -115,6 +116,7 @@ const LayoutSide1 = () => {
               <Menu.Item
                 key="6"
                 entityId="TBAS_ABN_RE_PAY_IF"
+                title="비정상영업_재심관리"
                 onClick={menuClick}
               >
                 비정상영업_재심관리
@@ -122,6 +124,7 @@ const LayoutSide1 = () => {
               <Menu.Item
                 key="8"
                 entityId="TBAS_ABN_SALE_RPAY_IF"
+                title="비정상영업_환수관리"
                 onClick={menuClick}
               >
                 비정상영업_환수관리
@@ -129,6 +132,7 @@ const LayoutSide1 = () => {
               <Menu.Item
                 key="10"
                 entityId="TBAS_NEW_ORG_MGMT"
+                title="통합조직관리"
                 onClick={menuClick}
               >
                 통합조직관리
@@ -138,6 +142,7 @@ const LayoutSide1 = () => {
               <Menu.Item
                 key="31"
                 entityId="INVENTORY_IN_OUT"
+                title="창고입출고"
                 onClick={menuClick}
               >
                 창고입출고
@@ -146,6 +151,7 @@ const LayoutSide1 = () => {
             <SubMenu key="sub3" icon={<TeamOutlined />} on title="Sample">
               <Menu.Item
                 key="20"
+                title="코드블럭연습"
                 onClick={(param) => {
                   menuClickSample(param, <CodeBlock />);
                 }}
@@ -154,6 +160,7 @@ const LayoutSide1 = () => {
               </Menu.Item>
               <Menu.Item
                 key="21"
+                title="Collapse"
                 onClick={(param) => {
                   menuClickSample(param, <Collapse />);
                 }}

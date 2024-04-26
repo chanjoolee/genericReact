@@ -120,37 +120,14 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     ...params,
   });
 
-  const fetchData = (params = {}) => {
-    setLoading(true);
-    fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(params))}`)
-      // fetch(`https://randomuser.me/api?`)
-      .then((res) => res.json())
-      .then(({ results }) => {
-        // setData(results);
-        let values = [
-          { key: 'instances.' + instanceId + '.list', value: results },
-          { key: 'instances.' + instanceId + '.pageInfo', value: { ...params.pagination, total: 200 } },
-        ];
-        dispatch(actions.setValues(values));
-        setLoading(false);
-        // setPagination({
-        //   ...params.pagination,
-        //   total: 200, // 200 is mock data, you should read it from server
-        //   // total: data.totalCount,
-        // });
-      });
-  };
-  // 페이지 변경 이벤트 
-  const onPageInfoChange = (pageNumber, pageSize) => {
-    dispatch(actions.setPageInfo({ instanceId, pageNumber, pageSize }));
-  };
+
   const handleTableChange = (newPagination, filters, sorter) => {
-    fetchData({
-      sortField: sorter.field,
-      sortOrder: sorter.order,
-      pagination: newPagination,
-      ...filters,
-    });
+
+    dispatch(actions.setPageInfo({
+      instanceId,
+      ...newPagination
+    }));
+
   };
   const contextMenuClick = () => {
     console.log('contextMenuClick');
@@ -179,60 +156,15 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
   return (
     <>
-      {/* <Card 
-        style={{border: 0 }} 
-        title={(() => { 
-        if(thisInstance.openType === 'tab') {
-          return thisInstance.entityInfo.entityNm;
-        }
-      })()} 
-      // utilsGroupRight={
-      //   <>
-      //     <Button onClick={(e) => {
-      //       openModalAdd();
-      //     }}
-      //     >
-      //       추가 
-      //     </Button> 
-      //   </>
-      // }
-    >
-    <Table
-        columns={cols}
-        rowKey={(record) => record.login.uuid}
-        dataSource={list}
-        pagination={pageInfo}
-        loading={loading}
-        onChange={handleTableChange}
-    />
-    </Card> */}
       <Table
         columns={cols}
-        rowKey={(record) => record.login.uuid}
+        // rowKey={(record) => record.login.uuid}
         dataSource={list}
         pagination={pageInfo}
         loading={loading}
         onChange={handleTableChange}
-        scroll={{ x: 'max-content' }}
+        // scroll={{ x: 'max-content' }}
       />
-      {/* <div className="wrap-sheet" 
-      style= {(() => {
-        if(thisInstance.openType === 'tab'){
-          return { height: '650px' , minheight: '200px' };
-        } else {
-          return { height: '355px' , minheight: '200px' };
-        }
-      })()}
-    >
-       <Table
-        columns={cols}
-        rowKey={(record) => record.login.uuid}
-        dataSource={list}
-        pagination={pageInfo}
-        loading={loading}
-        onChange={handleTableChange}
-      />
-    </div>  */}
     </>
 
 

@@ -40,8 +40,9 @@ const initialState = {
         callInstance: {}, // 나를 호출한 인스턴스
         listTotalCount: 0,
         pageInfo: {
-            pageNumber: 1,
-            pageSize: pageDefaultSize
+            current: 1,
+            pageSize: pageDefaultSize,
+            total: 0
         },
         // 어떤형식으로 호출하는가
         openType: '', // tab, modal , embeded
@@ -307,11 +308,10 @@ const reducers = {
     },
     setSearchFilter: (state, { payload: { instanceId, ...rest } }) => {
         state.instances[instanceId].searchFilter = rest;
-        state.instances[instanceId].pageInfo.pageNumber = 1;
+        state.instances[instanceId].pageInfo.current = 1;
     },
-    setPageInfo: (state, { payload: { instanceId, pageNumber, pageSize } }) => {
-        state.instances[instanceId].pageInfo.pageNumber = pageNumber;
-        state.instances[instanceId].pageInfo.pageSize = pageSize;
+    setPageInfo: (state, { payload: { instanceId, ...rest } }) => {
+        state.instances[instanceId].pageInfo = rest
     }
 };
 

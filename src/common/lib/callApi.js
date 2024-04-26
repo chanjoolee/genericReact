@@ -33,7 +33,7 @@ export default function callApi(
     })
     .then((response) => {
         console.log('response : ' , response);
-        const {payload , resultCode , message } = response.data;
+        // const {payload , resultCode , message } = response.data;
         
 
         return {

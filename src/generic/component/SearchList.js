@@ -34,7 +34,7 @@ const SearchList = (props) => {
                     tableName: props.initParams.entityId,
                     // tab, modal : default tab 
                     openType: props.initParams.openType ? props.initParams.openType : 'tab',
-                    uitype: props.initParams.uiType ? props.initParams.uiType : 'list',
+                    uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
                     callInstanceId: props.initParams.callInstanced
                 }),
             );

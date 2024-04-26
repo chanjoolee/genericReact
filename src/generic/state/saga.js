@@ -90,7 +90,7 @@ function* getListPage({ payload }) {
     data: searchFilter,
   });
 
-  if (isSuccess & data) {
+  if (isSuccess && data) {
 
     let values = [];
     if (instance.uiType === 'list') {
@@ -100,6 +100,10 @@ function* getListPage({ payload }) {
       });
       values.push({
         key: 'instances.' + payload.instanceId + '.listTotalCount',
+        value: data.totalCnt
+      });
+      values.push({
+        key: 'instances.' + payload.instanceId + '.pageInfo.total',
         value: data.totalCnt
       });
     } else if (instance.uiType === 'detail') {
