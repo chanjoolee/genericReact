@@ -161,7 +161,15 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   return (
     <>
       <Table
-        columns={cols}
+        columns={[
+          {
+            title: 'No',
+            key: 'index',
+            width: 30,
+            render: (text, record, index) => ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1,
+          },
+          ...cols
+        ]}
         // rowKey={(record) => record.login.uuid}
         dataSource={list}
         pagination={pageInfo}
