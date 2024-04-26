@@ -42,6 +42,8 @@ const initialState = {
         pageInfo: {
             current: 1,
             pageSize: pageDefaultSize,
+            defaultPageSize: 10,
+            showSizeChanger: true,
             total: 0
         },
         // 어떤형식으로 호출하는가
