@@ -10,6 +10,8 @@ import {
   FileOutlined,
   TeamOutlined,
   UserOutlined,
+  AppstoreAddOutlined,
+  CodeSandboxOutlined,
 } from "@ant-design/icons";
 import TabContainer from "@tabs/container/tabs";
 import { actions, getState } from "@tabs/state";
@@ -138,7 +140,7 @@ const LayoutSide1 = () => {
                 통합조직관리
               </Menu.Item>
             </SubMenu>
-            <SubMenu key="sub4" icon={<TeamOutlined />} on title="INVENTORY">
+            <SubMenu key="sub4" icon={<AppstoreAddOutlined />} on title="INVENTORY">
               <Menu.Item
                 key="31"
                 entityid="INVENTORY_IN_OUT"
@@ -148,7 +150,7 @@ const LayoutSide1 = () => {
                 창고입출고
               </Menu.Item>
             </SubMenu>
-            <SubMenu key="sub3" icon={<TeamOutlined />} on title="Sample">
+            <SubMenu key="sub3" icon={<CodeSandboxOutlined />} on title="Sample">
               <Menu.Item
                 key="20"
                 title="코드블럭연습"
