@@ -51,7 +51,7 @@ const LayoutSide1 = () => {
     // maxkey
     let initParams = {
       // entityId: item.props.elementRef.current.getAttribute("entityId"),
-      entityId: item.props.entityId,
+      entityId: item.props.entityid,
       openType: "tab",
       uiType: "list",
     };
@@ -115,7 +115,7 @@ const LayoutSide1 = () => {
             <SubMenu key="sub2" icon={<TeamOutlined />} on title="TDCS">
               <Menu.Item
                 key="6"
-                entityId="TBAS_ABN_RE_PAY_IF"
+                entityid="TBAS_ABN_RE_PAY_IF"
                 title="비정상영업_재심관리"
                 onClick={menuClick}
               >
@@ -123,7 +123,7 @@ const LayoutSide1 = () => {
               </Menu.Item>
               <Menu.Item
                 key="8"
-                entityId="TBAS_ABN_SALE_RPAY_IF"
+                entityid="TBAS_ABN_SALE_RPAY_IF"
                 title="비정상영업_환수관리"
                 onClick={menuClick}
               >
@@ -131,7 +131,7 @@ const LayoutSide1 = () => {
               </Menu.Item>
               <Menu.Item
                 key="10"
-                entityId="TBAS_NEW_ORG_MGMT"
+                entityid="TBAS_NEW_ORG_MGMT"
                 title="통합조직관리"
                 onClick={menuClick}
               >
@@ -141,7 +141,7 @@ const LayoutSide1 = () => {
             <SubMenu key="sub4" icon={<TeamOutlined />} on title="INVENTORY">
               <Menu.Item
                 key="31"
-                entityId="INVENTORY_IN_OUT"
+                entityid="INVENTORY_IN_OUT"
                 title="창고입출고"
                 onClick={menuClick}
               >
