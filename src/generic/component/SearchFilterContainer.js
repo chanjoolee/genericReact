@@ -33,6 +33,12 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     search();
   });
 
+  // useMounted 는 왜 안먹지. useEffect 를 써야하나
+  useEffect(() => {
+    // Initialization logic...
+    search();
+  }, []);
+
   const initForm = () => {
     // form.setFieldsValue(formInitValue);
   };
@@ -257,7 +263,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     },
   };
   return (
-    <Form form={form} {...formProps} onFinish={onFinish} {...formItemLayout} >
+    <Form form={form} {...formProps}  {...formItemLayout} >
       <Row gutter={24}>{getFields()}</Row>
       <Row>
         <Col
