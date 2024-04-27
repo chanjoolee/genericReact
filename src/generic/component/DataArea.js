@@ -165,22 +165,30 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
           {
             title: 'No',
             key: 'index',
-            width: 30,
+            width: 40,
             render: (text, record, index) => ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1,
+            fixed: 'left'
           },
-          ...cols
+          ...cols ,
+          {
+            title: 'Action',
+            key: 'operation',
+            fixed: 'right',
+            width: 100,
+            render: () => <a>action</a>,
+          },
         ]}
-        // rowKey={(record) => record.login.uuid}
+        rowKey={(record,index) => {
+          return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
+        }}
         dataSource={list}
         pagination={pageInfo}
         loading={loading}
         onChange={handleTableChange}
-        // scroll={{ x: 'max-content' }}
+        // size="small"
+        // scroll={{ x: 'max-content' , y: 600 }}
       />
     </>
-
-
-
 
   );
 };
