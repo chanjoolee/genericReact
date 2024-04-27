@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
-import { Table } from 'antd';
+import { Table, Dropdown, Space, message  } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { schemaGeneric, mergeCols } from '@generic/schemaGeneric.js';
 import Item from 'antd/lib/list/Item';
 import qs from 'qs';
+import { DownOutlined } from '@ant-design/icons';
 
 const DataArea = ({ entityId, instanceId, ...restProps }) => {
   const dispatch = useDispatch();
@@ -158,6 +159,28 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     dispatch(actions.setValues(values));
   };
 
+  const onClick = ({ key }) => {
+    message.info(`Click on item ${key}`);
+  };
+
+  const items = [
+    {
+      label: '1st menu item',
+      key: '0',
+    },
+    {
+      label: '2nd menu item',
+      key: '1',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      label: '3rd menu item',
+      key: '3',
+    },
+  ];
+
   return (
     <>
       <Table
@@ -175,7 +198,18 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             key: 'operation',
             fixed: 'right',
             width: 100,
-            render: () => <a>action</a>,
+            render: (text, record, index) => {
+              return (
+                <Dropdown menu={{ items , onClick }} >
+                  <a onClick={e => e.preventDefault()}>
+                    <Space>
+                      Action
+                      <DownOutlined />
+                    </Space>
+                  </a>
+                </Dropdown>
+              );
+            },
           },
         ]}
         rowKey={(record,index) => {
