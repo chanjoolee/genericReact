@@ -255,16 +255,16 @@
 		"table_name" : "INVENTORY_IN_OUT",
 		"table_comment" : "INVENTORY_IN_OUT",
 		"column_name" : "WARE_HOUSE_CD",
-		"column_comment" : "창고",
+		"column_comment" : "창고코드",
 		"ordinal_position" : 8,
 		"data_type" : "varchar",
 		"column_key" : ""
 	},
 	{
 		"table_name" : "INVENTORY_ITEM_MASTER",
-		"table_comment" : "INVENTORY_ITEM_MASTER",
+		"table_comment" : "품목마스터",
 		"column_name" : "ITEM_CD",
-		"column_comment" : "ITEM_CD",
+		"column_comment" : "품목코드",
 		"ordinal_position" : 1,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -273,7 +273,7 @@
 		"table_name" : "INVENTORY_ITEM_MASTER",
 		"table_comment" : "INVENTORY_ITEM_MASTER",
 		"column_name" : "ITEM_NAME",
-		"column_comment" : "ITEM_NAME",
+		"column_comment" : "품목명",
 		"ordinal_position" : 2,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -282,7 +282,7 @@
 		"table_name" : "INVENTORY_ITEM_MASTER",
 		"table_comment" : "INVENTORY_ITEM_MASTER",
 		"column_name" : "DESCRIPTION",
-		"column_comment" : "DESCRIPTION",
+		"column_comment" : "설명",
 		"ordinal_position" : 3,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -303,33 +303,6 @@
 		"column_comment" : "MOD_DT",
 		"ordinal_position" : 5,
 		"data_type" : "date",
-		"column_key" : ""
-	},
-	{
-		"table_name" : "INVENTORY_ITEM_MASTER",
-		"table_comment" : "INVENTORY_ITEM_MASTER",
-		"column_name" : "item_cd",
-		"column_comment" : "item_cd",
-		"ordinal_position" : 1,
-		"data_type" : "varchar",
-		"column_key" : "PRI"
-	},
-	{
-		"table_name" : "INVENTORY_ITEM_MASTER",
-		"table_comment" : "INVENTORY_ITEM_MASTER",
-		"column_name" : "description",
-		"column_comment" : "description",
-		"ordinal_position" : 2,
-		"data_type" : "varchar",
-		"column_key" : ""
-	},
-	{
-		"table_name" : "INVENTORY_ITEM_MASTER",
-		"table_comment" : "INVENTORY_ITEM_MASTER",
-		"column_name" : "item_name",
-		"column_comment" : "item_name",
-		"ordinal_position" : 3,
-		"data_type" : "varchar",
 		"column_key" : ""
 	},
 	{
@@ -442,9 +415,9 @@
 	},
 	{
 		"table_name" : "INVENTORY_WARE_HOUSE",
-		"table_comment" : "INVENTORY_WARE_HOUSE",
+		"table_comment" : "창고정보",
 		"column_name" : "WARE_HOUSE_CD",
-		"column_comment" : "WARE_HOUSE_CD",
+		"column_comment" : "창고코드",
 		"ordinal_position" : 1,
 		"data_type" : "varchar",
 		"column_key" : "PRI"
@@ -453,7 +426,7 @@
 		"table_name" : "INVENTORY_WARE_HOUSE",
 		"table_comment" : "INVENTORY_WARE_HOUSE",
 		"column_name" : "WARE_HOUSE_NM",
-		"column_comment" : "WARE_HOUSE_NM",
+		"column_comment" : "창고명",
 		"ordinal_position" : 2,
 		"data_type" : "varchar",
 		"column_key" : ""
@@ -462,7 +435,7 @@
 		"table_name" : "INVENTORY_WARE_HOUSE",
 		"table_comment" : "INVENTORY_WARE_HOUSE",
 		"column_name" : "WARE_DESC",
-		"column_comment" : "WARE_DESC",
+		"column_comment" : "설명",
 		"ordinal_position" : 3,
 		"data_type" : "varchar",
 		"column_key" : ""

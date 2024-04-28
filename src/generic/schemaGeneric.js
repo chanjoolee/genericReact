@@ -4,9 +4,57 @@ import { Button, Checkbox, Form, Input, Col, Row } from "antd";
 
 export const schemaGeneric = {
     entities : [],
-    relations : [],
-    nameColumns : [],
-    commonCodeList : [],
+    relations : [
+        {
+            from: {
+                entityId: 'INVENTORY_ITEM_MASTER',
+                cols: [
+                    {
+                        column_name: 'ITEM_CD'
+                    }
+                ],
+            },
+            to: {
+                entityId: 'INVENTORY_IN_OUT',
+                cols: [
+                    {
+                        column_name: 'ITEM_CD',
+                    }
+                ],
+            }
+        },
+        {
+            from: {
+                entityId: 'INVENTORY_WARE_HOUSE',
+                cols: [
+                    {
+                        column_name: 'WARE_HOUSE_CD',
+                    }
+                ],
+            },
+            to: {
+                entityId: 'INVENTORY_IN_OUT',
+                cols: [
+                    {
+                        column_name: 'WARE_HOUSE_CD',
+                    }
+                ],
+            },
+        },
+    ],
+    nameColumns : [
+        {
+            entityId: 'INVENTORY_WARE_HOUSE',
+            cols: [
+                {
+                    column_name : 'WARE_HOUSE_CD',
+                    name_column : 'WARE_HOUSE_NM',
+                },
+            ],
+        },
+    ],
+    // Db에서 가져오기로 했으므로 사용안함. 
+    // commonCodeList : [],
     customFunctions : {
         sm_anpl_dspl_ask_n : {
             entityId : 'sm_anpl_dspl_ask_n' ,

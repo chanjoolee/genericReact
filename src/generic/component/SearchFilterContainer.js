@@ -8,9 +8,11 @@ import { actions } from "@/generic/state/stateSearch";
 import _ from "lodash";
 import { schemaGeneric, addCustomSearchFilters } from "@generic/schemaGeneric.js";
 import callApi from "@lib/callApi";
+import { join } from "redux-saga/effects";
 
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // window.columns - columns;
+  const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
   const event = useSelector((state) => getState(state).searchEvent);
   const codelist = useSelector((state) => getState(state).codelist);
@@ -48,7 +50,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
 
   var searchFilter = [];
-  var parentKeyValue = {};
+  const parentKeyValue = {};
   const search = () => {
     let payload = form.getFieldsValue();
     // parent join
@@ -69,10 +71,10 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     let filters = [];
     let forms = form.getFieldsValue();
     _.forEach(searchFilter, (search) => {
-      let elName = _.camelCase(search.targetColumn.column_name);
+      let elName = _.camelCase(search.join.childColumn.column_name);
       let filter = {
         col: elName,
-        dbcolumnName: search.targetColumn.column_name,
+        dbcolumnName: search.join.childColumn.column_name,
         value: forms[elName],
       };
       filters.push(filter);
@@ -86,12 +88,13 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     } else {
       dispatch(actions.setSearchFilter(payload));
     }
-    dispatch(
-      actions.setValue(
-        "instances." + instanceId + ".parentKeyValue",
-        parentKeyValue
-      )
-    );
+
+    // dispatch(
+    //   actions.setValue(
+    //     "instances." + instanceId + ".parentKeyValue",
+    //     parentKeyValue
+    //   )
+    // );
   };
 
   const getListPageAsync = async (payload) => {
@@ -162,66 +165,52 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
   const makeSearchFilter = () => {
     let entityId = thisState.instances[instanceId].entityInfo.entityId;
-    let entityobject = _.find(schemaGeneric.entities, { entityId: entityId });
+    let entityobject = _.find(_schemaGeneric.entities, { entityId: entityId });
     let forms = form.getFieldsValue();
     // find parents
-    let relation_parents = _.filter(schemaGeneric.relations, {
+    let relation_parents = _.filter(_schemaGeneric.relations, {
       to: { entityId: entityId },
     });
     // Relations
-    _.forEach(relation_parents, (rel, i) => {
-      // 부모컬럼 찾기
-      let targetEntity = _.find(schemaGeneric.entities, {
-        entityId: rel.from.entityId,
+    _.forEach(thisInstance.entityInfo.parents, (parent, i) => {
+      _.forEach(parent.joins, (join, i) => {
+        // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
+        // 나중에 좀더 기능 고민 필요함.
+        // let nameColumn = join.nameColumn;
+        // if(nameColumn == null){
+        //   nameColumn = join.parentColumn;
+        // }
+        let component = (
+          <Col span={8} key={i}>
+            <Form.Item
+              type="Text"
+              label={join.parentColumn.column_comment}  // parentColumns 으로 해야하나?
+              name={_.camelCase("" + join.childColumn.column_name)}
+            // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
+            >
+              <Input
+                placeholder={join.childColumn.column_comment + " 을 입력해 주세요."}
+              />
+            </Form.Item>
+          </Col>
+        );
+        searchFilter.push({
+          component: component,
+          join : join
+        });
+  
+        // 일단주석처리.  뭘 할려고 했던 것 같은데.
+        // if (initParams.filters) {
+        //   let v_filter = _.find(initParams.filters, {
+        //     col: targetColumn.column_name,
+        //   });
+        //   if (v_filter != null) {
+        //     parentKeyValue[_.camelCase(targetColumn.column_name)] =
+        //       v_filter.value + "";
+        //   }
+        // }
       });
-      // 컬럼들
-      _.forEach(rel.from.cols, (col, j) => {
-        let componentName = col.componentName;
-        if (componentName == null) {
-          componentName = "FormItem";
-        }
-        if (componentName === "FormItem") {
-          let targetColumn = _.find(targetEntity.cols, {
-            column_name: col.name,
-          });
-          let nameColumn = _.cloneDeep(targetColumn);
-          // let label - targetColumn.column_comment;
-          if (targetColumn.name_column != null) {
-            nameColumn = _.find(targetEntity.cols, {
-              column_name: targetColumn.name_column,
-            });
-          }
-
-          let component = (
-            <Col span={8} key={i}>
-              <Form.Item
-                type="Text"
-                label={nameColumn.column_comment}
-                name={_.camelCase("" + targetColumn.column_name)}
-              // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
-              >
-                <Input
-                  placeholder={nameColumn.column_comment + " 을 입력해 주세요."}
-                />
-              </Form.Item>
-            </Col>
-          );
-          searchFilter.push({
-            component: component,
-            targetColumn: targetColumn,
-          });
-
-          if (initParams.filters) {
-            let v_filter = _.find(initParams.filters, {
-              col: targetColumn.column_name,
-            });
-            if (v_filter != null) {
-              parentKeyValue[_.camelCase(targetColumn.column_name)] =
-                v_filter.value + "";
-            }
-          }
-        }
-      });
+      
     });
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);

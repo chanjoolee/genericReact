@@ -7,6 +7,7 @@ import { schemaGeneric } from '@generic/schemaGeneric';
 const columns = require("@generic/columns_inventory.json");
 const columns1 = [];
 
+const _schemaGeneric = schemaGeneric;
 const ROOT_SLICE_NAME = 'generic';
 const SLICE_NAME = 'search';
 
@@ -86,7 +87,7 @@ const makeSheetCols = (instance) => {
         };
     });
 
-    instance.schema = _.merge(schemaGeneric, { entities: entities });
+    instance.schema = _.merge(_schemaGeneric, { entities: entities });
     let entityObject = _.find(instance.schema.entities, { entityId: instance.entityInfo.entityId });
     if (entityObject == null) {
         console.log("해당 Entity Schema 를 찾을 수 없습니다." + instance.entityInfo.entityId);
@@ -113,18 +114,7 @@ const makeSheetCols = (instance) => {
             , dbColumnName: v.column_name
             , width: 120
         };
-        // find codeList
-        let vCommonCode = _.find(schemaGeneric.commonCodeList, {
-            entityId: instance.entityInfo.entityId,
-            columnName: v.columnName
-        });
-        if (vCommonCode != null) {
-            vRtn.Type = 'Enum';
-            vRtn.Enum = instance.codeList.enum[vCommonCode.codeCategory];
-            vRtn.EnumKeys = instance.codeList.enumKeys[vCommonCode.codeCategory];
-            vRtn.codeGroupId = vCommonCode.codeCategory;
-            vRtn.codeGroupNm = vCommonCode.codeCategoryNm;
-        }
+        
 
         if (_.includes(['RGSR_ID', 'RGST_DTM', 'UPPR_ID', 'UPD_DTM'], v.column_name)) {
             vRtn.Visible = false;
@@ -149,11 +139,11 @@ const makeSheetCols = (instance) => {
 
     // parent info
     // find parents
-    let relation_parents = _.filter(schemaGeneric.relations, { to: { entityId: instance.entityInfo.entityId } });
+    let relation_parents = _.filter(_schemaGeneric.relations, { to: { entityId: instance.entityInfo.entityId } });
 
     _.forEach(relation_parents, (rel, i) => {
         //  부모컬럼찾기
-        let targetEntity = _.find(schemaGeneric.entities, { entityId: rel.from.entityId });
+        let targetEntity = _.find(_schemaGeneric.entities, { entityId: rel.from.entityId });
         let parent = {
             parentTableName: targetEntity.tableName,
             childTableName: entityObject.tableName,
@@ -164,24 +154,33 @@ const makeSheetCols = (instance) => {
         // 조인컬럼들
         _.forEach(rel.from.cols, (col, j) => {
             // 부모컬럼
-            let targetColumn = _.find(targetEntity.cols, { column_name: col.name });
-            let nameColumn = _.colneDeep(targetColumn);
+            let targetColumn = _.find(targetEntity.cols, { column_name: col.column_name });
+            let childColumn = _.find(entityObject.cols, { column_name: rel.to.cols[j].column_name });
             // 쿼리에서 join on 정보
             let join = {
-                parentColumnName: col.name,
-                childColumnName: rel.from.cols[j].name
+                parentColumn: targetColumn,
+                childColumn: childColumn,
+                nameColumn : null ,  // column info 임 {} 
             };
             parent.joins.push(join);
-            if (targetColumn.name_column != null) {
-                nameColumn = _.find(targetEntity.cols, { column_name: targetColumn.name_column });
-                join.nameColumn = nameColumn.column_name;
+            // name column 우선적으로 cols 에서 가져옮.
+            if (targetColumn['name_column'] != null) {
+                join.nameColumn = targetColumn['name_column'];
                 // cols 에서 컬럼추가
+            }
+            // name column 만약 없다면 schemaGeneric.nameColumns 에서 가져옮
+            if(join.nameColumn == null){
+                let findName = _.find( _schemaGeneric.nameColumns , { entityId : rel.from.entityId , cols: [{column_name : col.column_name}]});
+                // cols: {column_name : col.column_name}
+                if (findName != null){
+                    join.nameColumn = _.find(targetEntity.cols, { column_name: findName.cols[0].name_column }); 
+                }
             }
         })
     });
 
     // children
-    let relation_child = _.filter(schemaGeneric.relations, { from: { entityId: instance.entityInfo.entityId } });
+    let relation_child = _.filter(_schemaGeneric.relations, { from: { entityId: instance.entityInfo.entityId } });
 
     let contextCol = {
         Header: " ",
@@ -278,7 +277,7 @@ const reducers = {
         }
 
         // after onload
-        let custom = schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
+        let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
         if (custom != null) {
             if (custom.afterOnload) {
                 custom.afterOnload(newinstance);

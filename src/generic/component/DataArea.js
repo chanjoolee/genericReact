@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
-import { Table, Dropdown, Space, message  } from 'antd';
+import { Table, Dropdown, Menu, Space, message  } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
@@ -13,8 +13,11 @@ import { schemaGeneric, mergeCols } from '@generic/schemaGeneric.js';
 import Item from 'antd/lib/list/Item';
 import qs from 'qs';
 import { DownOutlined } from '@ant-design/icons';
+import { join } from 'redux-saga/effects';
+import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
 
 const DataArea = ({ entityId, instanceId, ...restProps }) => {
+  const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [sheetReady, setSheetReady] = useState(false);
@@ -139,47 +142,129 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   };
 
 
-
-  const openModalAdd = () => {
-    let initParams = {
-      entityId: thisInstance.entityInfo.entityId,
-      entitylin: thisInstance.entityInfo.entityNm,
-      openType: 'modal',
-      uiType: 'detail',
-      editType: 'insert',
-      callinstanceId: thisInstance.id
-    };
-    let vOpenUiType = 'detail';
-    let values = [
-      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-    ];
-    // 모달창띄우기 
-    dispatch(actions.setValues(values));
-  };
-
-  const onClick = ({ key }) => {
-    message.info(`Click on item ${key}`);
-  };
-
-  const items = [
+  var items = [
     {
-      label: '1st menu item',
-      key: '0',
-    },
-    {
-      label: '2nd menu item',
       key: '1',
+      type: 'group',
+      label: 'Group title',
+      children: [
+        {
+          key: '1-1',
+          label: '1st menu item',
+        },
+        {
+          key: '1-2',
+          label: '2nd menu item',
+        },
+      ],
     },
     {
-      type: 'divider',
+      key: '2',
+      label: 'sub menu',
+      children: [
+        {
+          key: '2-1',
+          label: '3rd menu item',
+        },
+        {
+          key: '2-2',
+          label: '4th menu item',
+        },
+      ],
     },
     {
-      label: '3rd menu item',
       key: '3',
+      label: 'disabled sub menu',
+      disabled: true,
+      children: [
+        {
+          key: '3-1',
+          label: '5d menu item',
+        },
+        {
+          key: '3-2',
+          label: '6th menu item',
+        },
+      ],
     },
   ];
+
+
+
+  (() => {
+    items = [
+      {
+        key: 'detail',
+        label: '상세',
+      },
+      {
+        key: 'edit',
+        label: '편집',
+      },
+      {
+        key: 'add',
+        label: '추가',
+      },
+      {
+        key: 'delete',
+        label: '삭제',
+      },
+     
+      
+    ];
+    // parent 
+    let parent = {
+      key: 'parent',
+      label : 'Parent',
+      type: 'group',
+      children: []
+    };    
+    _.forEach(thisInstance.entityInfo.parents, (m, i) => {
+      let keys = m.joins.map(join => join.parentColumn.column_name).join(',');
+      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.parentTableName });
+      let labels = m.joins.map(join => {
+      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.parentTableName });
+        let column = _.find(targetEntity.cols, {column_name : join.parentColumn.column_name });
+        return column.column_comment;
+      }).join(',');
+      parent.children.push({
+        key: m.parentTableName + " : " + keys ,
+        label : targetEntity.entityNm + " : " + labels ,      
+        information : { type: 'parent' , ...m }  
+      });
+    });
+    items.push(parent);
+
+    // child
+    let children = {
+      key: 'children',
+      label : 'Children',
+      type: 'group',
+      children: []
+    };    
+    _.forEach(thisInstance.entityInfo.children, (m, i) => {
+      let keys = m.joins.map(join => join.childColumn.column_name).join(',');
+      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.childTableName });
+      let labels = m.joins.map(join => {
+      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.childTableName });
+        let column = _.find(targetEntity.cols, {column_name : join.childColumn.column_name });
+        return column.column_comment;
+      }).join(',');
+      children.children.push({
+        key: m.childTableName + " : " + keys ,
+        label : targetEntity.entityNm + " : " + labels ,      
+        information : { type: 'child' , ...m }  
+      });
+    });
+    
+    items.push(children);
+
+  })();
+
+
+  function handleMenuClick(record, action) {
+    message.info(`Action: ${action} on record id: ${record.id}`);
+  }
 
   return (
     <>
@@ -199,15 +284,50 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             fixed: 'right',
             width: 100,
             render: (text, record, index) => {
+
+              // 참조
+              let openModalAdd = () => {
+                let initParams = {
+                  entityId: thisInstance.entityInfo.entityId,
+                  entitylin: thisInstance.entityInfo.entityNm,
+                  openType: 'modal',
+                  uiType: 'detail',
+                  editType: 'insert',
+                  callinstanceId: thisInstance.id
+                };
+                let vOpenUiType = 'detail';
+                let values = [
+                  { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                  { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                  { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                ];
+                // 모달창띄우기 
+                dispatch(actions.setValues(values));
+              };
+              
+
               return (
-                <Dropdown menu={{ items , onClick }} >
-                  <a onClick={e => e.preventDefault()}>
+                <Dropdown
+                  menu={{ 
+                    items,
+                    onClick: (info) => { 
+                      console.log(info.key);
+                      console.log(info.item.props.information);
+                      console.log(record);
+
+
+                    }
+                  }} 
+                  // overlay={items1}
+                >
+                  <a onClick={e =>  e.preventDefault()} >
                     <Space>
                       Action
                       <DownOutlined />
                     </Space>
                   </a>
                 </Dropdown>
+
               );
             },
           },
