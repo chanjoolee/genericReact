@@ -158,6 +158,7 @@ const makeSheetCols = (instance) => {
             let childColumn = _.find(entityObject.cols, { column_name: rel.to.cols[j].column_name });
             // 쿼리에서 join on 정보
             let join = {
+                type: 'parent',
                 parentColumn: targetColumn,
                 childColumn: childColumn,
                 nameColumn : null ,  // column info 임 {} 

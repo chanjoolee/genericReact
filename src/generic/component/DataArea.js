@@ -314,8 +314,6 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       console.log(info.key);
                       console.log(info.item.props.information);
                       console.log(record);
-
-
                     }
                   }} 
                   // overlay={items1}

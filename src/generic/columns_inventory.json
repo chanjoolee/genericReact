@@ -190,7 +190,7 @@
 	},
 	{
 		"table_name" : "INVENTORY_IN_OUT",
-		"table_comment" : "INVENTORY_IN_OUT",
+		"table_comment" : "창고입출고",
 		"column_name" : "ITEM_CD",
 		"column_comment" : "품목코드",
 		"ordinal_position" : 1,

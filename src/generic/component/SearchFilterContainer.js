@@ -76,6 +76,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         col: elName,
         dbcolumnName: search.join.childColumn.column_name,
         value: forms[elName],
+        joinInfo: search.join
       };
       filters.push(filter);
     });

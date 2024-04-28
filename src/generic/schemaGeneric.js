@@ -112,6 +112,15 @@ export const schemaGeneric = {
                 {column_name : "ORG_CL_CD"},
                 
             ]
+        },
+        INVENTORY_IN_OUT : {
+            entityId : 'INVENTORY_IN_OUT' ,
+            entityNm : '창고입출고', 
+            addSearchFilters : [
+                {column_name : "ORDER_NO"},
+                {column_name : "IN_OUT_CD"},
+                
+            ]
         }
     }  
 };
@@ -174,6 +183,11 @@ export const addCustomSearchFilters = (filters , entityId ) => {
                 rtnCols.push({
                     component: component,
                     targetColumn: targetColumn,
+                    type: 'customSearchFilter',
+                    join : {
+                        childColumn : targetColumn,
+                        type: 'customSearchFilter',
+                    }
                 });
             });
         }
