@@ -86,8 +86,8 @@ function* getListPage({ payload }) {
     url: '/generic/getListPage',
     method: 'post',
     // data: payload, 
-    params: pageInfo,
-    data: searchFilter,
+    // params: pageInfo,
+    data: { ...searchFilter, ...pageInfo }
   });
 
   if (isSuccess && data) {
