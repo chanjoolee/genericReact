@@ -22,9 +22,8 @@ const initialState = {
             enum: {},
             enumKeys: {}
         },
-        form: {},
+        // form: {},
         searchFilter: {},
-        parentKeyValue: {},
         entityInfo: {
             entityId: '',
             entityNm: '',
@@ -270,12 +269,6 @@ const reducers = {
 
         newinstance.onload = true;
 
-        if (newinstance.uiType === 'detail' && newinstance.editType === 'insert') {
-            let defaultValue = state.instances[callInstanceId].parentKeyValue;
-            if (defaultValue != null) {
-                _.merge(newinstance.form, defaultValue);
-            }
-        }
 
         // after onload
         let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
@@ -313,6 +306,11 @@ const reducers = {
                 }
             );
         });
+    },
+    setValue3: {
+        reducer: (state, { payload}) => {
+            state = {...state , ...payload} ;
+        }
     },
     setSearchFilter: (state, { payload: { instanceId, ...rest } }) => {
         state.instances[instanceId].searchFilter = { ...state.instances[instanceId].searchFilter , ...rest };

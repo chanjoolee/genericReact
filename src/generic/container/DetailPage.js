@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import useMounted from 'Chooks/useMounted';
-import { getState, actions } from '../state/stateSearch';
-import { LayoutType1, LayoutType3 } from '@components/layout';
-import TabContentHeader from '@components/layout/TabContentHeader';
-import CommonModal from '@components/modal/CommonModal';
-import Detail from '../layout/searchList/component/Detail';
-import { schemaBos } from '../schemaBos';
+import useMounted from "@hooks/useMounted";
+import { getState, actions } from '@generic/state/stateSearch';
+// import { LayoutType1, LayoutType3 } from '@components/layout';
+// import TabContentHeader from '@components/layout/TabContentHeader';
+// import CommonModal from '@components/modal/CommonModal';
+import Detail from '@generic/component/Details';
+// import { schemaBos } from '../schemaBos';
 import moment from 'moment';
 import _ from 'lodash';
-import '../layout/generic.css';
+import '@generic/generic.css';
 
 const DetailPage = (props) => {
   const dispatch = useDispatch();
@@ -54,7 +54,12 @@ const DetailPage = (props) => {
     <>
       {thisInstance && thisInstance.onload && (
         <>
-          <Detail entityId={props.initParams.entityId} instanceId={instanceId} initParams={props.initParans} ref={props.ref} />
+          <Detail 
+            entityId={props.initParams.entityId} 
+            instanceId={instanceId} 
+            initParams={props.initParams} 
+            ref={props.ref} 
+          />
         </>
       )}
     </>

@@ -1,44 +1,23 @@
-import useSession from '@hooks/useSession';
-import EventBus from '@lib/EventBus';
-import { ibSheetutil } from '@lib/ibSheetutil';
-import { confim } from '@lib/messageUtil';
-import { utils, regExp } from '@lib/utils';
-import { MSA_OFFER } from 'e/common/constant';
-import UserSearchModal from 'écomponents/modal/user Search Modal';
-import TabContext from '@pages/common/mainTabs/container/TabContext';
-import { Button, Card, Form, message, Input, DropdownMenu } from 'antd';
+import { Button, Card, Form, message, Input, Col,Row, DropdownMenu  } from 'antd';
 import moment from 'moment';
-import React, { useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import React, { forwardRef, useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import TitleSub from '@components/layout/TitleSub';
-import CodeCombo from '@components/search/CodeCombo';
-import { FormItem, FormItemBiz, FormItemPickerDate, FormItemRadio, FormItemser, FormItemDept, FormItemUserDept, FormItemFile, FormItemPhonellumber, } from '@components/formitem';
-import { InfoTip } from '@components/messages';
-import { rules } from '@lib/formRules';
-import { RowddButton, RowDeleteButton, DownloadButton, SaveButton } from '@components/button';
-import IbSheet from '@components/grid/IbSheet';
 import { actions, getState } from '../state/stateSearch';
-import ImageViewer from '@components/viewer/ImageViewer';
 import useMounted from '@hooks/useMounted';
-import { format } from 'prettier';
-import axios from 'axios';
 import { DownOutlined, QuestionCircleOutlined, SelectOutlined } from '@ant-design/icons';
-import CollideSwitch from '@components/switch/ColHideSwitch';
-// import SendozEmailModal from '@pages/common/sample/ozReportSample/Sendo2EmailModal'; 
-import FormPrdtGrpModal from 'pages/order/component/FormPrdtarpModal';
-import FormPrdtModal from '@pages/order/component/FormPratModal';
-import PrdtModal from '@pages/order/component/PrdtModal';
-// import GoodsModal from '@pages/order/component/Goods Modal'; 
-import ProductModal from '@pages/order/component/Productes';
 
-import { schemaBos } from '@pages/bos/common/generic/schemaBos';
-import SearchPage from '@pages/bos/common/generic/container/SearchPage';
+const Detail = forwardRef(({ entityId, instanceId, ref, ...restProps }) => {
+    
+    // 인스턴스 생성의 시차가 있을 수 있으므로 ref 객체는 사용하지 않는 것이 좋을 듯?
+    useImperativeHandle(ref, () => ({
+        onSaveConfirm,
+        search,
+    }));
 
-const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
     const dispatch = useDispatch();
     const [form] = Form.useForm();
-    const [searchForm] = Form.useform();
+    const [searchForm] = Form.useForm();
     // const list = useSelector((state) => getState(state) instances[instanceId].list); 
     const cols = useSelector((state) => {
         let vState = getState(state);
@@ -100,7 +79,7 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
 
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     useMounted(() => {
-        search();
+        // search();
         console.log('useMounted');
         // afterMount(); 
     });
@@ -131,19 +110,13 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
     // }, [list]);
 
     // 모달 Visible 
-    const { sessionUserid, sessionUserlim, sessionCustGrpcd } = useSession();
+    // const { sessionUserid, sessionUserlim, sessionCustGrpcd } = useSession();
     const nowDt = moment().format('YYYYMMDD');
-    const menuid = useContext(TabContext);
+    // const menuid = useContext(TabContext);
 
     // 오른쪽에 카드리스트를 표시한다.
     useEffect(() => {
-        const subscription = EventBus.subscribe('setLayout4', (data) => {
-            data(contentList);
-        });
-        return () => {
-            subscription.unsubscribe();
-        };
-        // eslint-disable-next-line 
+        
     }, []);
     // Events 
     const onFormChange = (e) => {
@@ -151,10 +124,18 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
     };
     useEffect(() => {
         form.resetFields();
-        form.setFieldsValue(thisInstance.form);
-    }, [thisInstance.form]);
+        if(thisInstance.list.length > 0)
+            form.setFieldsValue(thisInstance.list[0]);
+    }, [thisInstance.list]);
 
     const onSaveConfirm = (e) => {
+        if(thisInstance.editType == "view"){
+            dispatch(actions.setValue2(
+                'instances.' + thisInstance.callInstanceId + '.openModal.visible',
+                false
+            ));
+            return;
+        }
         // 공통 valid 체크 
         let validList = form.getFieldsError();
         for (var i = 0; i < validList.length; i++) {
@@ -196,7 +177,7 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
                             col: col.Name,
                             dbColumnName: col.dbColumnName,
                             dbColumnComment: col.dbColumnComment,
-                            value: thisInstance.form[col.Name]
+                            value: thisInstance.list[0][col.Name]
                         });
                     }
                 });
@@ -210,9 +191,7 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
             });
     };
 
-    useImperativeHandle(ref, () => ({
-        onSaveConfirm: onSaveConfirm,
-    }));
+
 
     const emailValidate = ({ getFieldValue }) => ({
         validator(_, value) {
@@ -252,349 +231,101 @@ const Detail = ({ entityId, instanceId, ref, ...restProps }) => {
                 title: thisInstance.entityInfo.entityNm,
                 component: (
                     <>
-                        {thisInstance.openType === 'tab' &&
-                            <TitleSub
-                                title={thisInstance.entityInfo.entityNm}
-                            />
-                        }
-                        <div className="wrap-table-form">
-                            <div className="wrap-table" style={{ paddingTop: '5px', paddingbottom: '5px' }}>
-                                <div className="">
-                                    <table className="table-form">
-                                        <tbody>
-                                            {Object.keys(thisInstance.entityInfo.cols).map((vCol, i) => {
-                                                let col = thisInstance.entityInfo.cols[i];
-                                                // console.log(col.Header + ":" + 1); 
-                                                // console.log(col);                                                
-                                                return (
-                                                    <tr>
-                                                        {(() => {
-                                                            if ((col.visible === undefined || col.Visible === true)) {
-                                                                if (col.Type === 'Enum') {
-                                                                    return (
-                                                                        <td>
-                                                                            <CodeCombo
-                                                                                formItemllame={col.Name}
-                                                                                label={col.Header}
-                                                                                codeList={thisInstance.codelist.combo['combo' + col.codeGroupId]}
-                                                                                alloption={true}
-                                                                                allOptionName="선택"
-                                                                                disabled={false}
-                                                                            />
-                                                                        </td>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <td>
-                                                                            <FormItem
-                                                                                label={col.Header}
-                                                                                name={col.Name}
-                                                                                key={i}>
-                                                                                <Input />
-                                                                            </FormItem>
-                                                                        </td>
-                                                                    );
-                                                                }
-
-                                                            } else {
-                                                                // 20E ES 
-                                                                return (
-                                                                    <FormItem label={col.Header} name={col.Name} noStyle key={i}>
-                                                                        <Input hidden={true} />
-                                                                    </FormItem>
-                                                                );
-                                                            }
-                                                        })()}
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        {Object.keys(thisInstance.entityInfo.cols).map((vCol, i) => {
+                            let col = thisInstance.entityInfo.cols[i];
+                            // console.log(col.Header + ":" + 1); 
+                            // console.log(col);                                                
+                            return (
+                                <Col span={12} key={vCol} >
+                                    <Form.Item
+                                        type="Text"
+                                        label={col.dbColumnComment}
+                                        name={col.dataIndex}
+                                        // key={vCol}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+                                </Col>
+                            );
+                        })}
                     </>
                 )
             }
         },
         buttons: (
-            <div className="wrap-btn">
-                <Button onclick={onSaveConfirm} type="primary" htmlType="button">
-                    {(() => {
-                        if (thisInstance.editType === 'edit') {
-                            return '저장';
-                        } else if (thisInstance.editType === 'insert') {
-                            return '추가';
-                        }
-                    })()}
-                </Button>
-            </div>
+            <Button onClick={onSaveConfirm} type="primary" htmlType="button">
+                {(() => {
+                    if (thisInstance.editType === 'edit') {
+                        return '저장';
+                    } else if (thisInstance.editType === 'insert') {
+                        return '추가';
+                    } else {
+                        return '확인'
+                    }
+                })()}
+            </Button>
         )
     };
 
+    const onFinish = (values) => {
+        // console.log(form.getFieldsValue(true)); 
+        // onSave();
+    };
+    if (thisInstance && thisInstance.onload && !_.isEmpty(thisInstance.list)) {
+        // makeContentList();
 
-    const onformFinish = (formName, info) => {
-        console.log(formName, info);
-        const makeContentList = () => {
-            let custom = schemaBos.customFunctions(thisInstance.entityInfo.entityId);
-            if (custom != null) {
-                if (custom.groups) {
-                    contentList.list = {};
-                    let colUseds = [];
-                    // 정의된 컬럼들
-                    _.forEach(custom.groups, (group, i) => {
-                        let content = {
-                            title: group.label,
-                            component: (<></>)
-                        };
+    }
 
-                        contentList.list['content' + _.padStart(i + '', 2, "0")] = content;
-                        let component = (
-                            <>
-                                {group.label && group.label !== '' &&
-                                    <TitleSub title={group.label} />
-                                }
-                                <div className="wrap-table-form">
-                                    <div className="wrap-table" style={{ paddingTop: '5px', paddingbottom: '5px' }}>
-                                        <div className="">
-                                            <table className="table-form">
-                                                <tbody>
-                                                    {Object.keys(group.items).map((lineIndex, ii) => {
-                                                        let line = group.items[lineIndex];
-                                                        return (
-                                                            <tr>
-                                                                {Object.keys(line).map((linecolIndex, iii) => {
-                                                                    let lineCol = line[linecolIndex];
-                                                                    return (
-                                                                        <>
-                                                                            {(() => {
-                                                                                let col = _.find(thisInstance.entityInfo.cols, { Name: lineCol.name });
-                                                                                colUseds.push(lineCol.name);
-                                                                                if ((col.Visible === undefined || col.Visible === true)) {
-                                                                                    // 보이는 필드
-                                                                                    if (col.Type === 'Enum') {
-                                                                                        return (
-                                                                                            <td>
-                                                                                                <CodeCombo
-                                                                                                    formitemName={col.Name}
-                                                                                                    label={col.Header}
-                                                                                                    codelist={thisInstance.codeList.combo['Combo' + col.codeGroupId]}
-                                                                                                    alloption={true}
-                                                                                                    allOptionName="선택"
-                                                                                                    disabled={false}
-                                                                                                />
-                                                                                            </td>
-                                                                                        );
-                                                                                    } else {
-                                                                                        return (
-                                                                                            <td>
-                                                                                                <FormItem label={col.Header} name={col.Name} key={1}>
-                                                                                                    <Input />
-                                                                                                </FormItem>
-                                                                                            </td>
-                                                                                        );
-                                                                                    }
-                                                                                } else {
-                                                                                    // 안보이는 필드
-                                                                                    return (
-                                                                                        <FormItem label={col.Header} name={col.Name} noStyle key={i}>
-                                                                                            <Input hidden={true} />
-                                                                                        </FormItem>
-                                                                                    );
-                                                                                }
-                                                                            })()}
-                                                                        </>
-                                                                    );
-                                                                })}
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        );
-                        content.component = component;
-                    });
-                    // 정의되지 않은 컬럼들
-                    let colsUnused = _.filter(thisInstance.entityInfo.cols, (col) => {
-                        if (!_.includes(colUseds, col.Name)) {
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    });
-                    if (colsUnused.length > 0) {
-                        let content = {
-                            title: 'Hidden',
-                            component: (<></>),
-                        };
-                        contentList.list['content' + _.padStart(custom.groups.length + '', 2, "0")] = content;
-                        let component = (
-                            <>
-                                <TitleSub title={'Hidden'} />
-                                <div className="wrap-table-form">
-                                    <div className="wrap-table" style={{ paddingTop: '5px', paddingbottom: '5px' }}>
-                                        <div className="">
-                                            <table className="table-form">
-                                                <tbody>
-                                                    {Object.keys(colsUnused).map((lineColIndex, iii) => {
-                                                        let lineCol = colsUnused[lineColIndex];
-                                                        return (
-
-                                                            <tr>
-                                                                {(() => {
-                                                                    let col = _.find(thisInstance.entityInfo.cols, { Name: lineCol.Name });
-                                                                    if ((col.visible === undefined || col.visible === true)) {
-                                                                        // 보이는 필드
-                                                                        if (col.Type === 'Enum') {
-                                                                            return (
-                                                                                <td>
-                                                                                    <CodeCombo
-                                                                                        formItemllame={col.Name}
-                                                                                        label={col.Header}
-                                                                                        codeList={thisInstance.codeList.combo['combo' + col.codeGroupId]}
-                                                                                        allOption={true}
-                                                                                        alloptionName="선택"
-                                                                                        disabled={false}
-                                                                                    />
-                                                                                </td>
-                                                                            );
-                                                                        } else {
-                                                                            return (
-                                                                                <td>
-                                                                                    <FormItem label={col.Header}
-                                                                                        name={col.Name}
-                                                                                        key={iii}
-                                                                                    >
-                                                                                        <Input />
-                                                                                    </FormItem>
-                                                                                </td>
-                                                                            );
-                                                                        }
-                                                                    } else {
-                                                                        // 보이지 않는 필드
-                                                                        return (
-                                                                            <FormItem
-                                                                                label={col.Header}
-                                                                                name={col.Name}
-                                                                                noStyle
-                                                                                key={iii}>
-                                                                                <Input hidden={true} />
-                                                                            </FormItem>
-                                                                        )
-                                                                    }
-                                                                })()}
-
-                                                            </tr>
-
-                                                        );
-                                                    })}
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        );
-                        content.component = component;
-                    }
-                }
-                // subData 
-                if (custom.showSubData && thisInstance.onload) {
-                    // children 
-                    let relation_child = _.filter(schemaBos.relations,
-                        {
-                            from: { entityId: thisInstance.entityInfo.entityId }
-                        });
-
-                    let contentListLength = _.keys(contentList.list).length;
-                    _.forEach(relation_child, (rel, i) => {
-                        let entityInfo = _.find(thisInstance.schema.entities, { "entityId": rel.to.entityId });
-                        let content = {
-                            title: rel.to.comments,
-                            component: (<></>)
-                        };
-                        contentList.list['content' + _.padStart((contentListLength + 1) + '', 2, "0")] = content;
-                        let component = (
-                            <>
-                                <TitleSub title={rel.to.comments} />
-                                <SearchPage
-                                    initParams={(() => {
-                                        // let param _.cloneDeep(thisInstance.openModal.initParams); 
-                                        let param = {
-                                            entityId: rel.to.entityId,
-                                            entitylin: rel.to.comments,
-                                            filters: [],
-                                            openType: "embeded",
-                                            uiType: "list"
-                                        };
-                                        let vfilter = [];
-                                        _.forEach(rel.to.cols, (col, icol) => {
-                                            let colParent = rel.from.cols[icol];
-                                            let filter = {
-                                                col: col.name,
-                                                value: thisInstance.form[_.camelCase(colParent.name)]
-                                            };
-                                            vfilter.push(filter);
-                                        });
-                                        param.filters = vfilter;
-                                        param.callinstanceId = instanceId;
-                                        return param;
-                                    })()}
-                                />
-                            </>
-                        );
-                        content.component = component;
-                    });
-                }
-            }
-        };
-        const onFinish = (values) => {
-            // console.log(form.getFieldsValue(true)); 
-            // onSave();
-        };
-        if (thisInstance && thisInstance.onload && !_.isEmpty(thisInstance.form)) {
-            makeContentList();
-
-        }
-        return (
-            <>
-                {thisInstance && thisInstance.onload && (!_.isEmpty(thisInstance.form) || thisInstance.editType === 'insert') && (
-                    <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
-                        <Form form={form} onFinish={onFinish}>
+    const formItemLayout = {
+        labelCol: {
+          xs: {
+            span: 24,
+          },
+          sm: {
+            span: 8,
+          },
+        },
+        wrapperCol: {
+          xs: {
+            span: 24,
+          },
+          sm: {
+            span: 16,
+          },
+        },
+    };
+    return (
+        <>
+            {thisInstance && thisInstance.onload 
+                // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
+                && (
+                <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
+                    <Form form={form} onFinish={onFinish} {...formItemLayout}>
+                        <Row gutter={24}>
                             {Object.keys(contentList.list).map((v, i) => {
                                 return (
-                                    <Card id={menuid + i} className="wrap-card" key={i}
-                                        style={(() => {
-                                            let content = contentList.list[v];
-                                            if (content.title === 'Hidden') {
-                                                return ({
-                                                    // display: none 
-                                                    marginTop: '5px'
-                                                });
-                                            } else {
-                                                return ({
-                                                    marginTop: '5px'
-                                                });
-                                            }
-                                        })()}
-                                    >
-                                        {contentList.list[v].component}
-                                    </Card>
+                                    contentList.list[v].component
                                 );
                             })}
-                            {contentList.buttons}
-                        </Form>
-                    </Form.Provider>
-                )}
-            </>
-        );
-    };
-}
+                        </Row>
+                        <Row>
+                            <Col
+                                span={24}
+                                style={{
+                                    textAlign: "right",
+                                }}
+                            >
+                                {contentList.buttons}
+                            </Col>
+                        
+                        </Row>
+                    </Form>
+                </Form.Provider>
+            )}
+        </>
+    );
+});
+
+
 
 export default Detail;

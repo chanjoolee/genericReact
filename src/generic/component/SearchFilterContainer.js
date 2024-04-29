@@ -50,7 +50,6 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
 
   var searchFilter = [];
-  const parentKeyValue = {};
   const search = () => {
     let payload = form.getFieldsValue();
     // parent join
@@ -90,12 +89,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       dispatch(actions.setSearchFilter(payload));
     }
 
-    // dispatch(
-    //   actions.setValue(
-    //     "instances." + instanceId + ".parentKeyValue",
-    //     parentKeyValue
-    //   )
-    // );
+    
   };
 
   const getListPageAsync = async (payload) => {
@@ -200,16 +194,6 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
           join : join
         });
   
-        // 일단주석처리.  뭘 할려고 했던 것 같은데.
-        // if (initParams.filters) {
-        //   let v_filter = _.find(initParams.filters, {
-        //     col: targetColumn.column_name,
-        //   });
-        //   if (v_filter != null) {
-        //     parentKeyValue[_.camelCase(targetColumn.column_name)] =
-        //       v_filter.value + "";
-        //   }
-        // }
       });
       
     });

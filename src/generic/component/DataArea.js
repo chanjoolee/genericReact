@@ -194,7 +194,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   (() => {
     items = [
       {
-        key: 'detail',
+        key: 'view',
         label: '상세',
       },
       {
@@ -304,6 +304,36 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 // 모달창띄우기 
                 dispatch(actions.setValues(values));
               };
+
+              let openModalView = (info) => {
+                let filters = [];
+                //  filter 만들기
+                let keyColumns = _.filter(thisInstance.entityInfo.cols, {isKey : true});
+                _.forEach(keyColumns, (col,i) => {
+                  let recordCol = record[col.dataIndex];
+                  if (record != null){
+                    filters.push(recordCol);
+                  }
+                });
+
+                let initParams = {
+                  entityId: thisInstance.entityInfo.entityId,
+                  entityNm: thisInstance.entityInfo.entityNm,
+                  openType: 'modal',
+                  uiType: 'detail',
+                  editType: 'view',
+                  callinstanceId: thisInstance.id ,
+                  filters : filters
+                };
+                let vOpenUiType = 'detail';
+                let values = [
+                  { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                  { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                  { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                ];
+                // 모달창띄우기 
+                dispatch(actions.setValues(values));
+              };
               
 
               return (
@@ -314,6 +344,10 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       console.log(info.key);
                       console.log(info.item.props.information);
                       console.log(record);
+
+                      if(info.key == "view") {
+                        openModalView(info);
+                      }
                     }
                   }} 
                   // overlay={items1}

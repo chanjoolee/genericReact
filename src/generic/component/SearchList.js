@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getState, actions } from '../state/stateSearch';
 import LayoutSearchRows from '@generic/component/layout/LayoutSearchRows';
 // import CommonModal from '@components/modal/CommonModal'; 
-import { Button } from 'antd';
+import { Button , Modal } from 'antd';
 import DataArea from '@generic/component/DataArea';
 import SearchFilterContainer from './SearchFilterContainer';
 // import Detail from '@generic/component/Detail'; 
-// import DetailPage from "@generic/container/DetailPage"; 
+import DetailPage from "@generic/container/DetailPage"; 
 import SearchPage from '@generic/container/SearchPage';
 import { schemaGeneric } from '@generic/schemaGeneric.js';
 import moment from 'moment';
@@ -16,6 +16,11 @@ import _ from 'lodash';
 import '@generic/generic.css';
 
 const SearchList = (props) => {
+    const modalwidth = {
+        sm: 300, // Example width for 'sm'
+        md: 500, // Example width for 'md'
+        lg: 800  // Example width for 'lg'
+    };
     const dispatch = useDispatch();
     const [instanceId, setInstanceId] = useState();
     const detailRef = useRef();
@@ -95,55 +100,55 @@ const SearchList = (props) => {
                 </div>
             )}
             {thisInstance && thisInstance.onload && thisInstance.openModal.visible && (
-                <>
-                </>
-                // <CommonModal
-                //     title={thisInstance.openModal.initParams.entityNm} 
-                //     width={(() => { 
-                //         if(thisInstance.openModal.uiType === 'list'){
-                //             return 1300; }
-                //         else{
-                //             return window.Modalwidth.sm;
-                //         }
-                //     })()} 
-                //     draggable={true} 
-                //     visible={thisInstance.openModal.visible} 
-                //     className="modalGrid" 
-                //     onCancel={() => { 
-                //         let values = [
-                //             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
-                //             { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
-                //         ];            
-                //         dispatch(actions.setValues(values));
-                //     }}
-                //     onok={() => { 
-                //         let values = [
-                //             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
-                //             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
-                //         ];
-                //         dispatch(actions.setValues(values));
-                //     }}
-                //     footer={thisInstance.openModal.uiType ==='detail' && []}
-                // >
-                //     {thisInstance.openModal.uiType==='list' && (
-                //         <SearchPage 
-                //             initParams={(() => {
-                //                 let param = _.cloneDeep(thisInstance.openModal.initParams); 
-                //                 param.callInstanceId = instanceId;
-                //                 return param; 
-                //             })()}
-                //         />
-                //     )}
-                //     {thisInstance.openModal.uiType=== 'detail' && (
-                //         <DetailPage initParams={(() => {
-                //             let param = _.cloneDeep(thisInstance.openModal.initParams); 
-                //                 param.callinstanceId = instanceId;
-                //                 return param; 
-                //             })()} 
-                //             ref={detailRef}
-                //         />
-                //     )}
-                // </CommonModal>
+                
+                <Modal
+                    title={thisInstance.openModal.initParams.entityNm} 
+                    width={(() => { 
+                        if(thisInstance.openModal.uiType === 'list'){
+                            return 1300; }
+                        else{
+                            return modalwidth.lg;
+                        }
+                    })()} 
+                    draggable={true} 
+                    open={thisInstance.openModal.visible} 
+                    className="modalGrid" 
+                    onCancel={() => { 
+                        let values = [
+                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
+                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
+                        ];            
+                        dispatch(actions.setValues(values));
+                    }}
+                    onok={() => { 
+                        let values = [
+                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
+                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
+                        ];
+                        dispatch(actions.setValues(values));
+                    }}
+                    footer={thisInstance.openModal.uiType ==='detail' && []}
+                >
+                    {thisInstance.openModal.uiType==='list' && (
+                        <SearchPage 
+                            initParams={(() => {
+                                let param = { ...thisInstance.openModal.initParams };
+                                param.callInstanceId = instanceId;
+                                return param; 
+                            })()}
+                        />
+                    )}
+                    {thisInstance.openModal.uiType=== 'detail' && (
+                        <DetailPage 
+                            initParams={(() => {
+                                let param = { ...thisInstance.openModal.initParams };
+                                param.callinstanceId = instanceId;
+                                return param; 
+                            })()} 
+                            ref={detailRef}
+                        />
+                    )}
+                </Modal>
             )}
         </>
     );
