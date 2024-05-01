@@ -20,6 +20,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   const thisInstance = useSelector(
     (state) => getState(state).instances[instanceId]
   );
+  const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
 
@@ -231,7 +232,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance.searchCompleted  && (
+    {thisInstance && thisInstance.onload && searchCompleted   && (
       <Form form={form} {...formProps}  {...formItemLayout} >
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>

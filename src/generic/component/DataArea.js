@@ -299,7 +299,7 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
 
   return (
     <>
-      {searchCompleted && (
+      {thisInstance && thisInstance.onload && searchCompleted  && (
         <>
           <Table
             columns={[
