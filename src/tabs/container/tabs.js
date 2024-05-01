@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { Children, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import 'antd/dist/antd.css';
 import '@tabs/tabs.css';
 import { Tabs } from 'antd';
 import { actions, getState } from '@tabs/state';
@@ -31,8 +30,8 @@ const TabContainer = () => {
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: 'New Tab',
-        content: 'Content of new Tab',
+        label: 'New Tab',
+        children: 'Content of new Tab',
         key: uniqKey,
         closable: true,
         initParams: {}
@@ -87,13 +86,20 @@ const TabContainer = () => {
   };
 
   return (
-    <Tabs type="editable-card" onChange={onChange} activeKey={thisState.activeKey} onEdit={onEdit}>
-      {thisState.panes.map((pane) => (
-        <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
-          {pane.content}
-        </TabPane>
-      ))}
-    </Tabs>
+    // <Tabs type="editable-card" onChange={onChange} activeKey={thisState.activeKey} onEdit={onEdit}>
+    //   {thisState.panes.map((pane) => (
+    //     <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+    //       {pane.content}
+    //     </TabPane>
+    //   ))}
+    // </Tabs>
+    <Tabs
+      type="editable-card"
+      onChange={onChange}
+      activeKey={thisState.activeKey}
+      onEdit={onEdit}
+      items={thisState.panes}
+    />
   );
 };
 

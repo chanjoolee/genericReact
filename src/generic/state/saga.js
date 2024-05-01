@@ -128,7 +128,7 @@ function* getListPage({ payload }) {
       }
     }
 
-    yield put(actions.setValues(values));
+    yield put(actions.setValues({instanceId:payload.instanceId, values}));
   }
 }
 

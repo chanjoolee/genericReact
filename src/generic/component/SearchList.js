@@ -29,21 +29,34 @@ const SearchList = (props) => {
         let vInstanceId = moment().format('YYYYMMDDHHmmssSSS') + _.uniqueId("_");
 
         setInstanceId(vInstanceId);
-        setTimeout(() => {
-            dispatch(
-                // backend 가 설정 될때 까지 saga 보류
-                actions.fetchInitialInfo({
-                // actions.setInitialInfo({
-                    instanceId: vInstanceId,
-                    entityId: props.initParams.entityId,
-                    tableName: props.initParams.entityId,
-                    // tab, modal : default tab 
-                    openType: props.initParams.openType ? props.initParams.openType : 'tab',
-                    uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
-                    callInstanceId: props.initParams.callInstanced
-                }),
-            );
-        }, 0);
+        // setTimeout(() => {
+        //     dispatch(
+        //         // backend 가 설정 될때 까지 saga 보류
+        //         actions.fetchInitialInfo({
+        //         // actions.setInitialInfo({
+        //             instanceId: vInstanceId,
+        //             entityId: props.initParams.entityId,
+        //             tableName: props.initParams.entityId,
+        //             // tab, modal : default tab 
+        //             openType: props.initParams.openType ? props.initParams.openType : 'tab',
+        //             uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
+        //             callInstanceId: props.initParams.callInstanced
+        //         }),
+        //     );
+        // }, 0);
+        dispatch(
+            // backend 가 설정 될때 까지 saga 보류
+            actions.fetchInitialInfo({
+            // actions.setInitialInfo({
+                instanceId: vInstanceId,
+                entityId: props.initParams.entityId,
+                tableName: props.initParams.entityId,
+                // tab, modal : default tab 
+                openType: props.initParams.openType ? props.initParams.openType : 'tab',
+                uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
+                callInstanceId: props.initParams.callInstanced
+            }),
+        );
         return () => {
             // dispatch(actions.initState());
             dispatch(actions.deleteInstance({ instanceId: instanceId }));
@@ -66,11 +79,12 @@ const SearchList = (props) => {
         <>
             {thisInstance && thisInstance.onload && thisInstance.openType === 'tab' && (
                 <LayoutSearchRows
+                    key={`LayoutSearchRows_${instanceId}`}
                     searchFilter={
-                        <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
+                        <SearchFilterContainer key={`searchFilter_${instanceId}`} instanceId={instanceId} initParams={props.initParams} />
                     }
                     rowsections={
-                        <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />
+                        <DataArea key={`dataArea_${instanceId}`} entityId={props.initParams.entityId} instanceId={instanceId} list={thisInstance.list} />
                     }
                 // rowsections={[
                 //     {
@@ -118,14 +132,14 @@ const SearchList = (props) => {
                             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
                             { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
                         ];            
-                        dispatch(actions.setValues(values));
+                        dispatch(actions.setValues({instanceId,values}));
                     }}
                     onok={() => { 
                         let values = [
                             { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
                             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
                         ];
-                        dispatch(actions.setValues(values));
+                        dispatch(actions.setValues({instanceId,values}));
                     }}
                     footer={thisInstance.openModal.uiType ==='detail' && []}
                 >

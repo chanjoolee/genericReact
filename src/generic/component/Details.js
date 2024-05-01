@@ -7,8 +7,9 @@ import { actions, getState } from '../state/stateSearch';
 import useMounted from '@hooks/useMounted';
 import { DownOutlined, QuestionCircleOutlined, SelectOutlined } from '@ant-design/icons';
 
-const Detail = forwardRef(({ entityId, instanceId, ref, ...restProps }) => {
+const Detail = forwardRef((props, ref) => {
     
+    const { entityId, instanceId, ...restProps } = props;
     // 인스턴스 생성의 시차가 있을 수 있으므로 ref 객체는 사용하지 않는 것이 좋을 듯?
     useImperativeHandle(ref, () => ({
         onSaveConfirm,
@@ -64,7 +65,7 @@ const Detail = forwardRef(({ entityId, instanceId, ref, ...restProps }) => {
                                 { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
                                 { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
                             ];
-                            dispatch(actions.setValues(values));
+                            dispatch(actions.setValues({instanceId,values}));
                             return true;
                         }
                     }
@@ -78,11 +79,11 @@ const Detail = forwardRef(({ entityId, instanceId, ref, ...restProps }) => {
     });
 
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
-    useMounted(() => {
-        // search();
-        console.log('useMounted');
-        // afterMount(); 
-    });
+    // useMounted(() => {
+    //     // search();
+    //     console.log('useMounted');
+    //     // afterMount(); 
+    // });
 
     const search = () => {
         if (thisInstance && restProps.initParams && restProps.initParams.filters) {
@@ -300,15 +301,15 @@ const Detail = forwardRef(({ entityId, instanceId, ref, ...restProps }) => {
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
                 <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
-                    <Form form={form} onFinish={onFinish} {...formItemLayout}>
-                        <Row gutter={24}>
+                    <Form form={form} onFinish={onFinish} {...formItemLayout}  key={`detailForm_${instanceId}`}>
+                        <Row gutter={24} key={'detail_row_0'}>
                             {Object.keys(contentList.list).map((v, i) => {
                                 return (
                                     contentList.list[v].component
                                 );
                             })}
                         </Row>
-                        <Row>
+                        <Row key={'detail_row_1'}>
                             <Col
                                 span={24}
                                 style={{

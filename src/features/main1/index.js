@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { Children, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactDOM from "react-dom";
-import "antd/dist/antd.min.css";
 import "./index.css";
 import { Layout, Menu, Breadcrumb } from "antd";
 import {
@@ -61,8 +60,8 @@ const LayoutSide1 = () => {
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: item.props.title,
-        content: <SearchPage initParams={initParams} />,
+        label: item.props.title,
+        children: <SearchPage initParams={initParams} />,
         key: uniqKey,
         closable: true,
         initParams: {},

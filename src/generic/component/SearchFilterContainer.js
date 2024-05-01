@@ -23,31 +23,23 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
 
-  // 모든 검색영역은 초기화 함수를 이와 같은 형태로 관리한다.
-  useMounted(() => {
-    if (initParams && initParams.filters) {
-      let initFormValues = {};
-      _.forEach(initParams.filters, (filter) => {
-        initFormValues[_.camelCase(filter.col)] = filter.value;
-      });
-      form.setFieldsValue(initFormValues);
-    }
-    search();
-  });
+  // // 모든 검색영역은 초기화 함수를 이와 같은 형태로 관리한다.
+  // useMounted(() => {
+  //   if (initParams && initParams.filters) {
+  //     let initFormValues = {};
+  //     _.forEach(initParams.filters, (filter) => {
+  //       initFormValues[_.camelCase(filter.col)] = filter.value;
+  //     });
+  //     form.setFieldsValue(initFormValues);
+  //   }
+  //   search();
+  // });
 
-  // useMounted 는 왜 안먹지. useEffect 를 써야하나
-  useEffect(() => {
-    // Initialization logic...
-    search();
-  }, []);
-
-  const initForm = () => {
-    // form.setFieldsValue(formInitValue);
-  };
-
-  const onFormReset = () => {
-    initForm();
-  };
+  // // useMounted 는 왜 안먹지. useEffect 를 써야하나
+  // useEffect(() => {
+  //   // Initialization logic...
+  //   search();
+  // }, [dispatch]);
 
   var searchFilter = [];
   const search = () => {
@@ -168,15 +160,16 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     });
     // Relations
     _.forEach(thisInstance.entityInfo.parents, (parent, i) => {
-      _.forEach(parent.joins, (join, i) => {
+      _.forEach(parent.joins, (join, j) => {
         // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
         // 나중에 좀더 기능 고민 필요함.
         // let nameColumn = join.nameColumn;
         // if(nameColumn == null){
         //   nameColumn = join.parentColumn;
         // }
+        let key = `searchFilter_${i}_${j}`;
         let component = (
-          <Col span={8} key={i}>
+          <Col span={8} key={key}>
             <Form.Item
               type="Text"
               label={join.parentColumn.column_comment}  // parentColumns 으로 해야하나?
@@ -238,8 +231,8 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <Form form={form} {...formProps}  {...formItemLayout} >
-      <Row gutter={24}>{getFields()}</Row>
-      <Row>
+      <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
+      <Row key={'search_row_1'}>
         <Col
           span={24}
           style={{

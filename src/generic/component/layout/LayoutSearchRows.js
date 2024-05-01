@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
 import './LayoutSearchRows.css';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row, Select } from 'antd';

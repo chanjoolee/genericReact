@@ -61,7 +61,10 @@ const initialState = {
                 entityId: '',
                 entityNm: '',
                 openType: 'modal',
-                editType: '' // edit, insert
+                editType: '', // edit, insert
+                uiType : 'detail',
+                callinstanceId : '',
+                filters: []
             }
         }
     },
@@ -298,14 +301,15 @@ const reducers = {
             return { payload: { key, value } }
         }
     },
-    setValues: (state, { payload }) => {
-        _.forEach(payload, (v, i) => {
+    setValues: (state, { payload: {instanceId , values } }) => {
+        _.forEach(values, (v, i) => {
             _.update(state, v.key
                 , function () {
                     return v.value;
                 }
             );
         });
+        state.instances[instanceId].onload = true;
     },
     setValue3: {
         reducer: (state, { payload}) => {
@@ -318,6 +322,7 @@ const reducers = {
     },
     setPageInfo: (state, { payload: { instanceId, ...rest } }) => {
         state.instances[instanceId].pageInfo = { ...state.instances[instanceId].pageInfo, ...rest }
+        state.instances[instanceId].onload = false;
     }
 };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
-import { Table, Dropdown, Menu, Space, message  } from 'antd';
+import { Table, Dropdown, Space, message  } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
@@ -15,15 +15,38 @@ import qs from 'qs';
 import { DownOutlined } from '@ant-design/icons';
 import { join } from 'redux-saga/effects';
 import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
+import { createSelector } from 'reselect';
 
-const DataArea = ({ entityId, instanceId, ...restProps }) => {
+// Assuming getState gets the appropriate slice of state, adjust this as per your state structure
+const getList = (state, instanceId) => getState(state).instances[instanceId].list;
+
+// Memoized selector
+const getMemoizedList = createSelector(
+  [getList],
+  (list) => list
+);
+
+// const getPageInfo = (state, instanceId) => getState(state).instances[instanceId].pageInfo;
+// const getMemoizedPageInfo = createSelector(
+//   [getPageInfo],
+//   (pageInfo) => pageInfo
+// );
+
+// const pageInfo = (state, instanceId) => getState(state).instances[instanceId].pageInfo;
+
+
+const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
   const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [sheetReady, setSheetReady] = useState(false);
-  const list = useSelector((state) => getState(state).instances[instanceId].list);
-  const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
+  
+  // const list = useSelector((state) => getState(state).instances[instanceId].list);
+  const list = useSelector(state => getMemoizedList(state, instanceId));
+  // const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
   const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
+  // const pageInfo = useSelector(state => getMemoizedPageInfo(state, instanceId));
+  
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const cols = useSelector((state) => {
     let vState = getState(state);
@@ -92,7 +115,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
                 { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
               ];
-              dispatch(actions.setValues(values));
+              dispatch(actions.setValues({instanceId,values}));
               return true;
             }
           }
@@ -112,11 +135,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   });
 
   const thisSheet = useRef(null);
-  useEffect(() => {
-    if (thisSheet.current) {
-      thisSheet.current.loadSearchData({ data: list, sync: true });
-    }
-  }, [list]);
+
 
   const getRandomuserParams = (params) => ({
     results: params.pagination?.pageSize,
@@ -126,14 +145,16 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
 
   const handleTableChange = (newPagination, filters, sorter) => {
-
+    let _page = {
+      newPagination
+    };
     dispatch(actions.setPageInfo({
       instanceId,
-      ...newPagination,
-      // showTotal: (total, range) => {
-      //   console.log(range);
-      //   return `total ${total}` ;
-      // },
+      current : newPagination.current,
+      defaultPageSize: newPagination.defaultPageSize,
+      pageSize: newPagination.pageSize,
+      showSizeChanger : newPagination.showSizeChanger,
+      total : newPagination.total
     }));
 
   };
@@ -143,50 +164,50 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
 
   var items = [
-    {
-      key: '1',
-      type: 'group',
-      label: 'Group title',
-      children: [
-        {
-          key: '1-1',
-          label: '1st menu item',
-        },
-        {
-          key: '1-2',
-          label: '2nd menu item',
-        },
-      ],
-    },
-    {
-      key: '2',
-      label: 'sub menu',
-      children: [
-        {
-          key: '2-1',
-          label: '3rd menu item',
-        },
-        {
-          key: '2-2',
-          label: '4th menu item',
-        },
-      ],
-    },
-    {
-      key: '3',
-      label: 'disabled sub menu',
-      disabled: true,
-      children: [
-        {
-          key: '3-1',
-          label: '5d menu item',
-        },
-        {
-          key: '3-2',
-          label: '6th menu item',
-        },
-      ],
-    },
+    // {
+    //   key: '1',
+    //   type: 'group',
+    //   label: 'Group title',
+    //   children: [
+    //     {
+    //       key: '1-1',
+    //       label: '1st menu item',
+    //     },
+    //     {
+    //       key: '1-2',
+    //       label: '2nd menu item',
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: '2',
+    //   label: 'sub menu',
+    //   children: [
+    //     {
+    //       key: '2-1',
+    //       label: '3rd menu item',
+    //     },
+    //     {
+    //       key: '2-2',
+    //       label: '4th menu item',
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: '3',
+    //   label: 'disabled sub menu',
+    //   disabled: true,
+    //   children: [
+    //     {
+    //       key: '3-1',
+    //       label: '5d menu item',
+    //     },
+    //     {
+    //       key: '3-2',
+    //       label: '6th menu item',
+    //     },
+    //   ],
+    // },
   ];
 
 
@@ -274,7 +295,9 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             title: 'No',
             key: 'index',
             width: 40,
-            render: (text, record, index) => ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1,
+            render: (text, record, index) => {
+              return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1
+            },
             fixed: 'left'
           },
           ...cols ,
@@ -302,7 +325,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                   { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
                 ];
                 // 모달창띄우기 
-                dispatch(actions.setValues(values));
+                dispatch(actions.setValues({instanceId,values}));
               };
 
               let openModalView = (info) => {
@@ -311,9 +334,9 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 let keyColumns = _.filter(thisInstance.entityInfo.cols, {isKey : true});
                 _.forEach(keyColumns, (col,i) => {
                   let recordCol = record[col.dataIndex];
-                  if (record != null){
-                    filters.push(recordCol);
-                  }
+                  if (recordCol != null){
+                    filters.push({[col.dataIndex]: recordCol});
+                  } 
                 });
 
                 let initParams = {
@@ -332,7 +355,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                   { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
                 ];
                 // 모달창띄우기 
-                dispatch(actions.setValues(values));
+                dispatch(actions.setValues({instanceId,values}));
               };
               
 
@@ -365,18 +388,22 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
           },
         ]}
         rowKey={(record,index) => {
-          return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
+          // return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
+          return record.rowNumber + '';
         }}
         dataSource={list}
         pagination={pageInfo}
         loading={loading}
         onChange={handleTableChange}
         // size="small"
-        // scroll={{ x: 'max-content' , y: 600 }}
+        scroll={{ x: 'max-content' , y: 600 }}
       />
     </>
 
   );
-};
+}, (prevProps, nextProps) => {
+  // Assuming list is the only prop you care about for re-rendering
+  return prevProps.list === nextProps.list;
+});
 
 export default DataArea;

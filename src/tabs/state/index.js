@@ -8,9 +8,9 @@ const initialState = {
   activeKey: "Main",
   panes: [
     {
-      title: "메인",
+      label: "메인",
       key: "Main",
-      content: mainContent,
+      children: mainContent,
       closable: false,
       initParams: {},
     },
