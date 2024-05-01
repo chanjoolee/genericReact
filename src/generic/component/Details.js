@@ -212,7 +212,6 @@ const Detail = forwardRef((props, ref) => {
             </Button>
         )
     };
-
     const onFinish = (values) => {
         // console.log(form.getFieldsValue(true)); 
         // onSave();
