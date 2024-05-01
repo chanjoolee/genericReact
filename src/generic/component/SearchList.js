@@ -54,9 +54,6 @@ const SearchList = (props) => {
                 // tab, modal : default tab 
                 openType: props.initParams.openType ? props.initParams.openType : 'tab',
                 uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
-                callInstance: { 
-                    id: props.initParams.callInstanced,
-                },
                 callInstanceId: props.initParams.callInstanced
             }),
         );
@@ -69,7 +66,6 @@ const SearchList = (props) => {
     // debug 모드에서 전근가능(디버그용) 
     const thisState = useSelector((state) => getState(state));
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
-    const onloadGlobal = useSelector((state) => getState(state).onload);
     window.state_search = {
         state: thisState,
         dispatch: dispatch,
@@ -124,7 +120,7 @@ const SearchList = (props) => {
                             return modalwidth.lg;
                         }
                         })()}
-                        // draggable={true}
+                        draggable={true}
                         open={thisInstance.openModal.visible}
                         className="modalGrid"
                         onCancel={() => {
@@ -135,11 +131,11 @@ const SearchList = (props) => {
                         dispatch(actions.setValues(values));
                         }}
                         onok={() => {
-                            let values = [
-                                { key: 'instances.' + instanceId + '.openModal.visible', value: false },
-                                { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
-                            ];
-                            dispatch(actions.setValues(values));
+                        let values = [
+                            { key: 'instances.' + instanceId + '.openModal.visible', value: false },
+                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
+                        ];
+                        dispatch(actions.setValues(values));
                         }}
                         footer={thisInstance.openModal.uiType === 'detail' && []}
                     >
@@ -155,9 +151,9 @@ const SearchList = (props) => {
                         {thisInstance.openModal.uiType === 'detail' && (
                             <DetailPage
                                 initParams={(() => {
-                                    let param = { ...thisInstance.openModal.initParams };
-                                    param.callinstanceId = instanceId;
-                                    return param;
+                                let param = { ...thisInstance.openModal.initParams };
+                                param.callinstanceId = instanceId;
+                                return param;
                                 })()}
                                 ref={detailRef} 
                             />

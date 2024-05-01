@@ -70,7 +70,6 @@ const initialState = {
         }
     },
     searchCompleted: true,
-    onloadGlobal : false,
     instances: {}
 }
 
@@ -274,7 +273,6 @@ const reducers = {
         newinstance.callInstanceId = callInstanceId;
 
         newinstance.onload = true;
-        state.onloadGlobal = true;
 
 
         // // after onload
@@ -315,14 +313,9 @@ const reducers = {
         });
         // state.instances[instanceId].onload = true;
     },
-    setValue3: (state, { payload: { instanceId,searchCompleted,onloadGlobal, ...rest } }) => {
+    setValue3: (state, { payload: { instanceId, searchCompleted, ...rest } }) => {
         state.instances[instanceId] = { ...rest };
-        if(searchCompleted != null ) {
-            state.searchCompleted = searchCompleted;
-        }
-        if(onloadGlobal != null ) {
-            state.onloadGlobal = onloadGlobal;
-        }
+        state.searchCompleted = searchCompleted;
     },
     // setValue3: (state, { payload }) => {
     //     state = { ...payload } ;

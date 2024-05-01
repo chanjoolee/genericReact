@@ -20,67 +20,9 @@ const Detail = forwardRef((props, ref) => {
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();
     // const list = useSelector((state) => getState(state) instances[instanceId].list); 
-    // const cols = useSelector((state) => {
-    //     let vState = getState(state);
-    //     let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
-    //     _.forEach(vCols, function (col, k) {
-    //         // console.log('colcolcol"); 
-    //         if (col.Name === 'contextMenu') {
-    //             _.forEach(col.Menu.Items, function (item, kk) {
-    //                 item.OnClick = function (obj) {
-    //                     let _this = this;
-    //                     let sheet = _this.Owner.Sheet;
-    //                     let row = _this.Owner.Row;
-    //                     let v_entityId = _this.Name;
-    //                     let initParams = {
-    //                         entityId: v_entityId,
-    //                         entityNm: _this.Text,
-    //                         openType: 'modal',
-    //                     };
-    //                     let vOpenUiType = 'list';
-
-    //                     let filters = [];
-    //                     if (_this.uiType === 'list') {
-    //                         vOpenUiType = 'list';
-    //                         _.forEach(_this.Relation.to.cols, (col, k) => {
-    //                             let vCol = {
-    //                                 col: col.name,
-    //                                 value: row[_.camelCase(_this.Relation.from.cols[k]['name'])]
-    //                             };
-    //                             filters.push(vCol);
-    //                         });
-
-    //                         if (_this.uiType === 'detail') {
-    //                             initParams = {
-    //                                 entityId: _this.entityId,
-    //                                 entityllim: _this.entitym,
-    //                                 openType: 'modal',
-    //                             };
-    //                             vOpenUiType = 'detail';
-    //                             filters = [];
-    //                         }
-    //                         initParams.filters = filters;
-    //                         let values = [
-    //                             { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-    //                             { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-    //                             { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-    //                         ];
-    //                         dispatch(actions.setValues(values));
-    //                         return true;
-    //                     }
-    //                 }
-    //             });
-
-    //         }
-
-    //     });
-    //     return vCols;
-    //     // getState(state).instances[instanceId].entityInfo.cols 
-    // });
 
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     const searchCompleted = useSelector((state) => getState(state).searchCompleted);
-    const onloadGlobal = useSelector((state) => getState(state).onload);
     // useMounted(() => {
     //     // search();
     //     console.log('useMounted');
@@ -133,10 +75,10 @@ const Detail = forwardRef((props, ref) => {
 
     const onSaveConfirm = (e) => {
         if(thisInstance.editType == "view"){
-            let values = [];
-            values.push({key: 'instances.' + thisInstance.callInstanceId + '.openModal.visible',value: false });
-            values.push({key: 'instances.' + thisInstance.callInstanceId + '.openModal.initParams',value: {} });
-            dispatch(actions.setValues(values));
+            dispatch(actions.setValue2(
+                'instances.' + thisInstance.callInstanceId + '.openModal.visible',
+                false
+            ));
             return;
         }
         // 공통 valid 체크 
@@ -300,10 +242,10 @@ const Detail = forwardRef((props, ref) => {
     };
     return (
         <>
-            {thisInstance && onloadGlobal && searchCompleted 
+            {thisInstance && thisInstance.onload && searchCompleted 
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
-                // <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} key={`detailFormProvider`} >
+                <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
                     <Form form={form} onFinish={onFinish} {...formItemLayout}  key={`detailForm_${instanceId}`}>
                         <Row gutter={24} key={'detail_row_0'}>
                             {contentList.list.map((v, i) => {
@@ -324,7 +266,7 @@ const Detail = forwardRef((props, ref) => {
                         
                         </Row>
                     </Form>
-                // </Form.Provider>
+                </Form.Provider>
             )}
         </>
     );

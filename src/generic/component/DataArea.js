@@ -58,7 +58,6 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
 
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
-  const onloadGlobal = useSelector((state) => getState(state).onload);
   const cols = useSelector((state) => {
     let vState = getState(state);
     let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
@@ -307,7 +306,7 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
               {
                 title: 'No',
                 key: 'index',
-                width: 50,
+                width: 40,
                 render: (text, record, index) => {
                   return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1;
                 },
@@ -332,22 +331,13 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                       callinstanceId: thisInstance.id
                     };
                     let vOpenUiType = 'detail';
-
-                    // let values = [
-                    //   { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                    //   { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                    //   { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                    // ];
-                    // // 모달창띄우기 
-                    // dispatch(actions.setValues(values));
-
-                    let newInstance = _.cloneDeep(thisInstance);
-                    newInstance.openModal.visible = true;
-                    newInstance.openModal.uiType = vOpenUiType;
-                    newInstance.openModal.initParams = initParams;
-                    newInstance.onload = false;
-
-                    dispatch(actions.setValue3(newInstance));
+                    let values = [
+                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                    ];
+                    // 모달창띄우기 
+                    dispatch(actions.setValues(values));
                   };
 
                   let openModalView = (info) => {
@@ -361,7 +351,6 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                       }
                     });
 
-                    
                     let initParams = {
                       entityId: thisInstance.entityInfo.entityId,
                       entityNm: thisInstance.entityInfo.entityNm,
@@ -371,27 +360,14 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                       callinstanceId: thisInstance.id,
                       filters: filters
                     };
-
-                    // 모달창띄우기 
                     let vOpenUiType = 'detail';
-
-                    // let values = [
-                    //   { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                    //   { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                    //   { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                    // ];
-                    
-                    // dispatch(actions.setValues(values));
-
-                    let newInstance = _.cloneDeep(thisInstance);
-                    newInstance.instanceId = instanceId;
-                    newInstance.openModal.visible = true;
-                    newInstance.openModal.uiType = vOpenUiType;
-                    newInstance.openModal.initParams = initParams;
-                    // newInstance.searchCompleted = false;
-                    newInstance.onloadGlobal = false;
-
-                    dispatch(actions.setValue3(newInstance));
+                    let values = [
+                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                    ];
+                    // 모달창띄우기 
+                    dispatch(actions.setValues(values));
                   };
 
 
