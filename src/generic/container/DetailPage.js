@@ -16,6 +16,7 @@ const DetailPage = (props) => {
   const [instanceId, setInstanceId] = useState();
   const thisState = useSelector((state) => getState(state));
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+  const onloadGlobal = useSelector((state) => getState(state).onload);
   useMounted(() => {
     // search(); 
   });
@@ -52,7 +53,7 @@ const DetailPage = (props) => {
 
   return (
     <>
-      {thisInstance && thisInstance.onload && (
+      {thisInstance && onloadGlobal && (
         <>
           <Detail 
             entityId={props.initParams.entityId} 

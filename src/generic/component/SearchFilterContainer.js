@@ -21,6 +21,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     (state) => getState(state).instances[instanceId]
   );
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+  const onloadGlobal = useSelector((state) => getState(state).onload);
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
 
@@ -168,7 +169,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         // if(nameColumn == null){
         //   nameColumn = join.parentColumn;
         // }
-        let key = `searchFilter_${i}_${j}`;
+        let key = `searchFilter_${instanceId}_${i}_${j}`;
         let component = (
           <Col span={8} key={key}>
             <Form.Item
@@ -232,8 +233,8 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance && thisInstance.onload && searchCompleted    && (
-      <Form form={form} {...formProps}  {...formItemLayout} >
+    {thisInstance && thisInstance.onload && searchCompleted  && (
+      <Form form={form} {...formProps}  {...formItemLayout} key={`searhForm`}>
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
           <Col

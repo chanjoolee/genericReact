@@ -20,66 +20,67 @@ const Detail = forwardRef((props, ref) => {
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();
     // const list = useSelector((state) => getState(state) instances[instanceId].list); 
-    const cols = useSelector((state) => {
-        let vState = getState(state);
-        let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
-        _.forEach(vCols, function (col, k) {
-            // console.log('colcolcol"); 
-            if (col.Name === 'contextMenu') {
-                _.forEach(col.Menu.Items, function (item, kk) {
-                    item.OnClick = function (obj) {
-                        let _this = this;
-                        let sheet = _this.Owner.Sheet;
-                        let row = _this.Owner.Row;
-                        let v_entityId = _this.Name;
-                        let initParams = {
-                            entityId: v_entityId,
-                            entityNm: _this.Text,
-                            openType: 'modal',
-                        };
-                        let vOpenUiType = 'list';
+    // const cols = useSelector((state) => {
+    //     let vState = getState(state);
+    //     let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
+    //     _.forEach(vCols, function (col, k) {
+    //         // console.log('colcolcol"); 
+    //         if (col.Name === 'contextMenu') {
+    //             _.forEach(col.Menu.Items, function (item, kk) {
+    //                 item.OnClick = function (obj) {
+    //                     let _this = this;
+    //                     let sheet = _this.Owner.Sheet;
+    //                     let row = _this.Owner.Row;
+    //                     let v_entityId = _this.Name;
+    //                     let initParams = {
+    //                         entityId: v_entityId,
+    //                         entityNm: _this.Text,
+    //                         openType: 'modal',
+    //                     };
+    //                     let vOpenUiType = 'list';
 
-                        let filters = [];
-                        if (_this.uiType === 'list') {
-                            vOpenUiType = 'list';
-                            _.forEach(_this.Relation.to.cols, (col, k) => {
-                                let vCol = {
-                                    col: col.name,
-                                    value: row[_.camelCase(_this.Relation.from.cols[k]['name'])]
-                                };
-                                filters.push(vCol);
-                            });
+    //                     let filters = [];
+    //                     if (_this.uiType === 'list') {
+    //                         vOpenUiType = 'list';
+    //                         _.forEach(_this.Relation.to.cols, (col, k) => {
+    //                             let vCol = {
+    //                                 col: col.name,
+    //                                 value: row[_.camelCase(_this.Relation.from.cols[k]['name'])]
+    //                             };
+    //                             filters.push(vCol);
+    //                         });
 
-                            if (_this.uiType === 'detail') {
-                                initParams = {
-                                    entityId: _this.entityId,
-                                    entityllim: _this.entitym,
-                                    openType: 'modal',
-                                };
-                                vOpenUiType = 'detail';
-                                filters = [];
-                            }
-                            initParams.filters = filters;
-                            let values = [
-                                { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                                { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                                { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                            ];
-                            dispatch(actions.setValues(values));
-                            return true;
-                        }
-                    }
-                });
+    //                         if (_this.uiType === 'detail') {
+    //                             initParams = {
+    //                                 entityId: _this.entityId,
+    //                                 entityllim: _this.entitym,
+    //                                 openType: 'modal',
+    //                             };
+    //                             vOpenUiType = 'detail';
+    //                             filters = [];
+    //                         }
+    //                         initParams.filters = filters;
+    //                         let values = [
+    //                             { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+    //                             { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+    //                             { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+    //                         ];
+    //                         dispatch(actions.setValues(values));
+    //                         return true;
+    //                     }
+    //                 }
+    //             });
 
-            }
+    //         }
 
-        });
-        return vCols;
-        // getState(state).instances[instanceId].entityInfo.cols 
-    });
+    //     });
+    //     return vCols;
+    //     // getState(state).instances[instanceId].entityInfo.cols 
+    // });
 
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+    const onloadGlobal = useSelector((state) => getState(state).onload);
     // useMounted(() => {
     //     // search();
     //     console.log('useMounted');
@@ -132,10 +133,10 @@ const Detail = forwardRef((props, ref) => {
 
     const onSaveConfirm = (e) => {
         if(thisInstance.editType == "view"){
-            dispatch(actions.setValue2(
-                'instances.' + thisInstance.callInstanceId + '.openModal.visible',
-                false
-            ));
+            let values = [];
+            values.push({key: 'instances.' + thisInstance.callInstanceId + '.openModal.visible',value: false });
+            values.push({key: 'instances.' + thisInstance.callInstanceId + '.openModal.initParams',value: {} });
+            dispatch(actions.setValues(values));
             return;
         }
         // 공통 valid 체크 
@@ -228,22 +229,23 @@ const Detail = forwardRef((props, ref) => {
 
     // Content 
     let contentList = {
-        list: {
-            content01: {
+        list: [
+            {
                 title: thisInstance.entityInfo.entityNm,
                 component: (
                     <>
-                        {Object.keys(thisInstance.entityInfo.cols).map((vCol, i) => {
+                        {thisInstance.entityInfo.cols.map((vCol, i) => {
                             let col = thisInstance.entityInfo.cols[i];
                             // console.log(col.Header + ":" + 1); 
-                            // console.log(col);                                                
+                            // console.log(col); 
+                            let _key = `detail_col_${instanceId}_${vCol.dataIndex}`;
                             return (
-                                <Col span={12} key={vCol} >
+                                <Col span={12} key={_key} >
                                     <Form.Item
                                         type="Text"
                                         label={col.dbColumnComment}
                                         name={col.dataIndex}
-                                        // key={vCol}
+                                        // key={_key}
                                     >
                                         <Input />
                                     </Form.Item>
@@ -253,7 +255,7 @@ const Detail = forwardRef((props, ref) => {
                     </>
                 )
             }
-        },
+        ],
         buttons: (
             <Button onClick={onSaveConfirm} type="primary" htmlType="button">
                 {(() => {
@@ -298,15 +300,15 @@ const Detail = forwardRef((props, ref) => {
     };
     return (
         <>
-            {thisInstance && thisInstance.onload && searchCompleted 
+            {thisInstance && onloadGlobal && searchCompleted 
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
-                <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
+                // <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} key={`detailFormProvider`} >
                     <Form form={form} onFinish={onFinish} {...formItemLayout}  key={`detailForm_${instanceId}`}>
                         <Row gutter={24} key={'detail_row_0'}>
-                            {Object.keys(contentList.list).map((v, i) => {
+                            {contentList.list.map((v, i) => {
                                 return (
-                                    contentList.list[v].component
+                                    v.component
                                 );
                             })}
                         </Row>
@@ -322,7 +324,7 @@ const Detail = forwardRef((props, ref) => {
                         
                         </Row>
                     </Form>
-                </Form.Provider>
+                // </Form.Provider>
             )}
         </>
     );

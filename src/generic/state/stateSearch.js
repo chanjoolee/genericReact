@@ -70,6 +70,7 @@ const initialState = {
         }
     },
     searchCompleted: true,
+    onloadGlobal : false,
     instances: {}
 }
 
@@ -273,6 +274,7 @@ const reducers = {
         newinstance.callInstanceId = callInstanceId;
 
         newinstance.onload = true;
+        state.onloadGlobal = true;
 
 
         // // after onload
@@ -313,9 +315,14 @@ const reducers = {
         });
         // state.instances[instanceId].onload = true;
     },
-    setValue3: (state, { payload: { instanceId, searchCompleted, ...rest } }) => {
+    setValue3: (state, { payload: { instanceId,searchCompleted,onloadGlobal, ...rest } }) => {
         state.instances[instanceId] = { ...rest };
-        state.searchCompleted = searchCompleted;
+        if(searchCompleted != null ) {
+            state.searchCompleted = searchCompleted;
+        }
+        if(onloadGlobal != null ) {
+            state.onloadGlobal = onloadGlobal;
+        }
     },
     // setValue3: (state, { payload }) => {
     //     state = { ...payload } ;
