@@ -35,11 +35,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   //   search();
   // });
 
-  // // useMounted 는 왜 안먹지. useEffect 를 써야하나
-  // useEffect(() => {
-  //   // Initialization logic...
-  //   search();
-  // }, [dispatch]);
+  // useMounted 는 왜 안먹지. useEffect 를 써야하나
+  useEffect(() => {
+    // Initialization logic...
+    search();
+  }, [dispatch]);
 
   var searchFilter = [];
   const search = () => {
@@ -230,41 +230,45 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     },
   };
   return (
-    <Form form={form} {...formProps}  {...formItemLayout} >
-      <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
-      <Row key={'search_row_1'}>
-        <Col
-          span={24}
-          style={{
-            textAlign: "right",
-          }}
-        >
-          <Button type="primary" htmlType="submit">
-            Search
-          </Button>
-          <Button
+    <>
+    {thisInstance.searchCompleted  && (
+      <Form form={form} {...formProps}  {...formItemLayout} >
+        <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
+        <Row key={'search_row_1'}>
+          <Col
+            span={24}
             style={{
-              margin: "0 8px",
-            }}
-            onClick={() => {
-              form.resetFields();
+              textAlign: "right",
             }}
           >
-            Clear
-          </Button>
-          <a
-            style={{
-              fontSize: 12,
-            }}
-            onClick={() => {
-              setExpand(!expand);
-            }}
-          >
-            {expand ? <UpOutlined /> : <DownOutlined />} Collapse
-          </a>
-        </Col>
-      </Row>
-    </Form>
+            <Button type="primary" htmlType="submit">
+              Search
+            </Button>
+            <Button
+              style={{
+                margin: "0 8px",
+              }}
+              onClick={() => {
+                form.resetFields();
+              }}
+            >
+              Clear
+            </Button>
+            <a
+              style={{
+                fontSize: 12,
+              }}
+              onClick={() => {
+                setExpand(!expand);
+              }}
+            >
+              {expand ? <UpOutlined /> : <DownOutlined />} Collapse
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )}
+    </>
   );
 };
 

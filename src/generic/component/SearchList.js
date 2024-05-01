@@ -86,11 +86,6 @@ const SearchList = (props) => {
                     rowsections={
                         <DataArea key={`dataArea_${instanceId}`} entityId={props.initParams.entityId} instanceId={instanceId} list={thisInstance.list} />
                     }
-                // rowsections={[
-                //     {
-                //         cards: [<DataArea entityId={props.initParams.entityId} instanceId={instanceId} /> ]
-                //     },
-                // ]}
                 />
             )}
             {thisInstance && thisInstance.onload && thisInstance.openType === 'modal' && (
@@ -114,55 +109,57 @@ const SearchList = (props) => {
                 </div>
             )}
             {thisInstance && thisInstance.onload && thisInstance.openModal.visible && (
-                
-                <Modal
-                    title={thisInstance.openModal.initParams.entityNm} 
-                    width={(() => { 
-                        if(thisInstance.openModal.uiType === 'list'){
-                            return 1300; }
-                        else{
+                <>
+                    <Modal
+                        title={thisInstance.openModal.initParams.entityNm}
+                        width={(() => {
+                        if (thisInstance.openModal.uiType === 'list') {
+                            return 1300;
+                        }
+                        else {
                             return modalwidth.lg;
                         }
-                    })()} 
-                    draggable={true} 
-                    open={thisInstance.openModal.visible} 
-                    className="modalGrid" 
-                    onCancel={() => { 
+                        })()}
+                        draggable={true}
+                        open={thisInstance.openModal.visible}
+                        className="modalGrid"
+                        onCancel={() => {
                         let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
-                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {}},
-                        ];            
-                        dispatch(actions.setValues({instanceId,values}));
-                    }}
-                    onok={() => { 
-                        let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false }, 
+                            { key: 'instances.' + instanceId + '.openModal.visible', value: false },
                             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
                         ];
-                        dispatch(actions.setValues({instanceId,values}));
-                    }}
-                    footer={thisInstance.openModal.uiType ==='detail' && []}
-                >
-                    {thisInstance.openModal.uiType==='list' && (
-                        <SearchPage 
-                            initParams={(() => {
+                        dispatch(actions.setValues(values));
+                        }}
+                        onok={() => {
+                        let values = [
+                            { key: 'instances.' + instanceId + '.openModal.visible', value: false },
+                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
+                        ];
+                        dispatch(actions.setValues(values));
+                        }}
+                        footer={thisInstance.openModal.uiType === 'detail' && []}
+                    >
+                        {thisInstance.openModal.uiType === 'list' && (
+                            <SearchPage
+                                initParams={(() => {
                                 let param = { ...thisInstance.openModal.initParams };
                                 param.callInstanceId = instanceId;
-                                return param; 
-                            })()}
-                        />
-                    )}
-                    {thisInstance.openModal.uiType=== 'detail' && (
-                        <DetailPage 
-                            initParams={(() => {
+                                return param;
+                                })()} 
+                            />
+                        )}
+                        {thisInstance.openModal.uiType === 'detail' && (
+                            <DetailPage
+                                initParams={(() => {
                                 let param = { ...thisInstance.openModal.initParams };
                                 param.callinstanceId = instanceId;
-                                return param; 
-                            })()} 
-                            ref={detailRef}
-                        />
-                    )}
-                </Modal>
+                                return param;
+                                })()}
+                                ref={detailRef} 
+                            />
+                        )}
+                    </Modal>
+                </>
             )}
         </>
     );

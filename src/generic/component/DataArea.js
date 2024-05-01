@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
-import { Table, Dropdown, Space, message  } from 'antd';
+import { Table, Dropdown, Space, message, Modal } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
@@ -16,6 +16,8 @@ import { DownOutlined } from '@ant-design/icons';
 import { join } from 'redux-saga/effects';
 import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
 import { createSelector } from 'reselect';
+import SearchPage from '@generic/container/SearchPage';
+import DetailPage from "@generic/container/DetailPage"; 
 
 // Assuming getState gets the appropriate slice of state, adjust this as per your state structure
 const getList = (state, instanceId) => getState(state).instances[instanceId].list;
@@ -36,18 +38,26 @@ const getMemoizedList = createSelector(
 
 
 const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
+  const modalwidth = {
+    sm: 300, // Example width for 'sm'
+    md: 500, // Example width for 'md'
+    lg: 800  // Example width for 'lg'
+  };
+  const detailRef = useRef();
+
   const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [sheetReady, setSheetReady] = useState(false);
-  
+
   // const list = useSelector((state) => getState(state).instances[instanceId].list);
   const list = useSelector(state => getMemoizedList(state, instanceId));
   // const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
   const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
   // const pageInfo = useSelector(state => getMemoizedPageInfo(state, instanceId));
-  
+
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+  const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const cols = useSelector((state) => {
     let vState = getState(state);
     let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
@@ -115,7 +125,7 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                 { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
                 { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
               ];
-              dispatch(actions.setValues({instanceId,values}));
+              dispatch(actions.setValues(values));
               return true;
             }
           }
@@ -150,11 +160,11 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
     };
     dispatch(actions.setPageInfo({
       instanceId,
-      current : newPagination.current,
+      current: newPagination.current,
       defaultPageSize: newPagination.defaultPageSize,
       pageSize: newPagination.pageSize,
-      showSizeChanger : newPagination.showSizeChanger,
-      total : newPagination.total
+      showSizeChanger: newPagination.showSizeChanger,
+      total: newPagination.total
     }));
 
   };
@@ -230,28 +240,28 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
         key: 'delete',
         label: '삭제',
       },
-     
-      
+
+
     ];
     // parent 
     let parent = {
       key: 'parent',
-      label : 'Parent',
+      label: 'Parent',
       type: 'group',
       children: []
-    };    
+    };
     _.forEach(thisInstance.entityInfo.parents, (m, i) => {
       let keys = m.joins.map(join => join.parentColumn.column_name).join(',');
       let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.parentTableName });
       let labels = m.joins.map(join => {
-      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.parentTableName });
-        let column = _.find(targetEntity.cols, {column_name : join.parentColumn.column_name });
+        let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.parentTableName });
+        let column = _.find(targetEntity.cols, { column_name: join.parentColumn.column_name });
         return column.column_comment;
       }).join(',');
       parent.children.push({
-        key: m.parentTableName + " : " + keys ,
-        label : targetEntity.entityNm + " : " + labels ,      
-        information : { type: 'parent' , ...m }  
+        key: m.parentTableName + " : " + keys,
+        label: targetEntity.entityNm + " : " + labels,
+        information: { type: 'parent', ...m }
       });
     });
     items.push(parent);
@@ -259,25 +269,25 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
     // child
     let children = {
       key: 'children',
-      label : 'Children',
+      label: 'Children',
       type: 'group',
       children: []
-    };    
+    };
     _.forEach(thisInstance.entityInfo.children, (m, i) => {
       let keys = m.joins.map(join => join.childColumn.column_name).join(',');
       let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.childTableName });
       let labels = m.joins.map(join => {
-      let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.childTableName });
-        let column = _.find(targetEntity.cols, {column_name : join.childColumn.column_name });
+        let targetEntity = _.find(_schemaGeneric.entities, { entityId: m.childTableName });
+        let column = _.find(targetEntity.cols, { column_name: join.childColumn.column_name });
         return column.column_comment;
       }).join(',');
       children.children.push({
-        key: m.childTableName + " : " + keys ,
-        label : targetEntity.entityNm + " : " + labels ,      
-        information : { type: 'child' , ...m }  
+        key: m.childTableName + " : " + keys,
+        label: targetEntity.entityNm + " : " + labels,
+        information: { type: 'child', ...m }
       });
     });
-    
+
     items.push(children);
 
   })();
@@ -289,115 +299,118 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
 
   return (
     <>
-      <Table
-        columns={[
-          {
-            title: 'No',
-            key: 'index',
-            width: 40,
-            render: (text, record, index) => {
-              return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1
-            },
-            fixed: 'left'
-          },
-          ...cols ,
-          {
-            title: 'Action',
-            key: 'operation',
-            fixed: 'right',
-            width: 100,
-            render: (text, record, index) => {
+      {searchCompleted && (
+        <>
+          <Table
+            columns={[
+              {
+                title: 'No',
+                key: 'index',
+                width: 40,
+                render: (text, record, index) => {
+                  return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1;
+                },
+                fixed: 'left'
+              },
+              ...cols,
+              {
+                title: 'Action',
+                key: 'operation',
+                fixed: 'right',
+                width: 100,
+                render: (text, record, index) => {
 
-              // 참조
-              let openModalAdd = () => {
-                let initParams = {
-                  entityId: thisInstance.entityInfo.entityId,
-                  entitylin: thisInstance.entityInfo.entityNm,
-                  openType: 'modal',
-                  uiType: 'detail',
-                  editType: 'insert',
-                  callinstanceId: thisInstance.id
-                };
-                let vOpenUiType = 'detail';
-                let values = [
-                  { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                  { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                  { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                ];
-                // 모달창띄우기 
-                dispatch(actions.setValues({instanceId,values}));
-              };
+                  // 참조
+                  let openModalAdd = () => {
+                    let initParams = {
+                      entityId: thisInstance.entityInfo.entityId,
+                      entitylin: thisInstance.entityInfo.entityNm,
+                      openType: 'modal',
+                      uiType: 'detail',
+                      editType: 'insert',
+                      callinstanceId: thisInstance.id
+                    };
+                    let vOpenUiType = 'detail';
+                    let values = [
+                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                    ];
+                    // 모달창띄우기 
+                    dispatch(actions.setValues(values));
+                  };
 
-              let openModalView = (info) => {
-                let filters = [];
-                //  filter 만들기
-                let keyColumns = _.filter(thisInstance.entityInfo.cols, {isKey : true});
-                _.forEach(keyColumns, (col,i) => {
-                  let recordCol = record[col.dataIndex];
-                  if (recordCol != null){
-                    filters.push({[col.dataIndex]: recordCol});
-                  } 
-                });
-
-                let initParams = {
-                  entityId: thisInstance.entityInfo.entityId,
-                  entityNm: thisInstance.entityInfo.entityNm,
-                  openType: 'modal',
-                  uiType: 'detail',
-                  editType: 'view',
-                  callinstanceId: thisInstance.id ,
-                  filters : filters
-                };
-                let vOpenUiType = 'detail';
-                let values = [
-                  { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                  { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                  { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                ];
-                // 모달창띄우기 
-                dispatch(actions.setValues({instanceId,values}));
-              };
-              
-
-              return (
-                <Dropdown
-                  menu={{ 
-                    items,
-                    onClick: (info) => { 
-                      console.log(info.key);
-                      console.log(info.item.props.information);
-                      console.log(record);
-
-                      if(info.key == "view") {
-                        openModalView(info);
+                  let openModalView = (info) => {
+                    let filters = [];
+                    //  filter 만들기
+                    let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
+                    _.forEach(keyColumns, (col, i) => {
+                      let recordCol = record[col.dataIndex];
+                      if (recordCol != null) {
+                        filters.push({ [col.dataIndex]: recordCol });
                       }
-                    }
-                  }} 
-                  // overlay={items1}
-                >
-                  <a onClick={e =>  e.preventDefault()} >
-                    <Space>
-                      Action
-                      <DownOutlined />
-                    </Space>
-                  </a>
-                </Dropdown>
+                    });
 
-              );
-            },
-          },
-        ]}
-        rowKey={(record,index) => {
-          // return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
-          return record.rowNumber + '';
-        }}
-        dataSource={list}
-        pagination={pageInfo}
-        loading={loading}
-        onChange={handleTableChange}
-        // size="small"
-        scroll={{ x: 'max-content' , y: 600 }}
-      />
+                    let initParams = {
+                      entityId: thisInstance.entityInfo.entityId,
+                      entityNm: thisInstance.entityInfo.entityNm,
+                      openType: 'modal',
+                      uiType: 'detail',
+                      editType: 'view',
+                      callinstanceId: thisInstance.id,
+                      filters: filters
+                    };
+                    let vOpenUiType = 'detail';
+                    let values = [
+                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                    ];
+                    // 모달창띄우기 
+                    dispatch(actions.setValues(values));
+                  };
+
+
+                  return (
+                    <Dropdown
+                      menu={{
+                        items,
+                        onClick: (info) => {
+                          console.log(info.key);
+                          console.log(info.item.props.information);
+                          console.log(record);
+
+                          if (info.key == "view") {
+                            openModalView(info);
+                          }
+                        }
+                      }}
+                    >
+                      <a onClick={e => e.preventDefault()}>
+                        <Space>
+                          Action
+                          <DownOutlined />
+                        </Space>
+                      </a>
+                    </Dropdown>
+
+                  );
+                },
+              },
+            ]}
+            rowKey={(record, index) => {
+              // return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
+              return record.rowNumber + '';
+            }}
+            dataSource={list}
+            pagination={pageInfo}
+            loading={loading}
+            onChange={handleTableChange}
+            // size="small"
+            scroll={{ x: 'max-content', y: 600 }}
+          />
+        </>
+      )}
     </>
 
   );

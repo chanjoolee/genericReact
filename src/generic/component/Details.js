@@ -65,7 +65,7 @@ const Detail = forwardRef((props, ref) => {
                                 { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
                                 { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
                             ];
-                            dispatch(actions.setValues({instanceId,values}));
+                            dispatch(actions.setValues(values));
                             return true;
                         }
                     }
@@ -79,6 +79,7 @@ const Detail = forwardRef((props, ref) => {
     });
 
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+    const searchCompleted = useSelector((state) => getState(state).searchCompleted);
     // useMounted(() => {
     //     // search();
     //     console.log('useMounted');
@@ -297,7 +298,7 @@ const Detail = forwardRef((props, ref) => {
     };
     return (
         <>
-            {thisInstance && thisInstance.onload 
+            {thisInstance && thisInstance.onload && searchCompleted 
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
                 <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >

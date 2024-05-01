@@ -82,6 +82,7 @@ function* getListPage({ payload }) {
   let searchFilter = yield select((state) => getState(state).instances[payload.instanceId].searchFilter);
   let pageInfo = yield select((state) => getState(state).instances[payload.instanceId].pageInfo);
   let instance = yield select((state) => getState(state).instances[payload.instanceId]);
+  let state = yield select((state) => getState(state));
   let { isSuccess, data } = yield call(callApi, {
     url: '/generic/getListPage',
     method: 'post',
@@ -93,6 +94,10 @@ function* getListPage({ payload }) {
   if (isSuccess && data) {
 
     let values = [];
+    // let newState  = { ...state };
+    // let newInstance = { ...instance };
+    let newState  = _.cloneDeep(state);
+    let newInstance = _.cloneDeep(instance);
     if (instance.uiType === 'list') {
       values.push({
         key: 'instances.' + payload.instanceId + '.list',
@@ -106,6 +111,14 @@ function* getListPage({ payload }) {
         key: 'instances.' + payload.instanceId + '.pageInfo.total',
         value: data.totalCnt
       });
+
+      newInstance.instanceId = payload.instanceId;
+      newInstance.list = data.list;
+      newInstance.listTotalCount = data.totalCnt;
+      newInstance.pageInfo.total = data.totalCnt;
+      newInstance.searchCompleted = true;
+      newState.instances[payload.instanceId] = newInstance ;
+
     } else if (instance.uiType === 'detail') {
       values.push({
         key: 'instances.' + payload.instanceId + '.list',
@@ -126,9 +139,17 @@ function* getListPage({ payload }) {
           value: data.list[0]
         });
       }
+
+      newInstance.instanceId = payload.instanceId;
+      newInstance.list = data.list;
+      newInstance.editType = 'edit';
+      newInstance.listTotalcount = data.totalCnt;
+      newInstance.searchCompleted = true;
+      newState.instances[payload.instanceId] = newInstance ;
     }
 
-    yield put(actions.setValues({instanceId:payload.instanceId, values}));
+    // yield put(actions.setValues(values));
+    yield put(actions.setValue3(newInstance));
   }
 }
 

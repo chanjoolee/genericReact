@@ -15,6 +15,7 @@ const initialState = {
     basic: {
         id: '',
         onload: false,
+        searchCompleted: true,
         list: [],
         selectedData: {},
         codeList: {
@@ -68,6 +69,7 @@ const initialState = {
             }
         }
     },
+    searchCompleted: true,
     instances: {}
 }
 
@@ -273,13 +275,13 @@ const reducers = {
         newinstance.onload = true;
 
 
-        // after onload
-        let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
-        if (custom != null) {
-            if (custom.afterOnload) {
-                custom.afterOnload(newinstance);
-            }
-        }
+        // // after onload
+        // let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
+        // if (custom != null) {
+        //     if (custom.afterOnload) {
+        //         custom.afterOnload(newinstance);
+        //     }
+        // }
     },
     setValue: {
         reducer: (state, { payload: { key, value } }) => {
@@ -301,28 +303,31 @@ const reducers = {
             return { payload: { key, value } }
         }
     },
-    setValues: (state, { payload: {instanceId , values } }) => {
-        _.forEach(values, (v, i) => {
+    setValues: (state, { payload }) => {
+        _.forEach(payload, (v, i) => {
             _.update(state, v.key
                 , function () {
                     return v.value;
                 }
             );
         });
-        state.instances[instanceId].onload = true;
+        // state.instances[instanceId].onload = true;
     },
-    setValue3: {
-        reducer: (state, { payload}) => {
-            state = {...state , ...payload} ;
-        }
+    setValue3: (state, { payload: { instanceId, searchCompleted, ...rest } }) => {
+        state.instances[instanceId] = { ...rest };
+        state.searchCompleted = searchCompleted;
     },
+    // setValue3: (state, { payload }) => {
+    //     state = { ...payload } ;
+    // },
     setSearchFilter: (state, { payload: { instanceId, ...rest } }) => {
         state.instances[instanceId].searchFilter = { ...state.instances[instanceId].searchFilter , ...rest };
         state.instances[instanceId].pageInfo.current = 1;
+        state.searchCompleted = false;
     },
     setPageInfo: (state, { payload: { instanceId, ...rest } }) => {
         state.instances[instanceId].pageInfo = { ...state.instances[instanceId].pageInfo, ...rest }
-        state.instances[instanceId].onload = false;
+        state.searchCompleted = false;
     }
 };
 
