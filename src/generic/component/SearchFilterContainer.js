@@ -42,61 +42,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     search();
   }, [dispatch]);
 
-  // var searchFilter = [];
-  const searchFilter = useSelector((state) => {
-    let vState = getState(state);
-    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.cols);
-    let _thisInstance = vState.instances[instanceId];
-    let searchFilter = [];
-
-    // Relations
-    _.forEach(_thisInstance.entityInfo.parents, (parent, i) => {
-      _.forEach(parent.joins, (join, j) => {
-        // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
-        // 나중에 좀더 기능 고민 필요함.
-        // let nameColumn = join.nameColumn;
-        // if(nameColumn == null){
-        //   nameColumn = join.parentColumn;
-        // }
-        let _key = `searchFilter_${i}_${j}`;
-        let component = (
-          <Col span={8} key={_key}>
-            <Form.Item
-              type="Text"
-              label={join.parentColumn.column_comment}  // parentColumns 으로 해야하나?
-              name={_.camelCase("" + join.childColumn.column_name)}
-            // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
-            >
-              <Input
-                placeholder={join.childColumn.column_comment + " 을 입력해 주세요."}
-              />
-            </Form.Item>
-          </Col>
-        );
-        searchFilter.push({
-          component: component,
-          join : join
-        });
-        searchFilter = addCustomSearchFilters(searchFilter, _thisInstance.entityInfo.entityId);
-      });
-      
-    });
-
-  
-    return searchFilter;
-    // getState(state).instances[instanceId).entityInfo.cols 
-  });
-  // const searchFields = useSelector((state) => {
-  //   let children = [];
-  //   let count = searchFilter.length;
-  //   for (let i = 0; i < count; i++) {
-  //     children.push(
-  //       searchFilter[i].component
-  //     );
-  //   }
-  //   return children;
-  //   // getState(state).instances[instanceId).entityInfo.cols 
-  // });
+  var searchFilter = [];
   const search = () => {
     let payload = form.getFieldsValue();
     // parent join
@@ -206,7 +152,6 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
 
   const makeSearchFilter = () => {
-    let searchFilter = [];
     let entityId = thisState.instances[instanceId].entityInfo.entityId;
     let entityobject = _.find(_schemaGeneric.entities, { entityId: entityId });
     let forms = form.getFieldsValue();
@@ -223,9 +168,9 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         // if(nameColumn == null){
         //   nameColumn = join.parentColumn;
         // }
-        let _key = `searchFilter_${i}_${j}`;
+        let key = `searchFilter_${i}_${j}`;
         let component = (
-          <Col span={8} key={_key}>
+          <Col span={8} key={key}>
             <Form.Item
               type="Text"
               label={join.parentColumn.column_comment}  // parentColumns 으로 해야하나?
@@ -249,25 +194,23 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
 
-    return searchFilter;
+
   };
 
-
-  
-  // const getFields = () => {
-  //   let count = searchFilter.length;
-  //   let children = [];
+  const getFields = () => {
+    let count = searchFilter.length;
+    const children = [];
 
 
-  //   for (let i = 0; i < count; i++) {
-  //     children.push(
-  //       searchFilter[i].component
-  //     );
-  //   }
+    for (let i = 0; i < count; i++) {
+      children.push(
+        searchFilter[i].component
+      );
+    }
 
-  //   return children;
-  // };
-  // makeSearchFilter();
+    return children;
+  };
+  makeSearchFilter();
 
   const formItemLayout = {
     labelCol: {
@@ -289,13 +232,9 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance && thisInstance.onload && searchCompleted   && (
+    {thisInstance && thisInstance.onload && searchCompleted    && (
       <Form form={form} {...formProps}  {...formItemLayout} >
-        <Row gutter={24} key={'search_row_0'}>{
-          searchFilter.map((m,i) => {
-            return m.component;
-          })
-        }</Row>
+        <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
           <Col
             span={24}
