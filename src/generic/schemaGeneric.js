@@ -166,8 +166,9 @@ export const addCustomSearchFilters = (filters , entityId ) => {
                 let targetColumn = _.find(entityobject.cols, {
                     column_name: filter.column_name
                 });
+                let key = `searchFilter_${i}`;
                 let component = (
-                    <Col span={8} key={i}>
+                    <Col span={8} key={key}>
                     <Form.Item
                         type="Text"
                         label={targetColumn.column_comment}
