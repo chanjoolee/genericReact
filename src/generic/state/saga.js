@@ -142,7 +142,7 @@ function* getListPage({ payload }) {
 
       newInstance.instanceId = payload.instanceId;
       newInstance.list = data.list;
-      newInstance.editType = 'edit';
+      // newInstance.editType = 'edit';
       newInstance.listTotalcount = data.totalCnt;
       newInstance.searchCompleted = true;
       newState.instances[payload.instanceId] = newInstance ;
