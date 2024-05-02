@@ -368,6 +368,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                     let values = [
                       { key: 'instances.' + instanceId + '.openModal.visible', value: true },
                       { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
                       { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams } ,
 
                     ];

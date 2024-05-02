@@ -287,7 +287,7 @@ const arePropsEqual = (prevProps, nextProps) => {
   return isEqual;
 }
 
-const SearchFilterContainerMemo = React.memo(SearchFilterContainer,arePropsEqual);
+const SearchFilterContainerMemo = React.memo(SearchFilterContainer);
 // const mapStateToProps = (state) => {
 //   return ({
 //     searchState: state.generic.search

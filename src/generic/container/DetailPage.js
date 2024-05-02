@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useMounted from "@hooks/useMounted";
 import { getState, actions } from '@generic/state/stateSearch';
@@ -11,7 +11,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import '@generic/generic.css';
 
-const DetailPage = (props) => {
+const DetailPage = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const [instanceId, setInstanceId] = useState();
   const thisState = useSelector((state) => getState(state));
@@ -65,5 +65,10 @@ const DetailPage = (props) => {
       )}
     </>
   );
-};
-export default DetailPage;
+});
+// export default DetailPage;
+const arePropsEqual = (prevProps, nextProps) => {
+  return prevProps.list === nextProps.list;
+}
+const MemoizedMyDetailPage = React.memo(DetailPage);
+export default MemoizedMyDetailPage;

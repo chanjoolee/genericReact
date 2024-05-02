@@ -273,4 +273,11 @@ const Detail = forwardRef((props, ref) => {
 
 
 
-export default Detail;
+// export default Detail;
+
+const arePropsEqual = (prevProps, nextProps) => {
+    return prevProps.list === nextProps.list;
+}
+
+const MemoizedDetail = React.memo(Detail);
+export default MemoizedDetail;
