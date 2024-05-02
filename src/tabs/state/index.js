@@ -10,7 +10,7 @@ const initialState = {
     {
       label: "메인",
       key: "Main",
-      children: mainContent,
+      children: 'Content of Main',
       closable: false,
       initParams: {},
     },

@@ -47,7 +47,7 @@ const initialState = {
             showSizeChanger: true,
             total: 0,
             showTotal: (total, range) => {
-                console.log(range);
+                // console.log(range);
                 return `Total ${total}` ;
             },
         },
@@ -250,6 +250,14 @@ const reducers = {
         return state;
     },
     deleteInstance: (state, { payload: { instanceId } }) => {
+        // let myInstance = state.instances[instanceId];
+        // if( myInstance.callInstance.id != null){
+        //     let callInstance = state.instances[myInstance.callInstance.id];
+        //     if(callInstance != null){
+        //         callInstance.calleeInstance = {};
+        //     }
+        // }
+        
         delete state.instances[instanceId];
     },
     setInitialInfo: (state, { payload: { instanceId, entityId, tableName, codeList, openType, uiType, editType, callInstanceId } }) => {
@@ -270,11 +278,14 @@ const reducers = {
         newinstance.openType = openType;
         newinstance.uiType = uiType;
         newinstance.editType = editType;
-        newinstance.callInstanceId = callInstanceId;
-
         newinstance.onload = true;
-
-
+        if (callInstanceId != null){
+            newinstance.callInstanceId = callInstanceId;
+            // let callInstance = state.instances[callInstanceId];
+            // newinstance.callInstance = callInstance;
+            // callInstance.calleeInstance = newinstance;
+        }
+        
         // // after onload
         // let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
         // if (custom != null) {

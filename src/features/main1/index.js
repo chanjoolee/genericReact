@@ -1,4 +1,4 @@
-import React, { Children, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -61,10 +61,11 @@ const LayoutSide1 = () => {
       activeKey: uniqKey,
       pane: {
         label: item.props.title,
-        children: <SearchPage initParams={initParams} />,
+        // children: <SearchPage initParams={initParams} />,
+        children : initParams,
         key: uniqKey,
         closable: true,
-        initParams: {},
+        // initParams: {},
       },
     };
     dispatch(actions.add(payload));

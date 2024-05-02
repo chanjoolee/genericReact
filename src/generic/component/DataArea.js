@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState } from '@/generic/state/stateSearch';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect  } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
 import { Table, Dropdown, Space, message, Modal } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
@@ -37,7 +37,7 @@ const getMemoizedList = createSelector(
 // const pageInfo = (state, instanceId) => getState(state).instances[instanceId].pageInfo;
 
 
-const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
+const DataArea = ({ entityId, instanceId, ...restProps }) => {
   const modalwidth = {
     sm: 300, // Example width for 'sm'
     md: 500, // Example width for 'md'
@@ -364,7 +364,8 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                     let values = [
                       { key: 'instances.' + instanceId + '.openModal.visible', value: true },
                       { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams } ,
+
                     ];
                     // 모달창띄우기 
                     dispatch(actions.setValues(values));
@@ -376,9 +377,9 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
                       menu={{
                         items,
                         onClick: (info) => {
-                          console.log(info.key);
-                          console.log(info.item.props.information);
-                          console.log(record);
+                          // console.log(info.key);
+                          // console.log(info.item.props.information);
+                          // console.log(record);
 
                           if (info.key == "view") {
                             openModalView(info);
@@ -414,9 +415,12 @@ const DataArea = React.memo(({ entityId, instanceId, ...restProps }) => {
     </>
 
   );
-}, (prevProps, nextProps) => {
-  // Assuming list is the only prop you care about for re-rendering
-  return prevProps.list === nextProps.list;
-});
+};
 
-export default DataArea;
+const arePropsEqual = (prevProps, nextProps) => {
+  return prevProps.list === nextProps.list;
+}
+
+const MemoizedMyComponent = React.memo(DataArea, arePropsEqual);
+export default MemoizedMyComponent;
+// export default DataArea;

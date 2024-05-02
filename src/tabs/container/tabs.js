@@ -4,6 +4,7 @@ import '@tabs/tabs.css';
 import { Tabs } from 'antd';
 import { actions, getState } from '@tabs/state';
 import { actions as actions_generic, getState as getState_generic } from '@/generic/state/stateSearch';
+import SearchPage from "@generic/container/SearchPage";
 import _ from 'lodash';
 
 
@@ -85,6 +86,28 @@ const TabContainer = () => {
     }
   };
 
+
+  const items = thisState.panes.map((pane,i) => {
+    let { label, children , key , closable } = pane;
+    if(pane.key == "Main"){
+      return {
+        label, key , closable, 
+        children : <div style={{ height: "100vh" }}>Content of Main</div>
+      };
+    } else if (pane.label == 'New Tab') {
+      return {
+        label, key , closable, 
+        children : 'Content of new Tab'
+      };
+    } else {
+      return {
+        label, key , closable, 
+        children : <SearchPage  initParams={pane.children} />
+      };
+    }
+    
+  });
+
   return (
     // <Tabs type="editable-card" onChange={onChange} activeKey={thisState.activeKey} onEdit={onEdit}>
     //   {thisState.panes.map((pane) => (
@@ -98,7 +121,7 @@ const TabContainer = () => {
       onChange={onChange}
       activeKey={thisState.activeKey}
       onEdit={onEdit}
-      items={thisState.panes}
+      items={items}
     />
   );
 };

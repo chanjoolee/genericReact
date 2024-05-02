@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector ,connect } from "react-redux";
 import { getState } from "../state/stateSearch";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Col, Row } from "antd";
@@ -11,6 +11,7 @@ import callApi from "@lib/callApi";
 import { join } from "redux-saga/effects";
 
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
+  // console.log("SearchFilterContainer was rendered at", new Date().toLocaleTimeString());
   // window.columns - columns;
   const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
@@ -232,7 +233,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance && thisInstance.onload && searchCompleted    && (
+    {thisInstance && thisInstance.onload && (
       <Form form={form} {...formProps}  {...formItemLayout} >
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
@@ -273,5 +274,27 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   );
 };
 
-export default SearchFilterContainer;
+
+
+const arePropsEqual = (prevProps, nextProps) => {
+  // let filter1 = prevProps.searchState.instances[prevProps.instanceId].searchFilter;
+  // let filter2 = nextProps.searchState.instances[nextProps.instanceId].searchFilter;
+  // return filter1 === filter2 ;
+ 
+  // return prevProps.searchFilter.filters === nextProps.searchFilter.filters;
+  let isEqual =  _.isEqual(prevProps.searchFilter.filters,nextProps.searchFilter.filters);
+  // console.log(`SearchFilterContainer is Equal? ${isEqual}`);
+  return isEqual;
+}
+
+const SearchFilterContainerMemo = React.memo(SearchFilterContainer,arePropsEqual);
+// const mapStateToProps = (state) => {
+//   return ({
+//     searchState: state.generic.search
+//   });
+// };
+
+// export default SearchFilterContainer;
+export default SearchFilterContainerMemo;
+// export default connect(mapStateToProps)(MemoizedMyComponent);
 const formInitValue = {};

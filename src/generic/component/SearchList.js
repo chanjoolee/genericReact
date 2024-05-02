@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Card, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { getState, actions } from '../state/stateSearch';
@@ -15,7 +15,9 @@ import moment from 'moment';
 import _ from 'lodash';
 import '@generic/generic.css';
 
+
 const SearchList = (props) => {
+    // console.log("SearchList was rendered at", new Date().toLocaleTimeString());
     const modalwidth = {
         sm: 300, // Example width for 'sm'
         md: 500, // Example width for 'md'
@@ -29,34 +31,34 @@ const SearchList = (props) => {
         let vInstanceId = moment().format('YYYYMMDDHHmmssSSS') + _.uniqueId("_");
 
         setInstanceId(vInstanceId);
-        // setTimeout(() => {
-        //     dispatch(
-        //         // backend 가 설정 될때 까지 saga 보류
-        //         actions.fetchInitialInfo({
-        //         // actions.setInitialInfo({
-        //             instanceId: vInstanceId,
-        //             entityId: props.initParams.entityId,
-        //             tableName: props.initParams.entityId,
-        //             // tab, modal : default tab 
-        //             openType: props.initParams.openType ? props.initParams.openType : 'tab',
-        //             uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
-        //             callInstanceId: props.initParams.callInstanced
-        //         }),
-        //     );
-        // }, 0);
-        dispatch(
-            // backend 가 설정 될때 까지 saga 보류
-            actions.fetchInitialInfo({
-            // actions.setInitialInfo({
-                instanceId: vInstanceId,
-                entityId: props.initParams.entityId,
-                tableName: props.initParams.entityId,
-                // tab, modal : default tab 
-                openType: props.initParams.openType ? props.initParams.openType : 'tab',
-                uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
-                callInstanceId: props.initParams.callInstanced
-            }),
-        );
+        setTimeout(() => {
+            dispatch(
+                // backend 가 설정 될때 까지 saga 보류
+                actions.fetchInitialInfo({
+                // actions.setInitialInfo({
+                    instanceId: vInstanceId,
+                    entityId: props.initParams.entityId,
+                    tableName: props.initParams.entityId,
+                    // tab, modal : default tab 
+                    openType: props.initParams.openType ? props.initParams.openType : 'tab',
+                    uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
+                    callInstanceId: props.initParams.callInstanced
+                }),
+            );
+        }, 0);
+        // dispatch(
+        //     // backend 가 설정 될때 까지 saga 보류
+        //     actions.fetchInitialInfo({
+        //     // actions.setInitialInfo({
+        //         instanceId: vInstanceId,
+        //         entityId: props.initParams.entityId,
+        //         tableName: props.initParams.entityId,
+        //         // tab, modal : default tab 
+        //         openType: props.initParams.openType ? props.initParams.openType : 'tab',
+        //         uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
+        //         callInstanceId: props.initParams.callInstanced
+        //     }),
+        // );
         return () => {
             // dispatch(actions.initState());
             dispatch(actions.deleteInstance({ instanceId: instanceId }));
@@ -64,13 +66,22 @@ const SearchList = (props) => {
     }, [dispatch]);
 
     // debug 모드에서 전근가능(디버그용) 
-    const thisState = useSelector((state) => getState(state));
+    // const thisState = useSelector((state) => getState(state));
     const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
-    window.state_search = {
-        state: thisState,
-        dispatch: dispatch,
-        actions: actions
-    };
+    const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+    
+    // const searchFilterMemo = useMemo(() => {
+    //     if (thisInstance && thisInstance.searchFilter) {
+    //       return thisInstance.searchFilter;
+    //     }
+    //     return null;
+    //   }, [thisInstance]);
+
+    // window.state_search = {
+    //     state: thisState,
+    //     dispatch: dispatch,
+    //     actions: actions
+    // };
     const saveDetail = () => {
         detailRef.current.onSaveConfirm();
     };
@@ -81,7 +92,7 @@ const SearchList = (props) => {
                 <LayoutSearchRows
                     key={`LayoutSearchRows_${instanceId}`}
                     searchFilter={
-                        <SearchFilterContainer key={`searchFilter_${instanceId}`} instanceId={instanceId} initParams={props.initParams} />
+                        <SearchFilterContainer key={`searchFilter_${instanceId}`} instanceId={instanceId} initParams={props.initParams} searchFilter={thisInstance.searchFilter}/>
                     }
                     rowsections={
                         <DataArea key={`dataArea_${instanceId}`} entityId={props.initParams.entityId} instanceId={instanceId} list={thisInstance.list} />
@@ -109,60 +120,63 @@ const SearchList = (props) => {
                 </div>
             )}
             {thisInstance && thisInstance.onload && thisInstance.openModal.visible && (
-                <>
-                    <Modal
-                        title={thisInstance.openModal.initParams.entityNm}
-                        width={(() => {
+
+                <Modal
+                    title={thisInstance.openModal.initParams.entityNm}
+                    width={(() => {
                         if (thisInstance.openModal.uiType === 'list') {
                             return 1300;
                         }
                         else {
                             return modalwidth.lg;
                         }
-                        })()}
-                        draggable={true}
-                        open={thisInstance.openModal.visible}
-                        className="modalGrid"
-                        onCancel={() => {
+                    })()}
+                    // draggable={true}
+                    open={thisInstance.openModal.visible}
+                    className="modalGrid"
+                    onCancel={() => {
                         let values = [
                             { key: 'instances.' + instanceId + '.openModal.visible', value: false },
                             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
                         ];
                         dispatch(actions.setValues(values));
-                        }}
-                        onok={() => {
+                    }}
+                    onok={() => {
                         let values = [
                             { key: 'instances.' + instanceId + '.openModal.visible', value: false },
                             { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
                         ];
                         dispatch(actions.setValues(values));
-                        }}
-                        footer={thisInstance.openModal.uiType === 'detail' && []}
-                    >
-                        {thisInstance.openModal.uiType === 'list' && (
-                            <SearchPage
-                                initParams={(() => {
+                    }}
+                    footer={thisInstance.openModal.uiType === 'detail' && []}
+                >
+                    {thisInstance.openModal.uiType === 'list' && (
+                        <SearchPage
+                            initParams={(() => {
                                 let param = { ...thisInstance.openModal.initParams };
                                 param.callInstanceId = instanceId;
                                 return param;
-                                })()} 
-                            />
-                        )}
-                        {thisInstance.openModal.uiType === 'detail' && (
-                            <DetailPage
-                                initParams={(() => {
+                            })()} 
+                        />
+                    )}
+                    {thisInstance.openModal.uiType === 'detail' && (
+                        <DetailPage
+                            initParams={(() => {
                                 let param = { ...thisInstance.openModal.initParams };
                                 param.callinstanceId = instanceId;
                                 return param;
-                                })()}
-                                ref={detailRef} 
-                            />
-                        )}
-                    </Modal>
-                </>
+                            })()}
+                            ref={detailRef} 
+                        />
+                    )}
+                </Modal>
+                
             )}
         </>
     );
 };
 
+
 export default SearchList;
+// const SearchListMemo = React.memo(SearchList);
+// export default SearchListMemo;
