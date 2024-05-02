@@ -233,7 +233,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance && thisInstance.onload && (
+    {thisInstance && thisInstance.onload && searchCompleted && (
       <Form form={form} {...formProps}  {...formItemLayout} >
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
