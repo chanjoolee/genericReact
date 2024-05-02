@@ -143,6 +143,22 @@ const LayoutSide1 = () => {
             <SubMenu key="sub4" icon={<AppstoreAddOutlined />} on title="INVENTORY">
               <Menu.Item
                 key="31"
+                entityid="INVENTORY_CMM_CD"
+                title="공통코드"
+                onClick={menuClick}
+              >
+                공통코드
+              </Menu.Item>
+              <Menu.Item
+                key="32"
+                entityid="INVENTORY_ITEM_MASTER"
+                title="품목코드마스타"
+                onClick={menuClick}
+              >
+                품목코드마스타
+              </Menu.Item>
+              <Menu.Item
+                key="33"
                 entityid="INVENTORY_IN_OUT"
                 title="창고입출고"
                 onClick={menuClick}
