@@ -61,8 +61,8 @@ const Detail = forwardRef((props, ref) => {
 
     // 오른쪽에 카드리스트를 표시한다.
     useEffect(() => {
-        
-    }, []);
+        search();
+    }, [dispatch]);
     // Events 
     const onFormChange = (e) => {
         // console.log('Change');

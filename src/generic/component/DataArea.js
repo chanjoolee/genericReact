@@ -324,7 +324,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                   let openModalAdd = () => {
                     let initParams = {
                       entityId: thisInstance.entityInfo.entityId,
-                      entitylin: thisInstance.entityInfo.entityNm,
+                      entityNm: thisInstance.entityInfo.entityNm,
                       openType: 'modal',
                       uiType: 'detail',
                       editType: 'insert',
@@ -345,9 +345,13 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                     //  filter 만들기
                     let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
                     _.forEach(keyColumns, (col, i) => {
-                      let recordCol = record[col.dataIndex];
-                      if (recordCol != null) {
-                        filters.push({ [col.dataIndex]: recordCol });
+                      let value = record[col.dataIndex];
+                      if (value != null) {
+                        filters.push({ 
+                          col :col.dataIndex,
+                          dbcolumnName : col.dbColumnName ,
+                          value 
+                        });
                       }
                     });
 

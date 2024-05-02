@@ -11,7 +11,7 @@ import callApi from "@lib/callApi";
 import { join } from "redux-saga/effects";
 
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
-  // console.log("SearchFilterContainer was rendered at", new Date().toLocaleTimeString());
+  console.log("SearchFilterContainer was rendered at", new Date().toLocaleTimeString());
   // window.columns - columns;
   const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
