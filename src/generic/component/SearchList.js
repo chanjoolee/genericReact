@@ -92,10 +92,10 @@ const SearchList = (props) => {
                 <LayoutSearchRows
                     key={`LayoutSearchRows_${instanceId}`}
                     searchFilter={
-                        <SearchFilterContainer key={`searchFilter_${instanceId}`} instanceId={instanceId} initParams={props.initParams} searchFilter={thisInstance.searchFilter}/>
+                        <SearchFilterContainer instanceId={instanceId} />
                     }
                     rowsections={
-                        <DataArea key={`dataArea_${instanceId}`} entityId={props.initParams.entityId} instanceId={instanceId} list={thisInstance.list} />
+                        <DataArea entityId={props.initParams.entityId} instanceId={instanceId}/>
                     }
                 />
             )}
@@ -103,7 +103,7 @@ const SearchList = (props) => {
                 <>
                     <div>
                         <Spin spinning={false}>
-                            <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
+                            <SearchFilterContainer instanceId={instanceId}  />
                             {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
                         </Spin>
                     </div>
@@ -113,7 +113,7 @@ const SearchList = (props) => {
                 <div>
                     <Spin spinning={false}>
                         <div style={{ display: 'none' }}>
-                            <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
+                            <SearchFilterContainer instanceId={instanceId} />
                         </div>
                         {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
                     </Spin>
