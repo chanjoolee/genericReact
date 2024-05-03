@@ -351,6 +351,20 @@ const slice = createSlice({
 
 export const getStateAll = (state) => state;
 export const getState = (state) => state[ROOT_SLICE_NAME][SLICE_NAME];
+export const getInstance = (state,id) => {
+    if (state[ROOT_SLICE_NAME][SLICE_NAME] != null) {
+        return state[ROOT_SLICE_NAME][SLICE_NAME].instances[id];
+    } else {
+        return null;
+    }
+};
+export const getAttr = (state,id,key) => {
+    if (state[ROOT_SLICE_NAME][SLICE_NAME] != null && state[ROOT_SLICE_NAME][SLICE_NAME].instances[id] != null) {
+        return state[ROOT_SLICE_NAME][SLICE_NAME].instances[id][key];
+    } else {
+        return null;
+    }
+};
 // export const getState = (state) => state[ROOT_SLICE_NAME];
 export const actions = {
     ...slice.actions,

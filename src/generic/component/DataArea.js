@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { actions, getState } from '@/generic/state/stateSearch';
+import { actions, getState, getInstance, getAttr } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector, connect  } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
 import { Table, Dropdown, Space, message, Modal } from 'antd';
@@ -51,7 +51,8 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   const [sheetReady, setSheetReady] = useState(false);
 
   // const list = useSelector((state) => getState(state).instances[instanceId].list);
-  const list = useSelector(state => getMemoizedList(state, instanceId));
+  // const list = useSelector(state => getMemoizedList(state, instanceId));
+  const list = useSelector((state) => getAttr(state,instanceId,'list'));
   // const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
   const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
   // const pageInfo = useSelector(state => getMemoizedPageInfo(state, instanceId));
@@ -321,26 +322,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 render: (text, record, index) => {
 
                   // 참조
-                  let openModalAdd = () => {
-                    let initParams = {
-                      entityId: thisInstance.entityInfo.entityId,
-                      entityNm: thisInstance.entityInfo.entityNm,
-                      openType: 'modal',
-                      uiType: 'detail',
-                      editType: 'insert',
-                      callinstanceId: thisInstance.id
-                    };
-                    let vOpenUiType = 'detail';
-                    let values = [
-                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-                    ];
-                    // 모달창띄우기 
-                    dispatch(actions.setValues(values));
-                  };
-
-                  let openModalView = (info) => {
+                  let openModalDetail = (info) => {
                     let filters = [];
                     //  filter 만들기
                     let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
@@ -360,15 +342,14 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       entityNm: thisInstance.entityInfo.entityNm,
                       openType: 'modal',
                       uiType: 'detail',
-                      editType: 'view',
+                      editType: info.key,
                       callinstanceId: thisInstance.id,
                       filters: filters
                     };
-                    let vOpenUiType = 'detail';
                     let values = [
                       { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                      { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
+                      { key: 'instances.' + instanceId + '.openModal.uiType', value: 'detail' },
+                      { key: 'instances.' + instanceId + '.openModal.editType', value: info.key },
                       { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams } ,
 
                     ];
@@ -386,9 +367,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                           // console.log(info.item.props.information);
                           // console.log(record);
 
-                          if (info.key == "view") {
-                            openModalView(info);
-                          }
+                          openModalDetail(info);  
                         }
                       }}
                     >
@@ -412,7 +391,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             pagination={pageInfo}
             loading={loading}
             onChange={handleTableChange}
-            // size="small"
+            size="middle" // small middle large
             scroll={{ x: 'max-content', y: 600 }}
             // style={{ minHeight: '600px' }}
           />

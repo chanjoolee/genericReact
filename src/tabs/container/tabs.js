@@ -92,7 +92,7 @@ const TabContainer = () => {
     if(pane.key == "Main"){
       return {
         label, key , closable, 
-        children : <div style={{ height: "100vh" }}>Content of Main</div>
+        children : <div>Content of Main</div>
       };
     } else if (pane.label == 'New Tab') {
       return {
