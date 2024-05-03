@@ -39,9 +39,18 @@ const GenericModal = ({instanceId}) => {
     const visible = useSelector((state) => getAttr(state,instanceId,'openModal.visible'));
     const entityNm = useSelector((state) => getAttr(state,instanceId,'openModal.initParams.entityNm'));
 
+    const [modalPageKey, setDetailPageKey] = useState(0);
+
+    useEffect(() => {
+      if (!visible) {
+        // Force remount of DetailPage by changing its key when modal becomes invisible
+        setDetailPageKey(prevKey => prevKey + 1);
+      }
+    }, [visible]);
+
     return (
         <>
-            {onload && visible && (
+            {onload && (
 
                 <Modal
                     title={entityNm}
@@ -74,6 +83,7 @@ const GenericModal = ({instanceId}) => {
                 >
                     {uiType === 'list' && (
                         <SearchPage
+                            key={modalPageKey}
                             initParams={(() => {
                                 let param = { ...initParams };
                                 param.callInstanceId = instanceId;
@@ -83,6 +93,7 @@ const GenericModal = ({instanceId}) => {
                     )}
                     {uiType === 'detail' && (
                         <DetailPage
+                            key={modalPageKey}
                             initParams={(() => {
                                 let param = { ...initParams };
                                 param.callinstanceId = instanceId;

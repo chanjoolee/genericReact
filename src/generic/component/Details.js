@@ -16,6 +16,15 @@ const Detail = forwardRef((props, ref) => {
         search,
     }));
 
+    useEffect(() => {
+        // Set up logic here
+      
+        return () => {
+          // Cleanup logic here
+            console.log("Detail Destory");
+        };
+    }, []);  // Ensure dependencies are correctly set if needed
+
     const dispatch = useDispatch();
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();
@@ -245,7 +254,8 @@ const Detail = forwardRef((props, ref) => {
     };
     return (
         <>
-            {onload && searchCompleted 
+            {onload 
+                && searchCompleted 
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
                 <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
@@ -279,9 +289,9 @@ const Detail = forwardRef((props, ref) => {
 
 // export default Detail;
 
-const arePropsEqual = (prevProps, nextProps) => {
-    return prevProps.list === nextProps.list;
-}
+// const arePropsEqual = (prevProps, nextProps) => {
+//     return prevProps.list === nextProps.list;
+// }
 
 const MemoizedDetail = React.memo(Detail);
 export default MemoizedDetail;

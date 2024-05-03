@@ -17,6 +17,7 @@ const DetailPage = forwardRef((props, ref) => {
   // const thisState = useSelector((state) => getState(state));
   // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
+  const visible = useSelector((state) => getAttr(state,instanceId,'openModal.visible'));
   // const onloadGlobal = useSelector((state) => getState(state).onload);
   useMounted(() => {
     // search(); 
@@ -69,8 +70,8 @@ const DetailPage = forwardRef((props, ref) => {
   );
 });
 // export default DetailPage;
-const arePropsEqual = (prevProps, nextProps) => {
-  return prevProps.list === nextProps.list;
-}
+// const arePropsEqual = (prevProps, nextProps) => {
+//   return prevProps.list === nextProps.list;
+// }
 const MemoizedMyDetailPage = React.memo(DetailPage);
 export default MemoizedMyDetailPage;
