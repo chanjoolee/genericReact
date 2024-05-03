@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Card, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getState, actions } from '../state/stateSearch';
+import { getState, getAttr , actions } from '../state/stateSearch';
 import LayoutSearchRows from '@generic/component/layout/LayoutSearchRows';
 // import CommonModal from '@components/modal/CommonModal'; 
 import { Button , Modal } from 'antd';
 import DataArea from '@generic/component/DataArea';
+import GenericModal from '@generic/component/GenericModal';
 import SearchFilterContainer from './SearchFilterContainer';
 // import Detail from '@generic/component/Detail'; 
 import DetailPage from "@generic/container/DetailPage"; 
@@ -67,8 +68,10 @@ const SearchList = (props) => {
 
     // debug 모드에서 전근가능(디버그용) 
     // const thisState = useSelector((state) => getState(state));
-    const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
-    const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+    // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+    // const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+    const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
+    const openType = useSelector((state) => getAttr(state,instanceId,'openType'));
     
     // const searchFilterMemo = useMemo(() => {
     //     if (thisInstance && thisInstance.searchFilter) {
@@ -88,6 +91,7 @@ const SearchList = (props) => {
 
     return (
         <>
+            {/*
             {thisInstance && thisInstance.onload && thisInstance.openType === 'tab' && (
                 <LayoutSearchRows
                     key={`LayoutSearchRows_${instanceId}`}
@@ -104,7 +108,6 @@ const SearchList = (props) => {
                     <div>
                         <Spin spinning={false}>
                             <SearchFilterContainer instanceId={instanceId}  />
-                            {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
                         </Spin>
                     </div>
                 </>
@@ -115,68 +118,48 @@ const SearchList = (props) => {
                         <div style={{ display: 'none' }}>
                             <SearchFilterContainer instanceId={instanceId} />
                         </div>
-                        {/* <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />  */}
+                        
                     </Spin>
                 </div>
             )}
-            {thisInstance && thisInstance.onload && thisInstance.openModal.visible && (
-
-                <Modal
-                    title={thisInstance.openModal.initParams.entityNm}
-                    width={(() => {
-                        if (thisInstance.openModal.uiType === 'list') {
-                            return 1300;
-                        }
-                        else {
-                            return modalwidth.lg;
-                        }
-                    })()}
-                    // draggable={true}
-                    open={thisInstance.openModal.visible}
-                    className="modalGrid"
-                    onCancel={() => {
-                        let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false },
-                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
-                        ];
-                        dispatch(actions.setValues(values));
-                    }}
-                    onok={() => {
-                        let values = [
-                            { key: 'instances.' + instanceId + '.openModal.visible', value: false },
-                            { key: 'instances.' + instanceId + '.openModal.initParams', value: {} },
-                        ];
-                        dispatch(actions.setValues(values));
-                    }}
-                    footer={thisInstance.openModal.uiType === 'detail' && []}
-                >
-                    {thisInstance.openModal.uiType === 'list' && (
-                        <SearchPage
-                            initParams={(() => {
-                                let param = { ...thisInstance.openModal.initParams };
-                                param.callInstanceId = instanceId;
-                                return param;
-                            })()} 
-                        />
-                    )}
-                    {thisInstance.openModal.uiType === 'detail' && (
-                        <DetailPage
-                            initParams={(() => {
-                                let param = { ...thisInstance.openModal.initParams };
-                                param.callinstanceId = instanceId;
-                                return param;
-                            })()}
-                            ref={detailRef} 
-                        />
-                    )}
-                </Modal>
-                
+            */}
+             {onload && openType === 'tab' && (
+                <LayoutSearchRows
+                    key={`LayoutSearchRows_${instanceId}`}
+                    searchFilter={
+                        <SearchFilterContainer instanceId={instanceId} />
+                    }
+                    rowsections={
+                        <DataArea entityId={props.initParams.entityId} instanceId={instanceId}/>
+                    }
+                />
             )}
+            {onload && openType === 'modal' && (
+                <>
+                    <div>
+                        <Spin spinning={false}>
+                            <SearchFilterContainer instanceId={instanceId}  />
+                        </Spin>
+                    </div>
+                </>
+            )}
+            {onload && openType === 'embeded' && (
+                <div>
+                    <Spin spinning={false}>
+                        <div style={{ display: 'none' }}>
+                            <SearchFilterContainer instanceId={instanceId} />
+                        </div>
+                        
+                    </Spin>
+                </div>
+            )}
+            <GenericModal instanceId={instanceId} />
+
         </>
     );
 };
 
 
-export default SearchList;
-// const SearchListMemo = React.memo(SearchList);
-// export default SearchListMemo;
+// export default SearchList;
+const SearchListMemo = React.memo(SearchList);
+export default SearchListMemo;

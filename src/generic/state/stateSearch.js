@@ -360,7 +360,7 @@ export const getInstance = (state,id) => {
 };
 export const getAttr = (state,id,key) => {
     if (state[ROOT_SLICE_NAME][SLICE_NAME] != null && state[ROOT_SLICE_NAME][SLICE_NAME].instances[id] != null) {
-        return state[ROOT_SLICE_NAME][SLICE_NAME].instances[id][key];
+        return _.get(state[ROOT_SLICE_NAME][SLICE_NAME].instances[id],key);
     } else {
         return null;
     }

@@ -54,9 +54,9 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   // const list = useSelector(state => getMemoizedList(state, instanceId));
   const list = useSelector((state) => getAttr(state,instanceId,'list'));
   // const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
-  const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
+  // const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
   // const pageInfo = useSelector(state => getMemoizedPageInfo(state, instanceId));
-
+  const pageInfo = useSelector((state) => getAttr(state,instanceId,'pageInfo'));
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const cols = useSelector((state) => {
