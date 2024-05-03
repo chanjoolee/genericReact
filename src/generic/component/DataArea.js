@@ -343,7 +343,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       openType: 'modal',
                       uiType: 'detail',
                       editType: info.key,
-                      callinstanceId: thisInstance.id,
+                      callInstanceId: thisInstance.id,
                       filters: filters
                     };
                     let values = [

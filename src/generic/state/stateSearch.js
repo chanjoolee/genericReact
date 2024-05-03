@@ -64,7 +64,7 @@ const initialState = {
                 openType: 'modal',
                 editType: '', // edit, insert
                 uiType : 'detail',
-                callinstanceId : '',
+                callInstanceId : '',
                 filters: []
             }
         }

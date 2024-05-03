@@ -1,7 +1,7 @@
 import React, { useEffect, useState, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useMounted from "@hooks/useMounted";
-import { getState, actions } from '@generic/state/stateSearch';
+import { getState, getAttr , actions } from '@generic/state/stateSearch';
 // import { LayoutType1, LayoutType3 } from '@components/layout';
 // import TabContentHeader from '@components/layout/TabContentHeader';
 // import CommonModal from '@components/modal/CommonModal';
@@ -14,8 +14,9 @@ import '@generic/generic.css';
 const DetailPage = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const [instanceId, setInstanceId] = useState();
-  const thisState = useSelector((state) => getState(state));
-  const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+  // const thisState = useSelector((state) => getState(state));
+  // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+  const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
   // const onloadGlobal = useSelector((state) => getState(state).onload);
   useMounted(() => {
     // search(); 
@@ -27,10 +28,11 @@ const DetailPage = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    let vInstanceId = moment().format('YYYYMMDDHHmmssSSS');
-    if (thisState.instances.vInstanceId == null) {
-      vInstanceId += _.uniqueId(".");
-    }
+    // let vInstanceId = moment().format('YYYYMMDDHHmmssSSS');
+    let vInstanceId = moment().format('YYYYMMDDHHmmssSSS') + _.uniqueId("_");
+    // if (thisState.instances.vInstanceId == null) {
+    //   vInstanceId += _.uniqueId(".");
+    // }
     setInstanceId(vInstanceId);
     dispatch(
       actions.fetchInitialInfo({
@@ -41,7 +43,7 @@ const DetailPage = forwardRef((props, ref) => {
         openType: props.initParams.openType ? props.initParams.openType : 'tab',
         uiType: props.initParams.uiType ? props.initParams.uiType : 'list',
         editType: props.initParams.editType ? props.initParams.editType : 'edit',
-        callInstanceId: props.initParams.callinstanceId
+        callInstanceId: props.initParams.callInstanceId
       }),
     );
     return () => {
@@ -53,7 +55,7 @@ const DetailPage = forwardRef((props, ref) => {
 
   return (
     <>
-      {thisInstance && thisInstance.onload && (
+      {onload && (
         <>
           <Detail 
             entityId={props.initParams.entityId} 

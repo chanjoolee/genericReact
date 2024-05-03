@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { forwardRef, useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { actions, getState } from '../state/stateSearch';
+import { actions, getState , getAttr } from '../state/stateSearch';
 import useMounted from '@hooks/useMounted';
 import { DownOutlined, QuestionCircleOutlined, SelectOutlined } from '@ant-design/icons';
 
@@ -21,8 +21,11 @@ const Detail = forwardRef((props, ref) => {
     const [searchForm] = Form.useForm();
     // const list = useSelector((state) => getState(state) instances[instanceId].list); 
 
-    const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
+    // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     const searchCompleted = useSelector((state) => getState(state).searchCompleted);
+    const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
+    const cols = useSelector((state) => getAttr(state,instanceId,'entityInfo.cols'));
+    const list = useSelector((state) => getAttr(state,instanceId,'list'));
     // useMounted(() => {
     //     // search();
     //     console.log('useMounted');
@@ -30,13 +33,13 @@ const Detail = forwardRef((props, ref) => {
     // });
 
     const search = () => {
-        if (thisInstance && restProps.initParams && restProps.initParams.filters) {
+        if (onload && restProps.initParams.filters) {
             var payload = {
                 instanceId: instanceId,
                 filters: restProps.initParams.filters,
-                entityId: thisInstance.entityInfo.entityId,
-                tableName: thisInstance.entityInfo.entityId,
-                cols: _.filter(thisInstance.entityInfo.cols, (col) => {
+                entityId: entityId,
+                tableName: entityId,
+                cols: _.filter(cols, (col) => {
                     if (col.Name !== 'contextMenu') {
                         return true;
                     } else {
@@ -45,7 +48,7 @@ const Detail = forwardRef((props, ref) => {
                 }),
             };
             dispatch(actions.setSearchFilter(payload));
-        } else if (thisInstance && restProps.initParams && restProps.initParams.editType === 'insert') {
+        } else if (restProps.initParams.editType === 'insert') {
             console.log('this is insert detail type ');
         }
     };
@@ -69,14 +72,14 @@ const Detail = forwardRef((props, ref) => {
     };
     useEffect(() => {
         form.resetFields();
-        if(thisInstance.list.length > 0)
-            form.setFieldsValue(thisInstance.list[0]);
-    }, [thisInstance.list]);
+        if(list.length > 0)
+            form.setFieldsValue(list[0]);
+    }, [list]);
 
     const onSaveConfirm = (e) => {
-        if(thisInstance.editType == "view"){
+        if(restProps.initParams.editType == "view"){
             dispatch(actions.setValue2(
-                'instances.' + thisInstance.callInstanceId + '.openModal.visible',
+                'instances.' + restProps.initParams.callInstanceId + '.openModal.visible',
                 false
             ));
             return;
@@ -99,15 +102,15 @@ const Detail = forwardRef((props, ref) => {
                 let forms = form.getFieldsValue();
                 var payload = {};
                 _.merge(payload, {
-                    entityId: thisInstance.entityInfo.entityId,
-                    tableName: thisInstance.entityInfo.entityId,
-                    tableComment: thisInstance.entityInfo.entityNm,
-                    instanceId: thisInstance.id,
-                    editType: thisInstance.editType
+                    entityId: entityId,
+                    tableName: entityId,
+                    tableComment: restProps.initParams.entityNm,
+                    instanceId: instanceId ,
+                    editType: restProps.initParams.editType
                 });
 
-                let cols = []; let filters = [];
-                _.forEach(thisInstance.entityInfo.cols, (col, i) => {
+                let filters = [];
+                _.forEach(cols, (col, i) => {
                     let v = {
                         col: col.Name,
                         dbcolumnName: col.dbColumnName,
@@ -122,7 +125,7 @@ const Detail = forwardRef((props, ref) => {
                             col: col.Name,
                             dbColumnName: col.dbColumnName,
                             dbColumnComment: col.dbColumnComment,
-                            value: thisInstance.list[0][col.Name]
+                            value: list[0][col.Name]
                         });
                     }
                 });
@@ -170,14 +173,14 @@ const Detail = forwardRef((props, ref) => {
     };
 
     // Content 
-    let contentList = {
+    let contentList =  {
         list: [
             {
-                title: thisInstance.entityInfo.entityNm,
+                title: restProps.initParams.entityNm,
                 component: (
                     <>
-                        {thisInstance.entityInfo.cols.map((vCol, i) => {
-                            let col = thisInstance.entityInfo.cols[i];
+                        {_.concat([],cols).map((vCol, i) => {
+                            // let col = cols[i];
                             // console.log(col.Header + ":" + 1); 
                             // console.log(col); 
                             let _key = `detail_col_${instanceId}_${vCol.dataIndex}`;
@@ -185,8 +188,8 @@ const Detail = forwardRef((props, ref) => {
                                 <Col span={12} key={_key} >
                                     <Form.Item
                                         type="Text"
-                                        label={col.dbColumnComment}
-                                        name={col.dataIndex}
+                                        label={vCol.dbColumnComment}
+                                        name={vCol.dataIndex}
                                         // key={_key}
                                     >
                                         <Input />
@@ -201,9 +204,9 @@ const Detail = forwardRef((props, ref) => {
         buttons: (
             <Button onClick={onSaveConfirm} type="primary" htmlType="button">
                 {(() => {
-                    if (thisInstance.editType === 'edit') {
+                    if (restProps.initParams.editType === 'edit') {
                         return '저장';
-                    } else if (thisInstance.editType === 'insert') {
+                    } else if (restProps.initParams.editType === 'insert') {
                         return '추가';
                     } else {
                         return '확인'
@@ -212,11 +215,12 @@ const Detail = forwardRef((props, ref) => {
             </Button>
         )
     };
+   
     const onFinish = (values) => {
         // console.log(form.getFieldsValue(true)); 
         // onSave();
     };
-    if (thisInstance && thisInstance.onload && !_.isEmpty(thisInstance.list)) {
+    if (onload && !_.isEmpty(list)) {
         // makeContentList();
 
     }
@@ -241,7 +245,7 @@ const Detail = forwardRef((props, ref) => {
     };
     return (
         <>
-            {thisInstance && thisInstance.onload && searchCompleted 
+            {onload && searchCompleted 
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
                 <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
