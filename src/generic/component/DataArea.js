@@ -414,6 +414,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             onChange={handleTableChange}
             // size="small"
             scroll={{ x: 'max-content', y: 600 }}
+            // style={{ minHeight: '600px' }}
           />
         </>
       )}

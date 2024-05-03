@@ -99,7 +99,7 @@ const LayoutSide1 = () => {
   const { collapsed } = state;
   return (
     <>
-      <Layout style={{ minHeight: "100px" }}>
+      <Layout style={{ minHeight: "100vh" }}>
         <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
