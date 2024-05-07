@@ -86,13 +86,6 @@ const Detail = forwardRef((props, ref) => {
     }, [list]);
 
     const onSaveConfirm = (e) => {
-        if(restProps.initParams.editType == "view"){
-            dispatch(actions.setValue2(
-                'instances.' + restProps.initParams.callInstanceId + '.openModal.visible',
-                false
-            ));
-            return;
-        }
         // 공통 valid 체크 
         let validList = form.getFieldsError();
         for (var i = 0; i < validList.length; i++) {
@@ -103,6 +96,12 @@ const Detail = forwardRef((props, ref) => {
             }
         }
         onSave(e);
+    }
+    const onConfirm = (e) => {
+        dispatch(actions.setValue2(
+            'instances.' + restProps.initParams.callInstanceId + '.openModal.visible',
+            false
+        ));
     }
 
     const onSave = (e) => {
@@ -211,17 +210,20 @@ const Detail = forwardRef((props, ref) => {
             }
         ],
         buttons: (
-            <Button onClick={onSaveConfirm} type="primary" htmlType="button">
-                {(() => {
-                    if (restProps.initParams.editType === 'edit') {
-                        return '저장';
-                    } else if (restProps.initParams.editType === 'insert') {
-                        return '추가';
-                    } else {
-                        return '확인'
-                    }
-                })()}
-            </Button>
+            <>
+                <Button onClick={onSaveConfirm} type="primary" htmlType="button">
+                    {(() => {
+                        if (restProps.initParams.editType === 'edit') {
+                            return '저장';
+                        } else if (restProps.initParams.editType === 'insert') {
+                            return '추가';
+                        }
+                    })()}
+                </Button>
+                <Button onClick={onConfirm} type="primary" htmlType="button">
+                    '확인'
+                </Button>
+            </>
         )
     };
    
