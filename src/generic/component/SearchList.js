@@ -15,6 +15,7 @@ import { schemaGeneric } from '@generic/schemaGeneric.js';
 import moment from 'moment';
 import _ from 'lodash';
 import '@generic/generic.css';
+import ErrorBoundary from '@generic/component/layout/ErrorBoundary'
 
 
 const SearchList = (props) => {
@@ -124,15 +125,17 @@ const SearchList = (props) => {
             )}
             */}
              {onload && openType === 'tab' && (
-                <LayoutSearchRows
-                    key={`LayoutSearchRows_${instanceId}`}
-                    searchFilter={
-                        <SearchFilterContainer instanceId={instanceId} />
-                    }
-                    rowsections={
-                        <DataArea entityId={props.initParams.entityId} instanceId={instanceId}/>
-                    }
-                />
+                <ErrorBoundary>
+                    <LayoutSearchRows
+                        key={`LayoutSearchRows_${instanceId}`}
+                        searchFilter={
+                            <SearchFilterContainer instanceId={instanceId} />
+                        }
+                        rowsections={
+                            <DataArea entityId={props.initParams.entityId} instanceId={instanceId}/>
+                        }
+                    />
+                    </ErrorBoundary>
             )}
             {onload && openType === 'modal' && (
                 <>

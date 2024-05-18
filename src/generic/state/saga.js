@@ -117,7 +117,7 @@ function* getListPage({ payload }) {
       newInstance.listTotalCount = data.totalCnt;
       newInstance.pageInfo.total = data.totalCnt;
       newInstance.searchCompleted = true;
-      newState.instances[payload.instanceId] = newInstance ;
+      // newState.instances[payload.instanceId] = newInstance ;
 
     } else if (instance.uiType === 'detail') {
       values.push({
@@ -145,7 +145,7 @@ function* getListPage({ payload }) {
       // newInstance.editType = 'edit';
       newInstance.listTotalcount = data.totalCnt;
       newInstance.searchCompleted = true;
-      newState.instances[payload.instanceId] = newInstance ;
+      // newState.instances[payload.instanceId] = newInstance ;
     }
 
     // yield put(actions.setValues(values));

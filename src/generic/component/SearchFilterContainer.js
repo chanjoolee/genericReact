@@ -10,6 +10,7 @@ import _ from "lodash";
 import { schemaGeneric, addCustomSearchFilters } from "@generic/schemaGeneric.js";
 import callApi from "@lib/callApi";
 import { join } from "redux-saga/effects";
+import state from "@/tabs/state";
 
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   console.log("SearchFilterContainer was rendered at", new Date().toLocaleTimeString());
@@ -158,7 +159,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
     return searchFilter;
 
-  }, [ this_entityId, _schemaGeneric]);
+  }, [ form, this_entityId]);
 
   const search = useCallback(() => {
     let payload = form.getFieldsValue();
@@ -234,7 +235,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // makeSearchFilter();
   const getFields = useCallback(() => {
     return makeSearchFilter.map((filter, index) => filter.component);
-  }, [makeSearchFilter]);
+  }, [makeSearchFilter,form]);
 
   const formItemLayout = {
     labelCol: {
@@ -256,7 +257,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {onload && searchCompleted && (
+    {onload  && (
       <Form form={form} {...formProps}  {...formItemLayout} >
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
@@ -300,17 +301,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
 
 const arePropsEqual = (prevProps, nextProps) => {
-  // let filter1 = prevProps.searchState.instances[prevProps.instanceId].searchFilter;
-  // let filter2 = nextProps.searchState.instances[nextProps.instanceId].searchFilter;
-  // return filter1 === filter2 ;
- 
-  // return prevProps.searchFilter.filters === nextProps.searchFilter.filters;
-  let isEqual =  _.isEqual(prevProps.searchFilter.filters, nextProps.searchFilter.filters);
-  // console.log(`SearchFilterContainer is Equal? ${isEqual}`);
+  let isEqual =  _.isEqual(prevProps.instanceId, nextProps.instanceId);
   return isEqual;
 }
 
-const SearchFilterContainerMemo = React.memo(SearchFilterContainer );
+const SearchFilterContainerMemo = React.memo(SearchFilterContainer ,arePropsEqual);
 // const mapStateToProps = (state) => {
 //   return ({
 //     searchState: state.generic.search
