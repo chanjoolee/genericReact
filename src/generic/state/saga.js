@@ -162,7 +162,7 @@ function* save({ payload }) {
     url = 'insert';
   }
   const { isSuccess, data, resultCode, message } = yield call(callApi, {
-    url: '/offer/generic/' + url,
+    url: '/generic/' + url,
     method: 'post',
     data: payload,
   });
@@ -170,7 +170,8 @@ function* save({ payload }) {
   if (isSuccess && resultCode >= 0) {
     // message.success(i18n.t('message.save')); 
     antMessage.success('저장이 완료되었습니다.');
-    yield put(actions.getListPage({ instanceId: payload.instanceId }))
+    // 다시조회할 필요는 없을 듯.
+    // yield put(actions.getListPage({ instanceId: payload.instanceId }))
     // getAnplDsplWithdrawPage(); 
   } else {
     // modalMessage({

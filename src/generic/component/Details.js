@@ -86,16 +86,27 @@ const Detail = forwardRef((props, ref) => {
     }, [list]);
 
     const onSaveConfirm = (e) => {
-        // 공통 valid 체크 
-        let validList = form.getFieldsError();
-        for (var i = 0; i < validList.length; i++) {
-            console.log(validList[i].errors);
-            if (validList[i].errors.length > 0) {
-                message.warning(validList[i].errors[0]);
-                return false;
+        // let validList = [];
+        switch (restProps.initParams.editType ) {
+            case 'edit':
+            case 'insert':{
+                // 공통 valid 체크 
+                let validList = form.getFieldsError();
+                for (var i = 0; i < validList.length; i++) {
+                    console.log(validList[i].errors);
+                    if (validList[i].errors.length > 0) {
+                        message.warning(validList[i].errors[0]);
+                        return false;
+                    }
+                }
+                onSave(e);
+                break;
             }
+            default: 
+                onConfirm(e);
+                
         }
-        onSave(e);
+        return true;
     }
     const onConfirm = (e) => {
         dispatch(actions.setValue2(
@@ -112,12 +123,13 @@ const Detail = forwardRef((props, ref) => {
                 _.merge(payload, {
                     entityId: entityId,
                     tableName: entityId,
+                    filters: restProps.initParams.filters,
                     tableComment: restProps.initParams.entityNm,
                     instanceId: instanceId ,
                     editType: restProps.initParams.editType
                 });
 
-                let filters = [];
+                let values = [];
                 _.forEach(cols, (col, i) => {
                     let v = {
                         col: col.Name,
@@ -126,20 +138,20 @@ const Detail = forwardRef((props, ref) => {
                         value: forms[col.Name]
                     };
                     if (!col.isSystemColumn) {
-                        cols.push(v);
+                        values.push(v);
                     }
-                    if (col.iskey) {
-                        filters.push({
-                            col: col.Name,
-                            dbColumnName: col.dbColumnName,
-                            dbColumnComment: col.dbColumnComment,
-                            value: list[0][col.Name]
-                        });
-                    }
+                    // if (col.iskey) {
+                    //     values.push({
+                    //         col: col.Name,
+                    //         dbColumnName: col.dbColumnName,
+                    //         dbColumnComment: col.dbColumnComment,
+                    //         value: list[0][col.Name]
+                    //     });
+                    // }
                 });
 
                 payload.cols = cols;
-                payload.filters = filters;
+                payload.values = values;
                 dispatch(actions.save(payload));
             })
             .catch((error) => {
@@ -217,12 +229,14 @@ const Detail = forwardRef((props, ref) => {
                             return '저장';
                         } else if (restProps.initParams.editType === 'insert') {
                             return '추가';
+                        } else {
+                            return '확인'
                         }
                     })()}
                 </Button>
-                <Button onClick={onConfirm} type="primary" htmlType="button">
-                    '확인'
-                </Button>
+                {/* <Button onClick={onConfirm} type="primary" htmlType="button">
+                    확인
+                </Button> */}
             </>
         )
     };

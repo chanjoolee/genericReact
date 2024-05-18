@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useCallback, useMemo } from "react";
 import { useDispatch, useSelector ,connect } from "react-redux";
+import { createSelector } from 'reselect';
 import { getState } from "../state/stateSearch";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Col, Row } from "antd";
@@ -15,12 +16,18 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // window.columns - columns;
   const _schemaGeneric = schemaGeneric;
   const dispatch = useDispatch();
-  const event = useSelector((state) => getState(state).searchEvent);
-  const codelist = useSelector((state) => getState(state).codelist);
-  const thisState = useSelector((state) => getState(state));
-  const thisInstance = useSelector(
-    (state) => getState(state).instances[instanceId]
-  );
+  // const event = useSelector((state) => getState(state).searchEvent);
+  // const codelist = useSelector((state) => getState(state).codelist);
+  // const thisState = useSelector((state) => getState(state));
+  // const thisInstance = useSelector(
+  //   (state) => getState(state).instances[instanceId]
+  // );
+  const this_entityId = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityId);
+  const entityNm = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityNm);
+  const cols =  useSelector((state) => getState(state).instances[instanceId].entityInfo.cols);
+  const parents =  useSelector((state) => getState(state).instances[instanceId].entityInfo.parents);
+  const openType =  useSelector((state) => getState(state).instances[instanceId].openType);
+  const onload =  useSelector((state) => getState(state).instances[instanceId].onload);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
@@ -37,102 +44,59 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   //   search();
   // });
 
-  // useMounted 는 왜 안먹지. useEffect 를 써야하나
-  useEffect(() => {
-    // Initialization logic...
-    search();
-  }, [dispatch]);
 
-  var searchFilter = [];
-  const search = () => {
-    let payload = form.getFieldsValue();
-    // parent join
-    payload = _.merge(payload, {
-      entityId: thisState.instances[instanceId].entityInfo.entityId,
-      tableName: thisState.instances[instanceId].entityInfo.entityId,
-      tableComment: thisInstance.entityInfo.entityNm,
-      cols: _.filter(thisState.instances[instanceId].entityInfo.cols, (col) => {
-        if (col.Name !== "contextMenu") {
-          return true;
-        } else {
-          return false;
-        }
-      }),
-      instanceId: instanceId,
-    });
 
-    let filters = [];
-    let forms = form.getFieldsValue();
-    _.forEach(searchFilter, (search) => {
-      let elName = _.camelCase(search.join.childColumn.column_name);
-      let filter = {
-        col: elName,
-        dbcolumnName: search.join.childColumn.column_name,
-        value: forms[elName],
-        joinInfo: search.join
-      };
-      filters.push(filter);
-    });
-    payload.filters = filters;
-    if (thisInstance.openType === "embeded") {
-      getListPageAsync(payload);
-      dispatch(
-        actions.setValue2("instances." + instanceId + ".searchFilter", payload)
-      );
-    } else {
-      dispatch(actions.setSearchFilter(payload));
-    }
+  // var searchFilter = [];
 
-    
-  };
 
-  const getListPageAsync = async (payload) => {
-    let searchFilter = payload;
-    let pageInfo = thisInstance.pageInfo;
-    let instance = thisInstance;
 
-    let { isSuccess, data } = await callApi({
-      url: "/offer/generic/getListPage",
-      method: "post",
-      // data: payload,
-      params: pageInfo,
-      data: searchFilter,
-    });
+  // const getListPageAsync = useCallback(async (payload) => {
+  //   let searchFilter = payload;
+  //   let pageInfo = thisInstance.pageInfo;
+  //   let instance = thisInstance;
 
-    if (isSuccess && data) {
-      let values = [];
-      if (instance.uiType === "list") {
-        values.push({
-          key: "instances." + payload.instanceId + "list",
-          value: data.list,
-        });
-        values.push({
-          key: "instances." + payload.instanceId + ".listTotalcount",
-          value: data.totalcnt,
-        });
-      } else if (instance.uiType === "detail") {
-        values.push({
-          key: "instances." + payload.instanceId + ".list",
-          value: data.list,
-        });
-        values.push({
-          key: "instances." + payload.instanceId + ".editType",
-          value: "edit",
-        });
-        values.push({
-          key: "instances." + payload.instanceId + ".listTotalcount",
-          value: data.totalent,
-        });
-        if (data.list.length > 0) {
-          values.push({
-            key: "instances." + payload.instanceId + ".form",
-            value: data.list[0],
-          });
-        }
-      }
-      dispatch(actions.setValues(values));
-    }
-  };
+  //   let { isSuccess, data } = await callApi({
+  //     url: "/generic/getListPage",
+  //     method: "post",
+  //     // data: payload,
+  //     params: pageInfo,
+  //     data: searchFilter,
+  //   });
+
+  //   if (isSuccess && data) {
+  //     let values = [];
+  //     if (instance.uiType === "list") {
+  //       values.push({
+  //         key: "instances." + payload.instanceId + "list",
+  //         value: data.list,
+  //       });
+  //       values.push({
+  //         key: "instances." + payload.instanceId + ".listTotalcount",
+  //         value: data.totalcnt,
+  //       });
+  //     } else if (instance.uiType === "detail") {
+  //       values.push({
+  //         key: "instances." + payload.instanceId + ".list",
+  //         value: data.list,
+  //       });
+  //       values.push({
+  //         key: "instances." + payload.instanceId + ".editType",
+  //         value: "edit",
+  //       });
+  //       values.push({
+  //         key: "instances." + payload.instanceId + ".listTotalcount",
+  //         value: data.totalent,
+  //       });
+  //       if (data.list.length > 0) {
+  //         values.push({
+  //           key: "instances." + payload.instanceId + ".form",
+  //           value: data.list[0],
+  //         });
+  //       }
+  //     }
+  //     dispatch(actions.setValues(values));
+  //   }
+  // }, [thisInstance, dispatch]);
 
   const formProps = {
     onFinish: () => {
@@ -140,10 +104,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     },
   };
 
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-    search();
-  };
+
 
 
   const rlcmonchange = () => {
@@ -152,8 +113,9 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     }
   };
 
-  const makeSearchFilter = () => {
-    let entityId = thisState.instances[instanceId].entityInfo.entityId;
+  const makeSearchFilter = useMemo(() => {
+    let searchFilter = [];
+    let entityId = this_entityId;
     let entityobject = _.find(_schemaGeneric.entities, { entityId: entityId });
     let forms = form.getFieldsValue();
     // find parents
@@ -161,7 +123,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       to: { entityId: entityId },
     });
     // Relations
-    _.forEach(thisInstance.entityInfo.parents, (parent, i) => {
+    _.forEach(parents, (parent, i) => {
       _.forEach(parent.joins, (join, j) => {
         // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
         // 나중에 좀더 기능 고민 필요함.
@@ -194,24 +156,85 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     });
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
+    return searchFilter;
 
+  }, [ this_entityId, _schemaGeneric]);
 
-  };
+  const search = useCallback(() => {
+    let payload = form.getFieldsValue();
+    // parent join
+    payload = _.merge(payload, {
+      entityId: this_entityId,
+      tableName: this_entityId,
+      tableComment: entityNm,
+      cols: _.filter(cols, (col) => {
+        if (col.Name !== "contextMenu") {
+          return true;
+        } else {
+          return false;
+        }
+      }),
+      instanceId: instanceId,
+    });
 
-  const getFields = () => {
-    let count = searchFilter.length;
-    const children = [];
-
-
-    for (let i = 0; i < count; i++) {
-      children.push(
-        searchFilter[i].component
+    let filters = [];
+    let forms = form.getFieldsValue();
+    _.forEach(makeSearchFilter, (_search) => {
+      let elName = _.camelCase(_search.join.childColumn.column_name);
+      let filter = {
+        col: elName,
+        dbcolumnName: _search.join.childColumn.column_name,
+        value: forms[elName],
+        joinInfo: _search.join
+      };
+      filters.push(filter);
+    });
+    payload.filters = filters;
+    if (openType === "embeded") {
+      // getListPageAsync(payload);
+      dispatch(
+        actions.setValue2("instances." + instanceId + ".searchFilter", payload)
       );
+    } else {
+      // setTimeout(() => {
+      //   dispatch(actions.setSearchFilter(payload));
+      // },100);
+      dispatch(actions.setSearchFilter(payload));
     }
 
-    return children;
-  };
-  makeSearchFilter();
+    
+  },[ instanceId, makeSearchFilter]);
+
+  // useMounted 는 왜 안먹지. useEffect 를 써야하나
+  useEffect(() => {
+    // Initialization logic...
+    search();
+  }, [dispatch]);
+
+  // const onFinish = useCallback((values) => {
+  //   console.log('Received values of form: ', values);
+  //   search();
+  // }, [search]);
+
+  // const searchFilter = useMemo(() => makeSearchFilter());
+
+  // const getFields = () => {
+  //   let count = searchFilter.length;
+  //   const children = [];
+
+
+  //   for (let i = 0; i < count; i++) {
+  //     children.push(
+  //       searchFilter[i].component
+  //     );
+  //   }
+
+  //   return children;
+  // };
+  // makeSearchFilter();
+  const getFields = useCallback(() => {
+    return makeSearchFilter.map((filter, index) => filter.component);
+  }, [makeSearchFilter]);
 
   const formItemLayout = {
     labelCol: {
@@ -233,7 +256,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {thisInstance && thisInstance.onload && searchCompleted && (
+    {onload && searchCompleted && (
       <Form form={form} {...formProps}  {...formItemLayout} >
         <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
         <Row key={'search_row_1'}>
@@ -282,12 +305,12 @@ const arePropsEqual = (prevProps, nextProps) => {
   // return filter1 === filter2 ;
  
   // return prevProps.searchFilter.filters === nextProps.searchFilter.filters;
-  let isEqual =  _.isEqual(prevProps.searchFilter.filters,nextProps.searchFilter.filters);
+  let isEqual =  _.isEqual(prevProps.searchFilter.filters, nextProps.searchFilter.filters);
   // console.log(`SearchFilterContainer is Equal? ${isEqual}`);
   return isEqual;
 }
 
-const SearchFilterContainerMemo = React.memo(SearchFilterContainer);
+const SearchFilterContainerMemo = React.memo(SearchFilterContainer );
 // const mapStateToProps = (state) => {
 //   return ({
 //     searchState: state.generic.search

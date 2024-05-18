@@ -67,7 +67,7 @@ const SearchList = (props) => {
     }, [dispatch]);
 
     // debug 모드에서 전근가능(디버그용) 
-    // const thisState = useSelector((state) => getState(state));
+    const thisState = useSelector((state) => getState(state));
     // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     // const searchCompleted = useSelector((state) => getState(state).searchCompleted);
     const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
@@ -80,11 +80,11 @@ const SearchList = (props) => {
     //     return null;
     //   }, [thisInstance]);
 
-    // window.state_search = {
-    //     state: thisState,
-    //     dispatch: dispatch,
-    //     actions: actions
-    // };
+    window.state_search = {
+        state: thisState,
+        dispatch: dispatch,
+        actions: actions
+    };
     const saveDetail = () => {
         detailRef.current.onSaveConfirm();
     };

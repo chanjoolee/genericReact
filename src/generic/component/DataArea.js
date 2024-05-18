@@ -383,10 +383,11 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 },
               },
             ]}
-            rowKey={(record, index) => {
-              // return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
-              return record.rowNumber + '';
-            }}
+            // rowKey={(record, index) => {
+            //   // return ((pageInfo.current - 1) * pageInfo.pageSize) + index + 1 ;
+            //   return record.rowNumber + '';
+            // }}
+            rowKey={(record) => record.rowNumber?.toString() || record.id?.toString()}
             dataSource={list}
             pagination={pageInfo}
             loading={loading}
