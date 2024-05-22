@@ -18,23 +18,23 @@ function* fetchInitialInfo({ payload }) {
     method: 'post',
     // credentials: 'include',
     data: {
-      sqlId  : 'com.mapper.inventory.selectCommonUseList', 
-      entityId : payload.entityId
+      sqlId: 'com.mapper.inventory.selectCommonUseList',
+      entityId: payload.entityId
     }
   });
 
   let vCommonCodes = data.list;
-  if (isSuccess && data ) {
+  if (isSuccess && data) {
     let v_codeCategoryList = _.map(vCommonCodes, (v, k) => {
       return { codeCategory: v.codeCategory };
     });
-    v_codeCategoryList.push({codeCategory: 'xxxxxx',codeCategoryNm : 'xxxxxx'});
+    v_codeCategoryList.push({ codeCategory: 'xxxxxx', codeCategoryNm: 'xxxxxx' });
     let { isSuccess, data } = yield call(callApi, {
       url: '/generic/selectList',
       method: 'post',
       data: {
-        codeCategoryList: v_codeCategoryList ,
-        sqlId  : 'com.mapper.inventory.selectCommonCodeList', 
+        codeCategoryList: v_codeCategoryList,
+        sqlId: 'com.mapper.inventory.selectCommonCodeList',
       }
     });
 
@@ -43,8 +43,8 @@ function* fetchInitialInfo({ payload }) {
 
       //category 하위에 codeList 만들기
       let v_allCodeList = data.list;
-      _.forEach(vCommonCodes, (m,i) => {
-        let v_codeList = _.filter(v_allCodeList , { codeCategory : m.codeCategory } );
+      _.forEach(vCommonCodes, (m, i) => {
+        let v_codeList = _.filter(v_allCodeList, { codeCategory: m.codeCategory });
         m.list = v_codeList;
       });
 
@@ -96,7 +96,7 @@ function* getListPage({ payload }) {
     let values = [];
     // let newState  = { ...state };
     // let newInstance = { ...instance };
-    let newState  = _.cloneDeep(state);
+    let newState = _.cloneDeep(state);
     let newInstance = _.cloneDeep(instance);
     if (instance.uiType === 'list') {
       values.push({
@@ -172,6 +172,12 @@ function* save({ payload }) {
     antMessage.success('저장이 완료되었습니다.');
     // 다시조회할 필요는 없을 듯.
     // yield put(actions.getListPage({ instanceId: payload.instanceId }))
+    if (instance.callInstanceId != null && !_.isEmpty(instance.callInstanceId)) {
+      let parentIns = yield select((state) => getState(state).instances[instance.callInstanceId]);
+      if (parentIns != null) {
+        yield put(actions.getListPage({ instanceId: instance.callInstanceId }))
+      }
+    }
     // getAnplDsplWithdrawPage(); 
   } else {
     // modalMessage({
