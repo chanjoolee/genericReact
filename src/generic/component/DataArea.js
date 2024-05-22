@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState, getInstance, getAttr } from '@/generic/state/stateSearch';
-import { useDispatch, useSelector, connect  } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
 import { Table, Dropdown, Space, message, Modal } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
@@ -17,7 +17,7 @@ import { join } from 'redux-saga/effects';
 import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
 import { createSelector } from 'reselect';
 import SearchPage from '@generic/container/SearchPage';
-import DetailPage from "@generic/container/DetailPage"; 
+import DetailPage from "@generic/container/DetailPage";
 
 // Assuming getState gets the appropriate slice of state, adjust this as per your state structure
 const getList = (state, instanceId) => getState(state).instances[instanceId].list;
@@ -52,11 +52,11 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
   // const list = useSelector((state) => getState(state).instances[instanceId].list);
   // const list = useSelector(state => getMemoizedList(state, instanceId));
-  const list = useSelector((state) => getAttr(state,instanceId,'list'));
+  const list = useSelector((state) => getAttr(state, instanceId, 'list'));
   // const listTotalCount = useSelector((state) => getState(state).instances[instanceId].listTotalCount); //전체 조회건수 
   // const pageInfo = useSelector((state) => getState(state).instances[instanceId].pageInfo); //HOSE 
   // const pageInfo = useSelector(state => getMemoizedPageInfo(state, instanceId));
-  const pageInfo = useSelector((state) => getAttr(state,instanceId,'pageInfo'));
+  const pageInfo = useSelector((state) => getAttr(state, instanceId, 'pageInfo'));
   const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const cols = useSelector((state) => {
@@ -300,7 +300,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
 
   return (
     <>
-      {thisInstance && thisInstance.onload && searchCompleted  && (
+      {thisInstance && thisInstance.onload && searchCompleted && (
         <>
           <Table
             columns={[
@@ -329,10 +329,10 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                     _.forEach(keyColumns, (col, i) => {
                       let value = record[col.dataIndex];
                       if (value != null) {
-                        filters.push({ 
-                          col :col.dataIndex,
-                          dbcolumnName : col.dbColumnName ,
-                          value 
+                        filters.push({
+                          col: col.dataIndex,
+                          dbColumnName: col.dbColumnName,
+                          value
                         });
                       }
                     });
@@ -350,7 +350,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       { key: 'instances.' + instanceId + '.openModal.visible', value: true },
                       { key: 'instances.' + instanceId + '.openModal.uiType', value: 'detail' },
                       { key: 'instances.' + instanceId + '.openModal.editType', value: info.key },
-                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams } ,
+                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams },
 
                     ];
                     // 모달창띄우기 
@@ -367,7 +367,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                           // console.log(info.item.props.information);
                           // console.log(record);
 
-                          openModalDetail(info);  
+                          openModalDetail(info);
                         }
                       }}
                     >
@@ -394,7 +394,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             onChange={handleTableChange}
             size="middle" // small middle large
             scroll={{ x: 'max-content', y: 600 }}
-            // style={{ minHeight: '600px' }}
+          // style={{ minHeight: '600px' }}
           />
         </>
       )}

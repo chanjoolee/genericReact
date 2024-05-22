@@ -48,7 +48,7 @@ const initialState = {
             total: 0,
             showTotal: (total, range) => {
                 // console.log(range);
-                return `Total ${total}` ;
+                return `Total ${total}`;
             },
         },
         // 어떤형식으로 호출하는가
@@ -63,8 +63,8 @@ const initialState = {
                 entityNm: '',
                 openType: 'modal',
                 editType: '', // edit, insert
-                uiType : 'detail',
-                callInstanceId : '',
+                uiType: 'detail',
+                callInstanceId: '',
                 filters: []
             }
         }
@@ -118,7 +118,7 @@ const makeSheetCols = (instance) => {
             , dbColumnName: v.column_name
             , width: 120
         };
-        
+
 
         if (_.includes(['RGSR_ID', 'RGST_DTM', 'UPPR_ID', 'UPD_DTM'], v.column_name)) {
             vRtn.Visible = false;
@@ -165,7 +165,7 @@ const makeSheetCols = (instance) => {
                 type: 'parent',
                 parentColumn: targetColumn,
                 childColumn: childColumn,
-                nameColumn : null ,  // column info 임 {} 
+                nameColumn: null,  // column info 임 {} 
             };
             parent.joins.push(join);
             // name column 우선적으로 cols 에서 가져옮.
@@ -174,11 +174,11 @@ const makeSheetCols = (instance) => {
                 // cols 에서 컬럼추가
             }
             // name column 만약 없다면 schemaGeneric.nameColumns 에서 가져옮
-            if(join.nameColumn == null){
-                let findName = _.find( _schemaGeneric.nameColumns , { entityId : rel.from.entityId , cols: [{column_name : col.column_name}]});
+            if (join.nameColumn == null) {
+                let findName = _.find(_schemaGeneric.nameColumns, { entityId: rel.from.entityId, cols: [{ column_name: col.column_name }] });
                 // cols: {column_name : col.column_name}
-                if (findName != null){
-                    join.nameColumn = _.find(targetEntity.cols, { column_name: findName.cols[0].name_column }); 
+                if (findName != null) {
+                    join.nameColumn = _.find(targetEntity.cols, { column_name: findName.cols[0].name_column });
                 }
             }
         })
@@ -257,7 +257,7 @@ const reducers = {
         //         callInstance.calleeInstance = {};
         //     }
         // }
-        
+
         delete state.instances[instanceId];
     },
     setInitialInfo: (state, { payload: { instanceId, entityId, tableName, codeList, openType, uiType, editType, callInstanceId } }) => {
@@ -279,13 +279,13 @@ const reducers = {
         newinstance.uiType = uiType;
         newinstance.editType = editType;
         newinstance.onload = true;
-        if (callInstanceId != null){
+        if (callInstanceId != null) {
             newinstance.callInstanceId = callInstanceId;
             // let callInstance = state.instances[callInstanceId];
             // newinstance.callInstance = callInstance;
             // callInstance.calleeInstance = newinstance;
         }
-        
+
         // // after onload
         // let custom = _schemaGeneric.customFunctions[newinstance.entityInfo.entityId];
         // if (custom != null) {
@@ -325,14 +325,14 @@ const reducers = {
         // state.instances[instanceId].onload = true;
     },
     setValue3: (state, { payload: { instanceId, searchCompleted, ...rest } }) => {
-        state.instances[instanceId] = { ...rest };
+        state.instances[instanceId] = { ...state.instances[instanceId], ...rest };
         state.searchCompleted = searchCompleted;
     },
     // setValue3: (state, { payload }) => {
     //     state = { ...payload } ;
     // },
     setSearchFilter: (state, { payload: { instanceId, ...rest } }) => {
-        state.instances[instanceId].searchFilter = { ...state.instances[instanceId].searchFilter , ...rest };
+        state.instances[instanceId].searchFilter = { ...state.instances[instanceId].searchFilter, ...rest };
         state.instances[instanceId].pageInfo.current = 1;
         state.searchCompleted = false;
     },
@@ -351,16 +351,16 @@ const slice = createSlice({
 
 export const getStateAll = (state) => state;
 export const getState = (state) => state[ROOT_SLICE_NAME][SLICE_NAME];
-export const getInstance = (state,id) => {
+export const getInstance = (state, id) => {
     if (state[ROOT_SLICE_NAME][SLICE_NAME] != null) {
         return state[ROOT_SLICE_NAME][SLICE_NAME].instances[id];
     } else {
         return null;
     }
 };
-export const getAttr = (state,id,key) => {
+export const getAttr = (state, id, key) => {
     if (state[ROOT_SLICE_NAME][SLICE_NAME] != null && state[ROOT_SLICE_NAME][SLICE_NAME].instances[id] != null) {
-        return _.get(state[ROOT_SLICE_NAME][SLICE_NAME].instances[id],key);
+        return _.get(state[ROOT_SLICE_NAME][SLICE_NAME].instances[id], key);
     } else {
         return null;
     }

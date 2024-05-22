@@ -1,5 +1,5 @@
-import React, { useEffect, useState ,useCallback, useMemo } from "react";
-import { useDispatch, useSelector ,connect } from "react-redux";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useDispatch, useSelector, connect } from "react-redux";
 import { createSelector } from 'reselect';
 import { getState } from "../state/stateSearch";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
@@ -25,10 +25,10 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // );
   const this_entityId = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityId);
   const entityNm = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityNm);
-  const cols =  useSelector((state) => getState(state).instances[instanceId].entityInfo.cols);
-  const parents =  useSelector((state) => getState(state).instances[instanceId].entityInfo.parents);
-  const openType =  useSelector((state) => getState(state).instances[instanceId].openType);
-  const onload =  useSelector((state) => getState(state).instances[instanceId].onload);
+  const cols = useSelector((state) => getState(state).instances[instanceId].entityInfo.cols);
+  const parents = useSelector((state) => getState(state).instances[instanceId].entityInfo.parents);
+  const openType = useSelector((state) => getState(state).instances[instanceId].openType);
+  const onload = useSelector((state) => getState(state).instances[instanceId].onload);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
@@ -149,17 +149,17 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         );
         searchFilter.push({
           component: component,
-          join : join
+          join: join
         });
-  
+
       });
-      
+
     });
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
     return searchFilter;
 
-  }, [ form, this_entityId]);
+  }, [form, this_entityId]);
 
   const search = useCallback(() => {
     let payload = form.getFieldsValue();
@@ -184,7 +184,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       let elName = _.camelCase(_search.join.childColumn.column_name);
       let filter = {
         col: elName,
-        dbcolumnName: _search.join.childColumn.column_name,
+        dbColumnName: _search.join.childColumn.column_name,
         value: forms[elName],
         joinInfo: _search.join
       };
@@ -203,8 +203,8 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       dispatch(actions.setSearchFilter(payload));
     }
 
-    
-  },[ instanceId, makeSearchFilter]);
+
+  }, [instanceId, makeSearchFilter]);
 
   // useMounted 는 왜 안먹지. useEffect 를 써야하나
   useEffect(() => {
@@ -235,7 +235,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // makeSearchFilter();
   const getFields = useCallback(() => {
     return makeSearchFilter.map((filter, index) => filter.component);
-  }, [makeSearchFilter,form]);
+  }, [makeSearchFilter, form]);
 
   const formItemLayout = {
     labelCol: {
@@ -257,43 +257,43 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   };
   return (
     <>
-    {onload  && (
-      <Form form={form} {...formProps}  {...formItemLayout} >
-        <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
-        <Row key={'search_row_1'}>
-          <Col
-            span={24}
-            style={{
-              textAlign: "right",
-            }}
-          >
-            <Button type="primary" htmlType="submit">
-              Search
-            </Button>
-            <Button
+      {onload && (
+        <Form form={form} {...formProps}  {...formItemLayout} >
+          <Row gutter={24} key={'search_row_0'}>{getFields()}</Row>
+          <Row key={'search_row_1'}>
+            <Col
+              span={24}
               style={{
-                margin: "0 8px",
-              }}
-              onClick={() => {
-                form.resetFields();
+                textAlign: "right",
               }}
             >
-              Clear
-            </Button>
-            <a
-              style={{
-                fontSize: 12,
-              }}
-              onClick={() => {
-                setExpand(!expand);
-              }}
-            >
-              {expand ? <UpOutlined /> : <DownOutlined />} Collapse
-            </a>
-          </Col>
-        </Row>
-      </Form>
-    )}
+              <Button type="primary" htmlType="submit">
+                Search
+              </Button>
+              <Button
+                style={{
+                  margin: "0 8px",
+                }}
+                onClick={() => {
+                  form.resetFields();
+                }}
+              >
+                Clear
+              </Button>
+              <a
+                style={{
+                  fontSize: 12,
+                }}
+                onClick={() => {
+                  setExpand(!expand);
+                }}
+              >
+                {expand ? <UpOutlined /> : <DownOutlined />} Collapse
+              </a>
+            </Col>
+          </Row>
+        </Form>
+      )}
     </>
   );
 };
@@ -301,11 +301,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
 
 const arePropsEqual = (prevProps, nextProps) => {
-  let isEqual =  _.isEqual(prevProps.instanceId, nextProps.instanceId);
+  let isEqual = _.isEqual(prevProps.instanceId, nextProps.instanceId);
   return isEqual;
 }
 
-const SearchFilterContainerMemo = React.memo(SearchFilterContainer ,arePropsEqual);
+const SearchFilterContainerMemo = React.memo(SearchFilterContainer, arePropsEqual);
 // const mapStateToProps = (state) => {
 //   return ({
 //     searchState: state.generic.search

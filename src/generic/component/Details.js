@@ -1,14 +1,14 @@
-import { Button, Card, Form, message, Input, Col,Row, DropdownMenu  } from 'antd';
+import { Button, Card, Form, message, Input, Col, Row, DropdownMenu } from 'antd';
 import moment from 'moment';
 import React, { forwardRef, useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { actions, getState , getAttr } from '../state/stateSearch';
+import { actions, getState, getAttr } from '../state/stateSearch';
 import useMounted from '@hooks/useMounted';
 import { DownOutlined, QuestionCircleOutlined, SelectOutlined } from '@ant-design/icons';
 
 const Detail = forwardRef((props, ref) => {
-    
+
     const { entityId, instanceId, ...restProps } = props;
     // 인스턴스 생성의 시차가 있을 수 있으므로 ref 객체는 사용하지 않는 것이 좋을 듯?
     useImperativeHandle(ref, () => ({
@@ -18,9 +18,9 @@ const Detail = forwardRef((props, ref) => {
 
     useEffect(() => {
         // Set up logic here
-      
+
         return () => {
-          // Cleanup logic here
+            // Cleanup logic here
             console.log("Detail Destory");
         };
     }, []);  // Ensure dependencies are correctly set if needed
@@ -32,9 +32,9 @@ const Detail = forwardRef((props, ref) => {
 
     // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     const searchCompleted = useSelector((state) => getState(state).searchCompleted);
-    const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
-    const cols = useSelector((state) => getAttr(state,instanceId,'entityInfo.cols'));
-    const list = useSelector((state) => getAttr(state,instanceId,'list'));
+    const onload = useSelector((state) => getAttr(state, instanceId, 'onload'));
+    const cols = useSelector((state) => getAttr(state, instanceId, 'entityInfo.cols'));
+    const list = useSelector((state) => getAttr(state, instanceId, 'list'));
     // useMounted(() => {
     //     // search();
     //     console.log('useMounted');
@@ -48,6 +48,8 @@ const Detail = forwardRef((props, ref) => {
                 filters: restProps.initParams.filters,
                 entityId: entityId,
                 tableName: entityId,
+                editType: restProps.initParams.editType,
+                uiType: restProps.initParams.uiType,
                 cols: _.filter(cols, (col) => {
                     if (col.Name !== 'contextMenu') {
                         return true;
@@ -81,15 +83,15 @@ const Detail = forwardRef((props, ref) => {
     };
     useEffect(() => {
         form.resetFields();
-        if(list.length > 0)
+        if (list.length > 0)
             form.setFieldsValue(list[0]);
     }, [list]);
 
     const onSaveConfirm = (e) => {
         // let validList = [];
-        switch (restProps.initParams.editType ) {
+        switch (restProps.initParams.editType) {
             case 'edit':
-            case 'insert':{
+            case 'insert': {
                 // 공통 valid 체크 
                 let validList = form.getFieldsError();
                 for (var i = 0; i < validList.length; i++) {
@@ -102,9 +104,9 @@ const Detail = forwardRef((props, ref) => {
                 onSave(e);
                 break;
             }
-            default: 
+            default:
                 onConfirm(e);
-                
+
         }
         return true;
     }
@@ -121,24 +123,22 @@ const Detail = forwardRef((props, ref) => {
                 let forms = form.getFieldsValue();
                 var payload = {};
                 _.merge(payload, {
+                    instanceId: instanceId,
                     entityId: entityId,
                     tableName: entityId,
                     filters: restProps.initParams.filters,
-                    tableComment: restProps.initParams.entityNm,
-                    instanceId: instanceId ,
-                    editType: restProps.initParams.editType
+                    // tableComment: restProps.initParams.entityNm,
+                    // instanceId: instanceId ,
+                    editType: restProps.initParams.editType,
+                    uiType: restProps.initParams.uiType
                 });
 
                 let values = [];
                 _.forEach(cols, (col, i) => {
-                    let v = {
-                        col: col.Name,
-                        dbcolumnName: col.dbColumnName,
-                        dbColumnComment: col.dbcolumnComment,
-                        value: forms[col.Name]
-                    };
+
+                    let value = { ...col, value: forms[col.dataIndex] }
                     if (!col.isSystemColumn) {
-                        values.push(v);
+                        values.push(value);
                     }
                     // if (col.iskey) {
                     //     values.push({
@@ -193,13 +193,13 @@ const Detail = forwardRef((props, ref) => {
     };
 
     // Content 
-    let contentList =  {
+    let contentList = {
         list: [
             {
                 title: restProps.initParams.entityNm,
                 component: (
                     <>
-                        {_.concat([],cols).map((vCol, i) => {
+                        {_.concat([], cols).map((vCol, i) => {
                             // let col = cols[i];
                             // console.log(col.Header + ":" + 1); 
                             // console.log(col); 
@@ -210,7 +210,7 @@ const Detail = forwardRef((props, ref) => {
                                         type="Text"
                                         label={vCol.dbColumnComment}
                                         name={vCol.dataIndex}
-                                        // key={_key}
+                                    // key={_key}
                                     >
                                         <Input />
                                     </Form.Item>
@@ -240,7 +240,7 @@ const Detail = forwardRef((props, ref) => {
             </>
         )
     };
-   
+
     const onFinish = (values) => {
         // console.log(form.getFieldsValue(true)); 
         // onSave();
@@ -252,51 +252,51 @@ const Detail = forwardRef((props, ref) => {
 
     const formItemLayout = {
         labelCol: {
-          xs: {
-            span: 24,
-          },
-          sm: {
-            span: 8,
-          },
+            xs: {
+                span: 24,
+            },
+            sm: {
+                span: 8,
+            },
         },
         wrapperCol: {
-          xs: {
-            span: 24,
-          },
-          sm: {
-            span: 16,
-          },
+            xs: {
+                span: 24,
+            },
+            sm: {
+                span: 16,
+            },
         },
     };
     return (
         <>
-            {onload 
-                && searchCompleted 
+            {onload
+                && searchCompleted
                 // && (!_.isEmpty(thisInstance.list) || thisInstance.editType === 'insert') 
                 && (
-                <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
-                    <Form form={form} onFinish={onFinish} {...formItemLayout}  key={`detailForm_${instanceId}`}>
-                        <Row gutter={24} key={'detail_row_0'}>
-                            {contentList.list.map((v, i) => {
-                                return (
-                                    v.component
-                                );
-                            })}
-                        </Row>
-                        <Row key={'detail_row_1'}>
-                            <Col
-                                span={24}
-                                style={{
-                                    textAlign: "right",
-                                }}
-                            >
-                                {contentList.buttons}
-                            </Col>
-                        
-                        </Row>
-                    </Form>
-                </Form.Provider>
-            )}
+                    <Form.Provider onFormFinish={onFinish} onFormChange={onFormChange} >
+                        <Form form={form} onFinish={onFinish} {...formItemLayout} key={`detailForm_${instanceId}`}>
+                            <Row gutter={24} key={'detail_row_0'}>
+                                {contentList.list.map((v, i) => {
+                                    return (
+                                        v.component
+                                    );
+                                })}
+                            </Row>
+                            <Row key={'detail_row_1'}>
+                                <Col
+                                    span={24}
+                                    style={{
+                                        textAlign: "right",
+                                    }}
+                                >
+                                    {contentList.buttons}
+                                </Col>
+
+                            </Row>
+                        </Form>
+                    </Form.Provider>
+                )}
         </>
     );
 });
