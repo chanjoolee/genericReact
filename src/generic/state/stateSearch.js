@@ -54,7 +54,7 @@ const initialState = {
         // 어떤형식으로 호출하는가
         openType: '', // tab, modal , embeded
         uiType: 'list', // list , detail
-        editType: '', // edit , insert
+        editType: '', // update , insert
         openModal: {
             visible: false,
             uiType: '', // list , detail,
@@ -62,7 +62,7 @@ const initialState = {
                 entityId: '',
                 entityNm: '',
                 openType: 'modal',
-                editType: '', // edit, insert
+                editType: '', // update, insert
                 uiType: 'detail',
                 callInstanceId: '',
                 filters: []
@@ -326,7 +326,8 @@ const reducers = {
     },
     setValue3: (state, { payload: { instanceId, searchCompleted, ...rest } }) => {
         state.instances[instanceId] = { ...state.instances[instanceId], ...rest };
-        state.searchCompleted = searchCompleted;
+        if (searchCompleted != null)
+            state.searchCompleted = searchCompleted;
     },
     // setValue3: (state, { payload }) => {
     //     state = { ...payload } ;

@@ -42,7 +42,7 @@ const Detail = forwardRef((props, ref) => {
     // });
 
     const search = () => {
-        if (onload && restProps.initParams.filters) {
+        if (onload && restProps.initParams.filters && restProps.initParams.filters.length > 0) {
             var payload = {
                 instanceId: instanceId,
                 filters: restProps.initParams.filters,
@@ -60,7 +60,7 @@ const Detail = forwardRef((props, ref) => {
             };
             dispatch(actions.setSearchFilter(payload));
         } else if (restProps.initParams.editType === 'insert') {
-            console.log('this is insert detail type ');
+            console.log('It will insert by empty form');
         }
     };
     // useEffect(() => { 
@@ -90,7 +90,7 @@ const Detail = forwardRef((props, ref) => {
     const onSaveConfirm = (e) => {
         // let validList = [];
         switch (restProps.initParams.editType) {
-            case 'edit':
+            case 'update':
             case 'insert': {
                 // 공통 valid 체크 
                 let validList = form.getFieldsError();
@@ -225,7 +225,7 @@ const Detail = forwardRef((props, ref) => {
             <>
                 <Button onClick={onSaveConfirm} type="primary" htmlType="button">
                     {(() => {
-                        if (restProps.initParams.editType === 'edit') {
+                        if (restProps.initParams.editType === 'update') {
                             return '저장';
                         } else if (restProps.initParams.editType === 'insert') {
                             return '추가';

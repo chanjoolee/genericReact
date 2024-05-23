@@ -230,11 +230,11 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
         label: '상세',
       },
       {
-        key: 'edit',
+        key: 'update',
         label: '편집',
       },
       {
-        key: 'add',
+        key: 'insert',
         label: '추가',
       },
       {

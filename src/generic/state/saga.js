@@ -1,5 +1,5 @@
 import callApi from '@lib/callApi';
-import { message as antMessage } from 'antd';
+import { message as antMessage, Modal } from 'antd';
 import { all, call, put, takeLatest, takeEvery, select } from 'redux-saga/effects';
 import { actions } from './stateSearch';
 // import { modalMessage } from '@lib/messageUtil'; 
@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { getState } from './stateSearch';
 import { schemaGeneric } from '@generic/schemaGeneric';
+
 
 function* fetchInitialInfo({ payload }) {
   const state = yield select((state) => getState(state));
@@ -157,34 +158,44 @@ function* save({ payload }) {
   const instance = yield select((state) => getState(state).instances[payload.instanceId]);
   // ui 타입에 따라 url 조정 
   let url = 'save';
-  if (payload.editType === 'insert') {
-    // detail insert 
-    url = 'insert';
-  }
+
+  // view delete add update
+  url = payload.editType
   const { isSuccess, data, resultCode, message } = yield call(callApi, {
     url: '/generic/' + url,
     method: 'post',
     data: payload,
   });
 
-  if (isSuccess && resultCode >= 0) {
+  if (isSuccess && resultCode == 200) {
     // message.success(i18n.t('message.save')); 
-    antMessage.success('저장이 완료되었습니다.');
+    if (payload.editType === 'insert') {
+      // detail insert 
+      antMessage.success('데이타가 추가되었습니다.');
+    } else if (payload.editType === 'update') {
+      antMessage.success('저장이 완료되었습니다.');
+    } else {
+      // delete
+      antMessage.success('삭제되었습니다.');
+    }
+
     // 다시조회할 필요는 없을 듯.
     // yield put(actions.getListPage({ instanceId: payload.instanceId }))
     if (instance.callInstanceId != null && !_.isEmpty(instance.callInstanceId)) {
       let parentIns = yield select((state) => getState(state).instances[instance.callInstanceId]);
       if (parentIns != null) {
-        yield put(actions.getListPage({ instanceId: instance.callInstanceId }))
+        yield put(actions.getListPage({ instanceId: instance.callInstanceId }));
       }
     }
     // getAnplDsplWithdrawPage(); 
   } else {
-    // modalMessage({
-    //   title: '오류', 
-    //   content: message, 
-    //   width: '500px',
-    // });
+    // let [modal, contextHolder] = Modal.useModal();
+    Modal.error({
+      title: '오류',
+      content: message,
+    });
+    // antMessage.error(message);
+
   }
 }
 

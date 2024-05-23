@@ -267,12 +267,40 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
                 textAlign: "right",
               }}
             >
+              <Button
+                type="primary"
+                style={{
+                  margin: "0 4px",
+                }}
+                onClick={() => {
+                  let payload = {
+                    instanceId: instanceId,
+                    openModal: {
+                      visible: true,
+                      uiType: 'detail',
+                      editType: 'insert',
+                      initParams: {
+                        entityId: this_entityId,
+                        entityNm: entityNm,
+                        openType: 'modal',
+                        uiType: 'detail',
+                        editType: 'insert',
+                        callInstanceId: instanceId,
+                        filters: []
+                      }
+                    }
+                  }
+                  dispatch(actions.setValue3(payload));
+                }}
+              >
+                Add
+              </Button>
               <Button type="primary" htmlType="submit">
                 Search
               </Button>
               <Button
                 style={{
-                  margin: "0 8px",
+                  margin: "0 4px",
                 }}
                 onClick={() => {
                   form.resetFields();
