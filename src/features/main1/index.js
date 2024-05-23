@@ -62,10 +62,11 @@ const LayoutSide1 = () => {
       pane: {
         label: item.props.title,
         // children: <SearchPage initParams={initParams} />,
-        children : initParams,
+        children: initParams,
         key: uniqKey,
         closable: true,
         // initParams: {},
+        type: 'generic',
       },
     };
     dispatch(actions.add(payload));
@@ -87,11 +88,12 @@ const LayoutSide1 = () => {
     let payload = {
       activeKey: uniqKey,
       pane: {
-        title: item.props.title,
-        content: content,
+        label: item.props.title,
+        children: content,
         key: uniqKey,
         closable: true,
-        initParams: {},
+        // initParams: {},
+        type: 'general',
       },
     };
     dispatch(actions.add(payload));

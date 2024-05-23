@@ -87,25 +87,33 @@ const TabContainer = () => {
   };
 
 
-  const items = thisState.panes.map((pane,i) => {
-    let { label, children , key , closable } = pane;
-    if(pane.key == "Main"){
+  const items = thisState.panes.map((pane, i) => {
+    let { label, children, key, closable } = pane;
+    if (pane.key == "Main") {
       return {
-        label, key , closable, 
-        children : <div>Content of Main</div>
+        label, key, closable,
+        children: <div>Content of Main</div>
       };
     } else if (pane.label == 'New Tab') {
       return {
-        label, key , closable, 
-        children : 'Content of new Tab'
+        label, key, closable,
+        children: 'Content of new Tab'
       };
     } else {
-      return {
-        label, key , closable, 
-        children : <SearchPage  initParams={pane.children} />
-      };
+      if (pane.type == 'generic') {
+        return {
+          label, key, closable,
+          children: <SearchPage initParams={pane.children} />
+        };
+      } else {
+        return {
+          label, key, closable,
+          children: pane.children
+        };
+      }
+
     }
-    
+
   });
 
   return (
