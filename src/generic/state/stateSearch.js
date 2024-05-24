@@ -187,60 +187,45 @@ const makeSheetCols = (instance) => {
     // children
     let relation_child = _.filter(_schemaGeneric.relations, { from: { entityId: instance.entityInfo.entityId } });
 
-    let contextCol = {
-        Header: " ",
-        Type: "Text",
-        Name: "contextMenu",
-        contextMenu: {
-            Default: { Width: 200 }
-        },
-        CanEdit: false,
-        Width: 35,
-        WidthPad: 35,
-        Align: "Left",
-        IconAlign: "Center",
-        Button: 'Html',
-        Class: "IBCpmtextCol",
-        ButtonText: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.33 14.33 64 32 64H416C433.7 64 448 78.33 448 96C448 113.7 433.7 128 416 128H32C14.33 128 0 113.7 0 96zM0 256C0 238.3 14.33 224 32 224H416C433.7 224 448 238.3 448 256C448 273.7 433.7 288 416 288H32C14.33 288 0 273.7 0 256zM416 448H32C14.33 448 0 433.7 0 416C0 398.3 14.33 384 32 384H416C433.7 384 448 398.3 448 416C448 433.7 433.7 448 416 448z"/></svg>'
-    };
-
-    contextCol.contextMenu.Items = _.map(relation_child, (value, key_) => {
-        let rtn = {
-            Name: value.to.entityId,
-            Text: value.to.comments,
-            Restion: value,
-            RelationType: 'child',
-            uiType: 'list'
+    _.forEach(relation_child, (rel, i) => {
+        //  부모컬럼찾기
+        let targetEntity = _.find(_schemaGeneric.entities, { entityId: rel.to.entityId });
+        let child = {
+            parentTableName: entityObject.tableName,
+            childTableName: targetEntity.tableName,
+            joins: []
         };
+        instance.entityInfo.children.push(child);
 
-        return rtn;
+        // 조인컬럼들
+        _.forEach(rel.to.cols, (col, j) => {
+            // 부모컬럼
+            let parentColumn = _.find(entityObject.cols, { column_name: rel.from.cols[j].column_name });
+            let childColumn = _.find(targetEntity.cols, { column_name: col.column_name });
+            // 쿼리에서 join on 정보
+            let join = {
+                type: 'child',
+                parentColumn: parentColumn,
+                childColumn: childColumn,
+                nameColumn: null,  // column info 임 {} 
+            };
+            child.joins.push(join);
+            // name column 우선적으로 cols 에서 가져옮.
+            if (parentColumn['name_column'] != null) {
+                join.nameColumn = parentColumn['name_column'];
+                // cols 에서 컬럼추가
+            }
+            // name column 만약 없다면 schemaGeneric.nameColumns 에서 가져옮
+            if (join.nameColumn == null) {
+                let findName = _.find(_schemaGeneric.nameColumns, { entityId: rel.from.entityId, cols: [{ column_name: parentColumn.column_name }] });
+                // cols: {column_name : col.column_name}
+                if (findName != null) {
+                    join.nameColumn = _.find(targetEntity.cols, { column_name: findName.cols[0].name_column });
+                }
+            }
+        })
     });
-    //상세
-    contextCol.contextMenu.Items.push({
-        Name: 'detail',
-        Text: '상세',
-        entityId: instance.entityInfo.entityId,
-        entityNm: instance.entityInfo.entityNm,
-        uiType: 'detail',
-        Width: 200
-    });
 
-    // parent relation
-    let itemsParents = _.map(relation_parents, (value, key) => {
-        let rtn = {
-            Name: value.from.entityId,
-            Text: value.from.comments,
-            Restion: value,
-            RelationType: 'parent',
-            uiType: 'list'
-        };
-
-        return rtn;
-    });
-
-    contextCol.contextMenu.Items.push.apply(contextCol.contextMenu.Items, itemsParents);
-
-    instance.entityInfo.leftCols = [contextCol];
     instance.entityInfo.cols = cols;
 
 }
