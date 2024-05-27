@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { actions, getState, getInstance, getAttr } from '@/generic/state/stateSearch';
 import { useDispatch, useSelector, connect } from 'react-redux';
 // import Ibsheet from '@components/grid/IbSheet'; 
-import { Table, Dropdown, Space, message, Modal } from 'antd';
+import { Table, Dropdown, Space, message, Modal, Popconfirm } from 'antd';
 // import TitleSub from '@components/layout/TitleSub'; 
 import { Card, Button } from 'antd';
 // import Pagination from '@components/grid/Pagenation'; 
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { schemaGeneric, mergeCols } from '@generic/schemaGeneric.js';
 import Item from 'antd/lib/list/Item';
 import qs from 'qs';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, DeleteOutlined, EyeOutlined, EditOutlined, FileAddOutlined } from '@ant-design/icons';
 import { join } from 'redux-saga/effects';
 import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
 import { createSelector } from 'reselect';
@@ -174,75 +174,48 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
   };
 
 
-  var items = [
-    // {
-    //   key: '1',
-    //   type: 'group',
-    //   label: 'Group title',
-    //   children: [
-    //     {
-    //       key: '1-1',
-    //       label: '1st menu item',
-    //     },
-    //     {
-    //       key: '1-2',
-    //       label: '2nd menu item',
-    //     },
-    //   ],
-    // },
-    // {
-    //   key: '2',
-    //   label: 'sub menu',
-    //   children: [
-    //     {
-    //       key: '2-1',
-    //       label: '3rd menu item',
-    //     },
-    //     {
-    //       key: '2-2',
-    //       label: '4th menu item',
-    //     },
-    //   ],
-    // },
-    // {
-    //   key: '3',
-    //   label: 'disabled sub menu',
-    //   disabled: true,
-    //   children: [
-    //     {
-    //       key: '3-1',
-    //       label: '5d menu item',
-    //     },
-    //     {
-    //       key: '3-2',
-    //       label: '6th menu item',
-    //     },
-    //   ],
-    // },
-  ];
+  function handleMenuClick(record, action) {
+    message.info(`Action: ${action} on record id: ${record.id}`);
+  }
 
-
-
-  (() => {
-    items = [
+  const makeActionItem = (filters) => {
+    let items = [
       {
         key: 'view',
-        label: '상세',
+        label: <Button type="link" icon={<EyeOutlined />} size={'small'}>상세</Button>,
       },
       {
         key: 'update',
-        label: '편집',
+        label: <Button type="link" icon={<EditOutlined />} size={'small'}>편집</Button>,
       },
       {
         key: 'insert',
-        label: '추가',
+        label: <Button type="link" icon={<FileAddOutlined />} size={'small'}>추가</Button>,
       },
       {
         key: 'delete',
-        label: '삭제',
+        label: <Popconfirm
+          title="삭제"
+          description="정말로 삭제하시겠습니까?"
+          onConfirm={(e) => {
+            // message.success('Click on Yes');
+            let payload = {
+              instanceId: instanceId,
+              editType: 'delete',
+              tableName: entityId,
+              filters: filters
+            };
+            dispatch(actions.save(payload));
+          }}
+          onCancel={(e) => {
+            // message.error('Click on No');
+          }}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="link" icon={<DeleteOutlined />} size={'small'}>삭제</Button>
+        </Popconfirm>,
       },
-
-
     ];
     // parent 
     let parent = {
@@ -290,14 +263,25 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     });
 
     items.push(children);
-
-  })();
-
-
-  function handleMenuClick(record, action) {
-    message.info(`Action: ${action} on record id: ${record.id}`);
+    return items;
   }
 
+  const getFiters = (record) => {
+    let filters = [];
+    //  filter 만들기
+    let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
+    _.forEach(keyColumns, (col, i) => {
+      let value = record[col.dataIndex];
+      if (value != null) {
+        filters.push({
+          col: col.dataIndex,
+          dbColumnName: col.dbColumnName,
+          value
+        });
+      }
+    });
+    return filters;
+  }
   return (
     <>
       {thisInstance && thisInstance.onload && searchCompleted && (
@@ -320,65 +304,61 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                 fixed: 'right',
                 width: 100,
                 render: (text, record, index) => {
-
+                  let filters = getFiters(record);
+                  let items = makeActionItem(filters);
                   // 참조
                   let openModalDetail = (info) => {
-                    let filters = [];
-                    //  filter 만들기
-                    let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
-                    _.forEach(keyColumns, (col, i) => {
-                      let value = record[col.dataIndex];
-                      if (value != null) {
-                        filters.push({
-                          col: col.dataIndex,
-                          dbColumnName: col.dbColumnName,
-                          value
-                        });
+
+                    switch (info.key) {
+                      case 'view':
+                      case 'update':
+                      case 'insert': {
+                        let initParams = {
+                          entityId: thisInstance.entityInfo.entityId,
+                          entityNm: thisInstance.entityInfo.entityNm,
+                          openType: 'modal',
+                          uiType: 'detail',
+                          editType: info.key,
+                          callInstanceId: thisInstance.id,
+                          filters: filters
+                        };
+                        let payload = {
+                          instanceId: instanceId,
+                          openModal: {
+                            visible: true,
+                            uiType: 'detail',
+                            editType: info.key,
+                            initParams: initParams
+                          }
+                        };
+                        dispatch(actions.setValue3(payload));
+                        break;
                       }
-                    });
 
-                    let initParams = {
-                      entityId: thisInstance.entityInfo.entityId,
-                      entityNm: thisInstance.entityInfo.entityNm,
-                      openType: 'modal',
-                      uiType: 'detail',
-                      editType: info.key,
-                      callInstanceId: thisInstance.id,
-                      filters: filters
-                    };
-                    let values = [
-                      { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                      { key: 'instances.' + instanceId + '.openModal.uiType', value: 'detail' },
-                      { key: 'instances.' + instanceId + '.openModal.editType', value: info.key },
-                      { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams },
+                      default:
+                        break;
+                    }
 
-                    ];
-                    // 모달창띄우기 
-                    dispatch(actions.setValues(values));
                   };
 
-
                   return (
-                    <Dropdown
-                      menu={{
-                        items,
-                        onClick: (info) => {
-                          // console.log(info.key);
-                          // console.log(info.item.props.information);
-                          // console.log(record);
-
-                          openModalDetail(info);
-                        }
-                      }}
-                    >
-                      <a onClick={e => e.preventDefault()}>
-                        <Space>
-                          Action
-                          <DownOutlined />
-                        </Space>
-                      </a>
-                    </Dropdown>
-
+                    <>
+                      <Dropdown
+                        menu={{
+                          items,
+                          onClick: (info) => {
+                            openModalDetail(info);
+                          }
+                        }}
+                      >
+                        <a onClick={e => e.preventDefault()}>
+                          <Space>
+                            Action
+                            <DownOutlined />
+                          </Space>
+                        </a>
+                      </Dropdown>
+                    </>
                   );
                 },
               },
@@ -409,4 +389,8 @@ const arePropsEqual = (prevProps, nextProps) => {
 
 const MemoizedMyComponent = React.memo(DataArea, arePropsEqual);
 export default MemoizedMyComponent;
+
+
+
+
 // export default DataArea;

@@ -104,6 +104,10 @@ const Detail = forwardRef((props, ref) => {
                 onSave(e);
                 break;
             }
+            case 'delete': {
+                onSave(e);
+                break;
+            }
             default:
                 onConfirm(e);
 
@@ -229,6 +233,8 @@ const Detail = forwardRef((props, ref) => {
                             return '저장';
                         } else if (restProps.initParams.editType === 'insert') {
                             return '추가';
+                        } else if (restProps.initParams.editType === 'delete') {
+                            return '삭제';
                         } else {
                             return '확인'
                         }

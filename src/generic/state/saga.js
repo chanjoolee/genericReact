@@ -177,11 +177,21 @@ function* save({ payload }) {
     } else {
       // delete
       antMessage.success('삭제되었습니다.');
+      // let payload = {
+      //   instanceId: instance.callInstanceId,
+      //   openModal: {
+      //     visible: false
+      //   }
+      // };
+      // yield put(actions.setValue3(payload));
     }
 
-    // 다시조회할 필요는 없을 듯.
-    // yield put(actions.getListPage({ instanceId: payload.instanceId }))
-    if (instance.callInstanceId != null && !_.isEmpty(instance.callInstanceId)) {
+    // 다시조회
+    if (payload.editType === 'delete') {
+      // 삭제는 본데이타의 DataArea에서 한다.
+      yield put(actions.getListPage({ instanceId: instance.id }));
+    } else if (instance.callInstanceId != null && !_.isEmpty(instance.callInstanceId)) {
+      // 추가 편집은 모달에서 하므로 자신을 콜한 instance를 찾아야 한다.
       let parentIns = yield select((state) => getState(state).instances[instance.callInstanceId]);
       if (parentIns != null) {
         yield put(actions.getListPage({ instanceId: instance.callInstanceId }));
