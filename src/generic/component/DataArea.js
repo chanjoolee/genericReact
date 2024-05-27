@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { schemaGeneric, mergeCols } from '@generic/schemaGeneric.js';
 import Item from 'antd/lib/list/Item';
 import qs from 'qs';
-import { DownOutlined, DeleteOutlined, EyeOutlined, EditOutlined, FileAddOutlined } from '@ant-design/icons';
+import { DownOutlined, DeleteOutlined, EyeOutlined, EditOutlined, FileAddOutlined, DatabaseOutlined, BranchesOutlined, MinusOutlined } from '@ant-design/icons';
 import { join } from 'redux-saga/effects';
 import { v } from 'react-syntax-highlighter/dist/esm/languages/prism';
 import { createSelector } from 'reselect';
@@ -220,7 +220,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     // parent 
     let parent = {
       key: 'parent',
-      label: 'Parent',
+      label: <Button type="Text" icon={<DatabaseOutlined />} size={'small'}>Parent</Button>,
       type: 'group',
       children: []
     };
@@ -234,7 +234,8 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
       }).join(',');
       parent.children.push({
         key: m.parentTableName + " : " + keys,
-        label: targetEntity.entityNm + " : " + labels,
+        // label: "    " + targetEntity.entityNm + " : " + labels,
+        label: <Button type="link" icon={<div style={{ display: 'inline-block', width: '16px' }} />} size={'small'}>{targetEntity.entityNm + " : " + labels} </Button>,
         information: { type: 'parent', ...m }
       });
     });
@@ -243,7 +244,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     // child
     let children = {
       key: 'children',
-      label: 'Children',
+      label: <Button type="Text" icon={<BranchesOutlined />} size={'small'}>Children</Button>,
       type: 'group',
       children: []
     };
@@ -257,7 +258,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
       }).join(',');
       children.children.push({
         key: m.childTableName + " : " + keys,
-        label: targetEntity.entityNm + " : " + labels,
+        label: <Button type="link" icon={<div style={{ display: 'inline-block', width: '16px' }} />} size={'small'}>{targetEntity.entityNm + " : " + labels} </Button>,
         information: { type: 'child', ...m }
       });
     });
