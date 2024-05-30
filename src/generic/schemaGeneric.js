@@ -3,8 +3,8 @@ import callApi from 'src/common/lib/callApi';
 import { Button, Checkbox, Form, Input, Col, Row } from "antd";
 
 export const schemaGeneric = {
-    entities : [],
-    relations : [
+    entities: [],
+    relations: [
         {
             from: {
                 entityId: 'INVENTORY_ITEM_MASTER',
@@ -42,87 +42,87 @@ export const schemaGeneric = {
             },
         },
     ],
-    nameColumns : [
+    nameColumns: [
         {
             entityId: 'INVENTORY_WARE_HOUSE',
             cols: [
                 {
-                    column_name : 'WARE_HOUSE_CD',
-                    name_column : 'WARE_HOUSE_NM',
+                    column_name: 'WARE_HOUSE_CD',
+                    name_column: 'WARE_HOUSE_NM',
                 },
             ],
         },
     ],
     // Db에서 가져오기로 했으므로 사용안함. 
     // commonCodeList : [],
-    customFunctions : {
-        sm_anpl_dspl_ask_n : {
-            entityId : 'sm_anpl_dspl_ask_n' ,
-            entityNm : '타소전시신청내역', 
-            showSubData : true, 
-            afterOnload : (payload) => {
-                let {uiType, openType, editType, form} = payload;
+    customFunctions: {
+        sm_anpl_dspl_ask_n: {
+            entityId: 'sm_anpl_dspl_ask_n',
+            entityNm: '타소전시신청내역',
+            showSubData: true,
+            afterOnload: (payload) => {
+                let { uiType, openType, editType, form } = payload;
 
                 const getSequence = async () => {
-                    const {isSuccess, data} = await callApi({
+                    const { isSuccess, data } = await callApi({
                         url: `/generic/getSequence`,
                         method: 'post',
-                        data: {sequenceName : 'somSequence'} ,
-                        isLoding : false
+                        data: { sequenceName: 'somSequence' },
+                        isLoding: false
                     });
                     if (isSuccess && data) {
                         let dispatch = window.state_search.dispatch;
                         let actions = window.state_search.actions;
-                        dispatch( actions.setValue2('instances.' + payload.id + '.form.mngNo'), data.sequence);
+                        dispatch(actions.setValue2('instances.' + payload.id + '.form.mngNo'), data.sequence);
                     }
                 };
 
-                if( uiType === 'detail' && editType === 'insert') {
+                if (uiType === 'detail' && editType === 'insert') {
                     getSequence();
                     console.log('customFunctions');
                 }
             },
-            sheet : {
-                cols : {
-                    someColumnName : {
-                        attr : 'attr'
+            sheet: {
+                cols: {
+                    someColumnName: {
+                        attr: 'attr'
                     }
                 }
             },
-            groups : [
+            groups: [
                 {
-                    id : 'general' ,
-                    label : 'general' ,
-                    items : [
+                    id: 'general',
+                    label: 'general',
+                    items: [
                         [
-                            {label : 'label', name: 'name'},
-                            {label : 'label1', name: 'name1'}
+                            { label: 'label', name: 'name' },
+                            { label: 'label1', name: 'name1' }
                         ]
                     ]
                 }
             ]
         },
-        TBAS_NEW_ORG_MGMT : {
-            entityId : 'TBAS_NEW_ORG_MGMT' ,
-            entityNm : '통합조직관리', 
-            addSearchFilters : [
-                {column_name : "ORG_CD"},
-                {column_name : "ORG_NM"},
-                {column_name : "APLY_STA_DT"},
-                {column_name : "ORG_CL_CD"},
-                
+        TBAS_NEW_ORG_MGMT: {
+            entityId: 'TBAS_NEW_ORG_MGMT',
+            entityNm: '통합조직관리',
+            addSearchFilters: [
+                { column_name: "ORG_CD" },
+                { column_name: "ORG_NM" },
+                { column_name: "APLY_STA_DT" },
+                { column_name: "ORG_CL_CD" },
+
             ]
         },
-        INVENTORY_IN_OUT : {
-            entityId : 'INVENTORY_IN_OUT' ,
-            entityNm : '창고입출고', 
-            addSearchFilters : [
-                {column_name : "ORDER_NO"},
-                {column_name : "IN_OUT_CD"},
-                
+        INVENTORY_IN_OUT: {
+            entityId: 'INVENTORY_IN_OUT',
+            entityNm: '창고입출고',
+            addSearchFilters: [
+                // {column_name : "ORDER_NO"},
+                // {column_name : "IN_OUT_CD"},
+
             ]
         }
-    }  
+    }
 };
 
 /**
@@ -134,65 +134,65 @@ export const schemaGeneric = {
 export const mergeCols = (cols, entityId) => {
     let rtnCols = _.cloneDeep(cols);
     let _this = schemaGeneric;
-    if( !_this || !_this.customFunctions){
+    if (!_this || !_this.customFunctions) {
         return rtnCols;
     }
     let custom = _this.customFunctions[entityId];
-    if(custom){
+    if (custom) {
         rtnCols = _.map(rtnCols, (col) => {
             let rtn = col;
             // 추가적인 컬럼 속성들
-            if( custom.sheet && custom.sheet.cols && custom.sheet.cols[col.Name]){
+            if (custom.sheet && custom.sheet.cols && custom.sheet.cols[col.Name]) {
                 _.merge(rtn, custom.sheet.cols[col.Name]);
             }
-        
+
             return rtn;
         });
     }
     return rtnCols;
 };
 
-export const addCustomSearchFilters = (filters , entityId ) => {
+export const addCustomSearchFilters = (filters, entityId) => {
     let rtnCols = _.cloneDeep(filters);
     let _this = schemaGeneric;
-    if( !_this || !_this.customFunctions){
+    if (!_this || !_this.customFunctions) {
         return rtnCols;
     }
     let entityobject = _.find(_this.entities, { entityId: entityId });
     let custom = _this.customFunctions[entityId];
-    if(custom){
-        if(custom.addSearchFilters != null){
-            _.forEach(custom.addSearchFilters , (filter , i ) =>{
+    if (custom) {
+        if (custom.addSearchFilters != null) {
+            _.forEach(custom.addSearchFilters, (filter, i) => {
                 let targetColumn = _.find(entityobject.cols, {
                     column_name: filter.column_name
                 });
                 let key = `searchFilter_${i}`;
                 let component = (
                     <Col span={8} key={key}>
-                    <Form.Item
-                        type="Text"
-                        label={targetColumn.column_comment}
-                        name={_.camelCase("" + targetColumn.column_name)}
+                        <Form.Item
+                            type="Text"
+                            label={targetColumn.column_comment}
+                            name={_.camelCase("" + targetColumn.column_name)}
                         // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
-                    >
-                        <Input
-                        placeholder={targetColumn.column_comment + " 을 입력해 주세요."}
-                        />
-                    </Form.Item>
+                        >
+                            <Input
+                                placeholder={targetColumn.column_comment + " 을 입력해 주세요."}
+                            />
+                        </Form.Item>
                     </Col>
                 );
                 rtnCols.push({
                     component: component,
                     targetColumn: targetColumn,
                     type: 'customSearchFilter',
-                    join : {
-                        childColumn : targetColumn,
+                    join: {
+                        childColumn: targetColumn,
                         type: 'customSearchFilter',
                     }
                 });
             });
         }
-        
+
     }
     return rtnCols;
 }
