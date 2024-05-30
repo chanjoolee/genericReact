@@ -270,51 +270,54 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                       }
 
                       default: {
-                        if (info.item.props.information.type == "parent") {
-                          let _info = info.item.props.information;
-                          let initParams = {
-                            entityId: _info.joins[0].parentColumn.table_name,
-                            entityNm: _info.joins[0].parentColumn.table_comment,
-                            openType: 'modal',
-                            uiType: 'list',
-                            editType: 'list',
-                            callInstanceId: thisInstance.id,
-                            filters: filters
-                          };
-                          let payload = {
-                            instanceId: instanceId,
-                            openModal: {
-                              visible: true,
+                        if (info.item.props.information != null) {
+                          if (info.item.props.information.type == "parent") {
+                            let _info = info.item.props.information;
+                            let initParams = {
+                              entityId: _info.joins[0].parentColumn.table_name,
+                              entityNm: _info.joins[0].parentColumn.table_comment,
                               openType: 'modal',
                               uiType: 'list',
                               editType: 'list',
-                              initParams: initParams
-                            }
-                          };
-                          dispatch(actions.setValue3(payload));
-                        } else if (info.item.props.information.type == "child") {
-                          let _info = info.item.props.information;
-                          let initParams = {
-                            entityId: _info.joins[0].childColumn.table_name,
-                            entityNm: _info.joins[0].childColumn.table_comment,
-                            openType: 'modal',
-                            uiType: 'list',
-                            editType: 'list',
-                            callInstanceId: thisInstance.id,
-                            filters: filters
-                          };
-                          let payload = {
-                            instanceId: instanceId,
-                            openModal: {
-                              visible: true,
+                              callInstanceId: thisInstance.id,
+                              filters: filters
+                            };
+                            let payload = {
+                              instanceId: instanceId,
+                              openModal: {
+                                visible: true,
+                                openType: 'modal',
+                                uiType: 'list',
+                                editType: 'list',
+                                initParams: initParams
+                              }
+                            };
+                            dispatch(actions.setValue3(payload));
+                          } else if (info.item.props.information.type == "child") {
+                            let _info = info.item.props.information;
+                            let initParams = {
+                              entityId: _info.joins[0].childColumn.table_name,
+                              entityNm: _info.joins[0].childColumn.table_comment,
                               openType: 'modal',
                               uiType: 'list',
                               editType: 'list',
-                              initParams: initParams
-                            }
-                          };
-                          dispatch(actions.setValue3(payload));
+                              callInstanceId: thisInstance.id,
+                              filters: filters
+                            };
+                            let payload = {
+                              instanceId: instanceId,
+                              openModal: {
+                                visible: true,
+                                openType: 'modal',
+                                uiType: 'list',
+                                editType: 'list',
+                                initParams: initParams
+                              }
+                            };
+                            dispatch(actions.setValue3(payload));
+                          }
                         }
+
                         break;
                       }
 
