@@ -184,10 +184,10 @@ export const addCustomSearchFilters = (filters, entityId) => {
                 rtnCols.push({
                     component: component,
                     targetColumn: targetColumn,
-                    type: 'customSearchFilter',
+                    relationType: 'customSearchFilter',
                     join: {
                         childColumn: targetColumn,
-                        type: 'customSearchFilter',
+                        relationType: 'customSearchFilter',
                     }
                 });
             });
