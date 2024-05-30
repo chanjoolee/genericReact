@@ -203,13 +203,14 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     let filters = [];
     //  filter 만들기
     let keyColumns = _.filter(thisInstance.entityInfo.cols, { isKey: true });
-    _.forEach(keyColumns, (col, i) => {
+    _.forEach(cols, (col, i) => {
       let value = record[col.dataIndex];
       if (value != null) {
         filters.push({
           col: col.dataIndex,
           dbColumnName: col.dbColumnName,
-          value
+          value,
+          isKey: col.isKey
         });
       }
     });
@@ -274,6 +275,28 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                           let initParams = {
                             entityId: _info.joins[0].parentColumn.table_name,
                             entityNm: _info.joins[0].parentColumn.table_comment,
+                            openType: 'modal',
+                            uiType: 'list',
+                            editType: 'list',
+                            callInstanceId: thisInstance.id,
+                            filters: filters
+                          };
+                          let payload = {
+                            instanceId: instanceId,
+                            openModal: {
+                              visible: true,
+                              openType: 'modal',
+                              uiType: 'list',
+                              editType: 'list',
+                              initParams: initParams
+                            }
+                          };
+                          dispatch(actions.setValue3(payload));
+                        } else if (info.item.props.information.type == "child") {
+                          let _info = info.item.props.information;
+                          let initParams = {
+                            entityId: _info.joins[0].childColumn.table_name,
+                            entityNm: _info.joins[0].childColumn.table_comment,
                             openType: 'modal',
                             uiType: 'list',
                             editType: 'list',
