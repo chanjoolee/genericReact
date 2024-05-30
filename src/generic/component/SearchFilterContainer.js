@@ -115,6 +115,17 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     }
   };
 
+  const getDefaultValueFromInitial = (col) => {
+    let defaultValue = null;
+    if (initParams.filters) {
+      let _find = _.find(initParams.filters, { col: _.camelCase(col.column_name) });
+      if (_find) {
+        defaultValue = _find.value;
+      }
+    }
+    return defaultValue;
+  }
+
   const makeSearchFilter = useMemo(() => {
     let searchFilter = [];
     let entityId = this_entityId;
@@ -134,7 +145,9 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         // if(nameColumn == null){
         //   nameColumn = join.parentColumn;
         // }
+
         let key = `searchFilter_${i}_${j}`;
+        // let defaultValue = getDefaultValueFromInitial(join.childColumn);
         let component = (
           <Col span={8} key={key}>
             <Form.Item
@@ -145,6 +158,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
             >
               <Input
                 placeholder={join.childColumn.column_comment + " 을 입력해 주세요."}
+              // defaultValue={defaultValue}
               />
             </Form.Item>
           </Col>
@@ -170,6 +184,8 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       });
       if (col.isKey && find_in_parent == null) {
         let key = `searchFilter_key_${i}`;
+        // let col = col.originColInfo;
+        // let defaultValue = getDefaultValueFromInitial(col.originColInfo);
         let component = (
           <Col span={8} key={key}>
             <Form.Item
@@ -180,6 +196,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
             >
               <Input
                 placeholder={col.originColInfo.column_comment + " 을 입력해 주세요."}
+              // defaultValue={defaultValue}
               />
             </Form.Item>
           </Col>
@@ -248,6 +265,15 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   // useMounted 는 왜 안먹지. useEffect 를 써야하나
   useEffect(() => {
     // Initialization logic...
+    if (initParams.filters) {
+      let formJson = {};
+      _.forEach(initParams.filters, (filter) => {
+        formJson[filter.col] = filter.value;
+      });
+
+      form.setFieldsValue(formJson);
+
+    }
     search();
   }, [dispatch]);
 
@@ -383,3 +409,5 @@ const SearchFilterContainerMemo = React.memo(SearchFilterContainer, arePropsEqua
 export default SearchFilterContainerMemo;
 // export default connect(mapStateToProps)(MemoizedMyComponent);
 const formInitValue = {};
+
+
