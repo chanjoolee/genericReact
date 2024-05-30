@@ -66,84 +66,7 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
     return vCols;
     // getState(state).instances[instanceId).entityInfo.cols 
   });
-  const leftCols = useSelector((state) => {
-    let vState = getState(state);
-    let vCols = _.cloneDeep(vState.instances[instanceId].entityInfo.leftcols);
-    _.forEach(vCols, function (col, k) {
-      // console.log('colcolcol') 
-      if (col.Name === 'contextMenu') {
-        _.forEach(col.contextMenu.Items, function (item, kk) {
-          if (item.Name != null) {
-            item.OnClick = function (obj) {
-              let _this = this;
-              let sheet = this.Owner.Sheet;
-              let row = _this.Owner.Row;
-              let entityId = _this.Name;
-              let initParams = {
-                entityId: entityId,
-                entity: _this.Text,
-                openType: 'modal',
-                ulType: 'list'
-              };
-              let vOpenUiType = 'list';
 
-              // instance.openModal = true; 
-              // instance.initParams = initParams; 
-              let filters = [];
-              if (this.uiType === 'list') {
-                vOpenUiType = 'list';
-                _.forEach(_this.Relation.to.cols, (col, k) => {
-                  let vol = {
-                    col: col.name,
-                    value: row[_.camelCase(_this.Relation.from.cols[k]['name'])]
-                  };
-                  filters.push(vol);
-                });
-              }
-              // 
-              if (_this.uiType === 'detail') {
-                initParams = {
-                  entityid: _this.entityid,
-                  entitym: _this.entitym,
-                  openType: 'modal',
-                  uiType: 'detail'
-                };
-                vOpenUiType = 'detail';
-                filters = [];
-                let keys = _.filter(thisInstance.entityInfo.dbCols, { column_key: "PRI" });
-                _.forEach(keys, (col, k) => {
-                  let vCol = {
-                    col: _.camelCase(col.column_name),
-                    dbColumnName: col.column_name,
-                    value: row[_.camelCase(col.column_name)]
-                  };
-                  filters.push(vCol);
-                });
-              }
-              initParams.filters = filters;
-              let values = [
-                { key: 'instances.' + instanceId + '.openModal.visible', value: true },
-                { key: 'instances.' + instanceId + '.openModal.uiType', value: vOpenUiType },
-                { key: 'instances.' + instanceId + '.openModal.initParams', value: initParams }
-              ];
-              dispatch(actions.setValues(values));
-              return true;
-            }
-          }
-
-        });
-        col.OnClick = (evtParam) => {
-          // const { sheet, row, col } - evtParam; 
-          var pos = { Align: 'right below' };
-          evtParam.sheet.showMenu(evtParam.row, evtParam.col, col.contextMenu, pos, null, null);
-          return true;
-        };
-      }
-    });
-
-    return vCols;
-    //  getState(state). instances[instance Id).entityinfo.cols
-  });
 
   const thisSheet = useRef(null);
 
@@ -232,10 +155,19 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
         let column = _.find(targetEntity.cols, { column_name: join.parentColumn.column_name });
         return column.column_comment;
       }).join(',');
+      //부모관계를 클릭한 경우
+      let button = <Button
+        type="link"
+        icon={<div style={{ display: 'inline-block', width: '16px' }} />}
+        // onClick={(e) => {
+        //   message.success(targetEntity.entityNm);
+
+        // }}
+        size={'small'}>{targetEntity.entityNm + " : " + labels} </Button>;
       parent.children.push({
         key: m.parentTableName + " : " + keys,
         // label: "    " + targetEntity.entityNm + " : " + labels,
-        label: <Button type="link" icon={<div style={{ display: 'inline-block', width: '16px' }} />} size={'small'}>{targetEntity.entityNm + " : " + labels} </Button>,
+        label: button,
         information: { type: 'parent', ...m }
       });
     });
@@ -336,8 +268,33 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
                         break;
                       }
 
-                      default:
+                      default: {
+                        if (info.item.props.information.type == "parent") {
+                          let _info = info.item.props.information;
+                          let initParams = {
+                            entityId: _info.joins[0].parentColumn.table_name,
+                            entityNm: _info.joins[0].parentColumn.table_comment,
+                            openType: 'modal',
+                            uiType: 'list',
+                            editType: 'list',
+                            callInstanceId: thisInstance.id,
+                            filters: filters
+                          };
+                          let payload = {
+                            instanceId: instanceId,
+                            openModal: {
+                              visible: true,
+                              openType: 'modal',
+                              uiType: 'list',
+                              editType: 'list',
+                              initParams: initParams
+                            }
+                          };
+                          dispatch(actions.setValue3(payload));
+                        }
                         break;
+                      }
+
                     }
 
                   };

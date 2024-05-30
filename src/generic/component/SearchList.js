@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Card, Spin } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { getState, getAttr , actions } from '../state/stateSearch';
+import { getState, getAttr, actions } from '../state/stateSearch';
 import LayoutSearchRows from '@generic/component/layout/LayoutSearchRows';
 // import CommonModal from '@components/modal/CommonModal'; 
-import { Button , Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import DataArea from '@generic/component/DataArea';
 import GenericModal from '@generic/component/GenericModal';
 import SearchFilterContainer from './SearchFilterContainer';
 // import Detail from '@generic/component/Detail'; 
-import DetailPage from "@generic/container/DetailPage"; 
+import DetailPage from "@generic/container/DetailPage";
 import SearchPage from '@generic/container/SearchPage';
 import { schemaGeneric } from '@generic/schemaGeneric.js';
 import moment from 'moment';
@@ -37,7 +37,7 @@ const SearchList = (props) => {
             dispatch(
                 // backend 가 설정 될때 까지 saga 보류
                 actions.fetchInitialInfo({
-                // actions.setInitialInfo({
+                    // actions.setInitialInfo({
                     instanceId: vInstanceId,
                     entityId: props.initParams.entityId,
                     tableName: props.initParams.entityId,
@@ -71,9 +71,9 @@ const SearchList = (props) => {
     const thisState = useSelector((state) => getState(state));
     // const thisInstance = useSelector((state) => getState(state).instances[instanceId]);
     // const searchCompleted = useSelector((state) => getState(state).searchCompleted);
-    const onload = useSelector((state) => getAttr(state,instanceId,'onload'));
-    const openType = useSelector((state) => getAttr(state,instanceId,'openType'));
-    
+    const onload = useSelector((state) => getAttr(state, instanceId, 'onload'));
+    const openType = useSelector((state) => getAttr(state, instanceId, 'openType'));
+
     // const searchFilterMemo = useMemo(() => {
     //     if (thisInstance && thisInstance.searchFilter) {
     //       return thisInstance.searchFilter;
@@ -124,7 +124,7 @@ const SearchList = (props) => {
                 </div>
             )}
             */}
-             {onload && openType === 'tab' && (
+            {onload && (openType === 'tab' || openType === 'modal') && (
                 <ErrorBoundary>
                     <LayoutSearchRows
                         key={`LayoutSearchRows_${instanceId}`}
@@ -132,12 +132,12 @@ const SearchList = (props) => {
                             <SearchFilterContainer instanceId={instanceId} />
                         }
                         rowsections={
-                            <DataArea entityId={props.initParams.entityId} instanceId={instanceId}/>
+                            <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />
                         }
                     />
-                    </ErrorBoundary>
+                </ErrorBoundary>
             )}
-            {onload && openType === 'modal' && (
+            {/* {onload && openType === 'modal' && (
                 <>
                     <div>
                         <Spin spinning={false}>
@@ -145,14 +145,14 @@ const SearchList = (props) => {
                         </Spin>
                     </div>
                 </>
-            )}
+            )} */}
             {onload && openType === 'embeded' && (
                 <div>
                     <Spin spinning={false}>
                         <div style={{ display: 'none' }}>
                             <SearchFilterContainer instanceId={instanceId} />
                         </div>
-                        
+
                     </Spin>
                 </div>
             )}
