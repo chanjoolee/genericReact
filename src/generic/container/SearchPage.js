@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'; 
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, uselocation } from 'react-router-dom'; 
+import { useParams, uselocation } from 'react-router-dom';
 import SearchList from '@generic/component/SearchList';
 
 const SearchPage = (props) => {
@@ -11,8 +11,10 @@ const SearchPage = (props) => {
     // return {entityId : entityId}; 
     // }else if (props.initParams) { 
     // return props.initParams;
-    return props.initParams; 
-  })(); 
-  return <>{<SearchList initParams={initParams} />}</>; 
+    return props.initParams;
+  })();
+  return <>{<SearchList initParams={initParams} />}</>;
 };
-export default SearchPage;
+// export default SearchPage;
+const MemoizedMySearchPagee = React.memo(SearchPage);
+export default MemoizedMySearchPagee;

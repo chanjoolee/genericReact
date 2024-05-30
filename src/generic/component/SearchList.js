@@ -129,7 +129,7 @@ const SearchList = (props) => {
                     <LayoutSearchRows
                         key={`LayoutSearchRows_${instanceId}`}
                         searchFilter={
-                            <SearchFilterContainer instanceId={instanceId} />
+                            <SearchFilterContainer instanceId={instanceId} initParams={props.initParams} />
                         }
                         rowsections={
                             <DataArea entityId={props.initParams.entityId} instanceId={instanceId} />

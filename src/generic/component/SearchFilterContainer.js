@@ -27,6 +27,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   const entityNm = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityNm);
   const cols = useSelector((state) => getState(state).instances[instanceId].entityInfo.cols);
   const parents = useSelector((state) => getState(state).instances[instanceId].entityInfo.parents);
+  const children = useSelector((state) => getState(state).instances[instanceId].entityInfo.children);
   const openType = useSelector((state) => getState(state).instances[instanceId].openType);
   const onload = useSelector((state) => getState(state).instances[instanceId].onload);
   const searchCompleted = useSelector((state) => getState(state).searchCompleted);
@@ -123,9 +124,10 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     let relation_parents = _.filter(_schemaGeneric.relations, {
       to: { entityId: entityId },
     });
+
     // Relations
-    _.forEach(parents, (parent, i) => {
-      _.forEach(parent.joins, (join, j) => {
+    _.forEach(parents, (relation, i) => {
+      _.forEach(relation.joins, (join, j) => {
         // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
         // 나중에 좀더 기능 고민 필요함.
         // let nameColumn = join.nameColumn;
@@ -137,7 +139,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
           <Col span={8} key={key}>
             <Form.Item
               type="Text"
-              label={join.parentColumn.column_comment}  // parentColumns 으로 해야하나?
+              label={join.childColumn.column_comment}  // parentColumns 으로 해야하나?
               name={_.camelCase("" + join.childColumn.column_name)}
             // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
             >
@@ -155,6 +157,42 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       });
 
     });
+
+    // Keys 부모컬럼을 참조하면 중복되므로 부모와 겹치는 부분은 제외
+    _.forEach(cols, (col, i) => {
+      let find_in_parent = _.find(parents, (parent) => {
+        return _.find(parent.joins, (join) => {
+          // { childColumn: { column_name: col.column_name } }
+          if (join.childColumn && join.childColumn.column_name) {
+            return join.childColumn.column_name === col.originColInfo.column_name;
+          }
+        });
+      });
+      if (col.isKey && find_in_parent == null) {
+        let key = `searchFilter_key_${i}`;
+        let component = (
+          <Col span={8} key={key}>
+            <Form.Item
+              type="Text"
+              label={col.originColInfo.column_comment}  // parentColumns 으로 해야하나?
+              name={_.camelCase("" + col.originColInfo.column_name)}
+            // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
+            >
+              <Input
+                placeholder={col.originColInfo.column_comment + " 을 입력해 주세요."}
+              />
+            </Form.Item>
+          </Col>
+        );
+        searchFilter.push({
+          component: component,
+          join: { ...col, type: 'key' },
+        });
+      }
+    });
+
+
+
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
     return searchFilter;
@@ -181,10 +219,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
     let filters = [];
     let forms = form.getFieldsValue();
     _.forEach(makeSearchFilter, (_search) => {
-      let elName = _.camelCase(_search.join.childColumn.column_name);
+      let col = _search.join.childColumn || _search.join.originColInfo;
+      let elName = _.camelCase(col.column_name);
       let filter = {
         col: elName,
-        dbColumnName: _search.join.childColumn.column_name,
+        dbColumnName: col.column_name,
         value: forms[elName],
         joinInfo: _search.join
       };
