@@ -186,7 +186,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         );
         searchFilter.push({
           component: component,
-          join: { ...col, type: 'key' },
+          join: { ...col, relationType: 'key' },
         });
       }
     });
