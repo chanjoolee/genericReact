@@ -13,21 +13,22 @@ function* fetchInitialInfo({ payload }) {
   const state = yield select((state) => getState(state));
   // backend가 설정될때 까지 보류
   // let vCommonCodes = _.filter(schemaGeneric.commonCodeList,{entityId : payload.entityId });
-
+  let commonInfo = schemaGeneric.commonCode;
   let { isSuccess, data } = yield call(callApi, {
     url: '/generic/selectList',
     method: 'post',
     // credentials: 'include',
     data: {
-      sqlId: 'com.mapper.inventory.selectCommonUseList',
-      entityId: payload.entityId
+      sqlId: 'com.mapper.generic.mysql.selectCommonUseList',
+      entityId: payload.entityId,
+      commonCodeInfo: commonInfo
     }
   });
 
   let vCommonCodes = data.list;
   if (isSuccess && data) {
     let v_codeCategoryList = _.map(vCommonCodes, (v, k) => {
-      return { codeCategory: v.codeCategory };
+      return { codeCategory: v[_.camelCase(commonInfo.commonCodeGroup.columns.groupCode)] };
     });
     v_codeCategoryList.push({ codeCategory: 'xxxxxx', codeCategoryNm: 'xxxxxx' });
     let { isSuccess, data } = yield call(callApi, {
@@ -35,7 +36,8 @@ function* fetchInitialInfo({ payload }) {
       method: 'post',
       data: {
         codeCategoryList: v_codeCategoryList,
-        sqlId: 'com.mapper.inventory.selectCommonCodeList',
+        commonCodeInfo: commonInfo,
+        sqlId: 'com.mapper.generic.mysql.selectCommonCodeList',
       }
     });
 

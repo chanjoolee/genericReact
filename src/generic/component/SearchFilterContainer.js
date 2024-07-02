@@ -26,6 +26,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   const this_entityId = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityId);
   const entityNm = useSelector((state) => getState(state).instances[instanceId].entityInfo.entityNm);
   const cols = useSelector((state) => getState(state).instances[instanceId].entityInfo.cols);
+  const commonCodeList = useSelector((state) => getState(state).instances[instanceId].codeList.combo);
   const parents = useSelector((state) => getState(state).instances[instanceId].entityInfo.parents);
   const children = useSelector((state) => getState(state).instances[instanceId].entityInfo.children);
   const openType = useSelector((state) => getState(state).instances[instanceId].openType);
@@ -208,8 +209,29 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       }
     });
 
-
-
+    // 공통코드
+    _.forEach(commonCodeList, (commonCode, i) => {
+      let component = (
+        <Col span={8}>
+          <Form.Item
+            type="Text"
+            label={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeGroup.columns.groupCodeName)]}  // parentColumns 으로 해야하나?
+            name={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeUse.columns.useColumnName)]}
+          // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
+          >
+            <Input
+              placeholder={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeGroup.columns.groupCodeName)] + " 을 입력해 주세요."}
+            // defaultValue={defaultValue}
+            />
+          </Form.Item>
+        </Col>
+      );
+      let col = _.find(cols, { dataIndex: _.camelCase(commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeUse.columns.useColumnName)]) })
+      searchFilter.push({
+        component: component,
+        join: { ...commonCode, type: 'commonCode', originColInfo: col.originColInfo },
+      });
+    })
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
     return searchFilter;

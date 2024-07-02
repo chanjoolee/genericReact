@@ -122,6 +122,32 @@ export const schemaGeneric = {
 
             ]
         }
+    },
+    commonCode: {
+        commonCodeGroup: {
+            tableName: 'INVENTORY_CMM_CATEGORY',
+            columns: {
+                groupCode: 'CODE_CATEGORY',
+                groupCodeName: 'CODE_CATEGORY_NM',
+                groupCodeDesc: 'CODE_CATEGORY_DESC'
+            }
+        },
+        commonCodeDetail: {
+            tableName: 'INVENTORY_CMM_CD',
+            columns: {
+                commonCode: 'CODE_ID',
+                commonCodeName: 'CODE_NM',
+                commonCodeDesc: 'CODE_DESC',
+                sortOrder: 'SORT_ORDER'
+            }
+        },
+        commonCodeUse: {
+            tableName: 'INVENTORY_CMM_USE',
+            columns: {
+                useTableName: 'TABLE_NAME',
+                useColumnName: 'COLUMN_NAME'
+            }
+        }
     }
 };
 
