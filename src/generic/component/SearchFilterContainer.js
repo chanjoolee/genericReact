@@ -3,7 +3,7 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import { createSelector } from 'reselect';
 import { getState } from "../state/stateSearch";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Col, Row } from "antd";
+import { Button, Checkbox, Form, Input, Select, Col, Row } from "antd";
 import useMounted from "@hooks/useMounted";
 import { actions } from "@/generic/state/stateSearch";
 import _ from "lodash";
@@ -209,20 +209,33 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       }
     });
 
-    // 공통코드
+    // 공통코드. 이부분을 Select 로 만들자
     _.forEach(commonCodeList, (commonCode, i) => {
+      let options = _.map(commonCode.list, (m, i) => {
+        return {
+          value: m[_.camelCase(_schemaGeneric.commonCode.commonCodeDetail.columns.commonCode)],
+          label: m[_.camelCase(_schemaGeneric.commonCode.commonCodeDetail.columns.commonCodeName)]
+        };
+      })
       let component = (
         <Col span={8}>
           <Form.Item
             type="Text"
             label={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeGroup.columns.groupCodeName)]}  // parentColumns 으로 해야하나?
-            name={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeUse.columns.useColumnName)]}
+            name={_.camelCase(commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeUse.columns.useColumnName)])}
           // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
           >
-            <Input
-              placeholder={commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeGroup.columns.groupCodeName)] + " 을 입력해 주세요."}
-            // defaultValue={defaultValue}
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              placeholder="All"
+              defaultValue={[]}
+              // onChange={(value) => {
+
+              // }}
+              options={options}
             />
+
           </Form.Item>
         </Col>
       );
@@ -231,7 +244,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         component: component,
         join: { ...commonCode, type: 'commonCode', originColInfo: col.originColInfo },
       });
-    })
+    });
 
     searchFilter = addCustomSearchFilters(searchFilter, entityId);
     return searchFilter;
