@@ -137,7 +137,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       to: { entityId: entityId },
     });
 
-    // Relations
+    // Relations Parent
     _.forEach(parents, (relation, i) => {
       _.forEach(relation.joins, (join, j) => {
         // 부모관계에 의한 검색조건은 멀티콤보등의 기능으로 구현 하므로 이름컬럼이 없다.  
@@ -166,14 +166,15 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         );
         searchFilter.push({
           component: component,
-          join: join
+          join: join,
+          valueType: 'string'
         });
 
       });
 
     });
 
-    // Keys 부모컬럼을 참조하면 중복되므로 부모와 겹치는 부분은 제외
+    // Primary Keys 부모컬럼을 참조하면 중복되므로 부모와 겹치는 부분은 제외
     _.forEach(cols, (col, i) => {
       let find_in_parent = _.find(parents, (parent) => {
         return _.find(parent.joins, (join) => {
@@ -204,7 +205,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         );
         searchFilter.push({
           component: component,
-          join: { ...col, relationType: 'key' },
+          join: { ...col, relationType: 'key', valueType: 'string' },
         });
       }
     });
@@ -242,7 +243,12 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
       let col = _.find(cols, { dataIndex: _.camelCase(commonCode[_.camelCase(_schemaGeneric.commonCode.commonCodeUse.columns.useColumnName)]) })
       searchFilter.push({
         component: component,
-        join: { ...commonCode, type: 'commonCode', originColInfo: col.originColInfo },
+        join: {
+          ...commonCode,
+          type: 'commonCode',
+          valueType: 'list',
+          originColInfo: col.originColInfo
+        },
       });
     });
 
