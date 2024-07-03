@@ -357,7 +357,15 @@ const DataArea = ({ entityId, instanceId, ...restProps }) => {
             loading={loading}
             onChange={handleTableChange}
             size="middle" // small middle large
-            scroll={{ x: 'max-content', y: 600 }}
+            // scroll={{ x: 'max-content', y: 600 }}
+            // scroll: {list.length > 0 ? { x: 'max-content', y: 600 } : {}},
+            scroll={(() => {
+              if (list.length > 0) {
+                return { x: 'max-content', y: 600 };
+              } else {
+                return {};
+              }
+            })()}
           // style={{ minHeight: '600px' }}
           />
         </>
