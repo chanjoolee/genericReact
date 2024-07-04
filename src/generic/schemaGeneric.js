@@ -21,6 +21,7 @@ export const schemaGeneric = {
                         column_name: 'ITEM_CD',
                     }
                 ],
+                selectType: 'multi-select'  // select , multi-select , modal
             }
         },
         {

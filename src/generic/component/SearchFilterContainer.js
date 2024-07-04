@@ -12,6 +12,69 @@ import callApi from "@lib/callApi";
 import { join } from "redux-saga/effects";
 import state from "@/tabs/state";
 
+// Function to fetch suggestions
+const fetch = (value, callback) => {
+  if (timeout) {
+    clearTimeout(timeout);
+    timeout = null;
+  }
+  currentValue = value;
+  const fake = () => {
+    const str = qs.stringify({
+      code: 'utf-8',
+      q: value,
+    });
+    jsonp(`https://suggest.taobao.com/sug?${str}`)
+      .then((response) => response.json())
+      .then((d) => {
+        if (currentValue === value) {
+          const { result } = d;
+          const data = result.map((item) => ({
+            value: item[0],
+            text: item[0],
+          }));
+          callback(data);
+        }
+      });
+  };
+  if (value) {
+    timeout = setTimeout(fake, 300);
+  } else {
+    callback([]);
+  }
+};
+
+// SearchInput Component
+const SearchInput = (props) => {
+  const [data, setData] = useState([]);
+  const [value, setValue] = useState();
+  const handleSearch = (newValue) => {
+    fetch(newValue, setData);
+  };
+  const handleChange = (newValue) => {
+    setValue(newValue);
+  };
+  return (
+    <Select
+      showSearch
+      value={value}
+      placeholder={props.placeholder}
+      style={props.style}
+      defaultActiveFirstOption={false}
+      suffixIcon={null}
+      filterOption={false}
+      onSearch={handleSearch}
+      onChange={handleChange}
+      notFoundContent={null}
+      options={(data || []).map((d) => ({
+        value: d.value,
+        label: d.text,
+      }))}
+      mode="multiple"
+    />
+  );
+};
+
 const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   console.log("SearchFilterContainer was rendered at", new Date().toLocaleTimeString());
   // window.columns - columns;
@@ -149,25 +212,44 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
         let key = `searchFilter_${i}_${j}`;
         // let defaultValue = getDefaultValueFromInitial(join.childColumn);
-        let component = (
-          <Col span={8} key={key}>
-            <Form.Item
-              type="Text"
-              label={join.childColumn.column_comment}  // parentColumns 으로 해야하나?
-              name={_.camelCase("" + join.childColumn.column_name)}
-            // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
-            >
-              <Input
-                placeholder={join.childColumn.column_comment + " 을 입력해 주세요."}
-              // defaultValue={defaultValue}
-              />
-            </Form.Item>
-          </Col>
-        );
+        let selectType = join.childColumn.selectType;
+        let component;
+        let valueType;
+        if (selectType === 'multi-select') {
+          valueType = 'list';
+          component = (
+            <Col span={8} key={key}>
+              <Form.Item
+                label={join.childColumn.column_comment}
+                name={_.camelCase("" + join.childColumn.column_name)}
+              >
+                <SearchInput placeholder={join.childColumn.column_comment + " 을 입력해 주세요."} />
+              </Form.Item>
+            </Col>
+          );
+        } else {
+          valueType = 'string';
+          component = (
+            <Col span={8} key={key}>
+              <Form.Item
+                type="Text"
+                label={join.childColumn.column_comment}  // parentColumns 으로 해야하나?
+                name={_.camelCase("" + join.childColumn.column_name)}
+              // rules={[rules.ruleRequired(), { validator: check }, rules.onlykor()]}
+              >
+                <Input
+                  placeholder={join.childColumn.column_comment + " 을 입력해 주세요."}
+                // defaultValue={defaultValue}
+                />
+              </Form.Item>
+            </Col>
+          );
+        }
+
         searchFilter.push({
           component: component,
           join: join,
-          valueType: 'string'
+          valueType: valueType
         });
 
       });
