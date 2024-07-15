@@ -150,6 +150,7 @@ const makeSheetCols = (instance) => {
         //  부모컬럼찾기
         let targetEntity = _.find(_schemaGeneric.entities, { entityId: rel.from.entityId });
         let parent = {
+            relationInfo: rel,
             parentTableName: targetEntity.tableName,
             childTableName: entityObject.tableName,
             joins: []
@@ -162,11 +163,22 @@ const makeSheetCols = (instance) => {
             let targetColumn = _.find(targetEntity.cols, { column_name: col.column_name });
             let childColumn = _.find(entityObject.cols, { column_name: rel.to.cols[j].column_name });
             // 쿼리에서 join on 정보
+            let nameColumnEntity = _.find(_schemaGeneric.nameColumns, (entity) => {
+                return entity.entityId === targetEntity.tableName && _.some(entity.cols, { column_name: targetColumn.column_name });
+            });
+            let nameColumnInfo = null;
+            let targetNameColum = null;
+            if (nameColumnEntity) {
+                nameColumnInfo = _.find(nameColumnEntity.cols, { column_name: targetColumn.column_name });
+                if (nameColumnInfo != null) {
+                    targetNameColum = _.find(targetEntity.cols, { column_name: nameColumnInfo.name_column });
+                }
+            }
             let join = {
                 relationType: 'parent',
                 parentColumn: targetColumn,
                 childColumn: childColumn,
-                nameColumn: null,  // column info 임 {} 
+                nameColumn: targetNameColum,  // column info 임 {} 
             };
             parent.joins.push(join);
             // name column 우선적으로 cols 에서 가져옮.
@@ -192,6 +204,7 @@ const makeSheetCols = (instance) => {
         //  부모컬럼찾기
         let targetEntity = _.find(_schemaGeneric.entities, { entityId: rel.to.entityId });
         let child = {
+            relationInfo: rel,
             parentTableName: entityObject.tableName,
             childTableName: targetEntity.tableName,
             joins: []

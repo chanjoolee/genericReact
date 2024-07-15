@@ -12,7 +12,7 @@ export const schemaGeneric = {
                     {
                         column_name: 'ITEM_CD'
                     }
-                ],
+                ]
             },
             to: {
                 entityId: 'INVENTORY_IN_OUT',
@@ -21,8 +21,8 @@ export const schemaGeneric = {
                         column_name: 'ITEM_CD',
                     }
                 ],
-                selectType: 'multi-select'  // select , multi-select , modal
-            }
+            },
+            selectType: 'multi-select'
         },
         {
             from: {
@@ -41,6 +41,7 @@ export const schemaGeneric = {
                     }
                 ],
             },
+            selectType: 'multi-select'
         },
     ],
     nameColumns: [
@@ -50,6 +51,15 @@ export const schemaGeneric = {
                 {
                     column_name: 'WARE_HOUSE_CD',
                     name_column: 'WARE_HOUSE_NM',
+                },
+            ],
+        },
+        {
+            entityId: 'INVENTORY_ITEM_MASTER',
+            cols: [
+                {
+                    column_name: 'ITEM_CD',
+                    name_column: 'ITEM_NAME',
                 },
             ],
         },

@@ -14,11 +14,10 @@ module.exports = {
             '@hooks': path.resolve(__dirname, 'src/hooks'),
             '@': path.resolve(__dirname, 'src'),
         },
-        // configure: (config, { paths }) => {
-        //     config.entry = `${paths}`
-        //     return config;
-
-        //   }
+        configure: (webpackConfig, { env, paths }) => {
+            webpackConfig.devtool = 'source-map';
+            return webpackConfig;
+        }
     },
     plugins: [
         {

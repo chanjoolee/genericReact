@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { createSelector } from 'reselect';
 import { getState } from "../state/stateSearch";
@@ -8,67 +8,115 @@ import useMounted from "@hooks/useMounted";
 import { actions } from "@/generic/state/stateSearch";
 import _ from "lodash";
 import { schemaGeneric, addCustomSearchFilters } from "@generic/schemaGeneric.js";
-import callApi from "@lib/callApi";
+// import callApi from "@lib/callApi";
 import { join } from "redux-saga/effects";
 import state from "@/tabs/state";
+// import jsonp from 'fetch-jsonp';
+import callApi from '@lib/callApi';
+import { keepalived } from "react-syntax-highlighter/dist/esm/languages/prism";
 
 // Function to fetch suggestions
-const fetch = (value, callback) => {
-  if (timeout) {
-    clearTimeout(timeout);
-    timeout = null;
-  }
-  currentValue = value;
-  const fake = () => {
-    const str = qs.stringify({
-      code: 'utf-8',
-      q: value,
-    });
-    jsonp(`https://suggest.taobao.com/sug?${str}`)
-      .then((response) => response.json())
-      .then((d) => {
-        if (currentValue === value) {
-          const { result } = d;
-          const data = result.map((item) => ({
-            value: item[0],
-            text: item[0],
-          }));
-          callback(data);
-        }
-      });
-  };
-  if (value) {
-    timeout = setTimeout(fake, 300);
-  } else {
-    callback([]);
-  }
-};
 
-// SearchInput Component
-const SearchInput = (props) => {
+
+const SearchInput = ({ join, relation, placeholder, style, value: initialValue, onChange }) => {
   const [data, setData] = useState([]);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(initialValue || []);
+  const timeoutRef = useRef(null);
+
+  const fetch = useCallback((value, callback) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    if (value) {
+      timeoutRef.current = setTimeout(async () => {
+        let cols = [];
+        _.filter(relation.relationInfo.from.cols, (col, i) => {
+          let addCol = {
+            dbColumnName: col.column_name
+          };
+          cols.push(addCol);
+          // name column
+          if (join.nameColumn != null) {
+            cols.push({
+              dbColumnName: join.nameColumn.column_name
+            });
+          }
+
+        });
+
+        let filterColumn = join.parentColumn.column_name;
+        if (join.nameColumn != null) {
+          filterColumn = join.nameColumn.column_name;
+        }
+        const { isSuccess, data } = await callApi({
+          url: '/generic/selectList',
+          method: 'post',
+          data: {
+            tableName: relation.parentTableName,
+            cols: cols,
+            filters: [
+              {
+                dbColumnName: filterColumn,
+                value: value
+              }
+            ]
+          }
+        });
+
+        if (isSuccess) {
+
+          const options = data.list.map((item) => {
+            let vlabel = item[_.camelCase(join.parentColumn.column_name)];
+            if (join.nameColumn != null) {
+              vlabel = item[_.camelCase(join.nameColumn.column_name)];
+            }
+            let rtn = {
+              value: item[_.camelCase(join.parentColumn.column_name)],
+              label: vlabel
+            };
+            return rtn;
+          });
+
+          callback(options);
+        } else {
+          console.error('Failed to fetch data');
+          callback([]);
+        }
+      }, 300);
+    } else {
+      callback([]);
+    }
+  }, [relation, join]);
+
   const handleSearch = (newValue) => {
     fetch(newValue, setData);
   };
+
   const handleChange = (newValue) => {
     setValue(newValue);
+    if (onChange) {
+      onChange(newValue);
+    }
   };
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
   return (
     <Select
       showSearch
       value={value}
-      placeholder={props.placeholder}
-      style={props.style}
-      defaultActiveFirstOption={false}
-      suffixIcon={null}
+      placeholder={placeholder}
+      style={style}
       filterOption={false}
       onSearch={handleSearch}
       onChange={handleChange}
-      notFoundContent={null}
-      options={(data || []).map((d) => ({
+      options={data.map((d) => ({
         value: d.value,
-        label: d.text,
+        label: d.label,
       }))}
       mode="multiple"
     />
@@ -98,80 +146,11 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
 
-  // // 모든 검색영역은 초기화 함수를 이와 같은 형태로 관리한다.
-  // useMounted(() => {
-  //   if (initParams && initParams.filters) {
-  //     let initFormValues = {};
-  //     _.forEach(initParams.filters, (filter) => {
-  //       initFormValues[_.camelCase(filter.col)] = filter.value;
-  //     });
-  //     form.setFieldsValue(initFormValues);
-  //   }
-  //   search();
-  // });
-
-
-
-  // var searchFilter = [];
-
-
-
-  // const getListPageAsync = useCallback(async (payload) => {
-  //   let searchFilter = payload;
-  //   let pageInfo = thisInstance.pageInfo;
-  //   let instance = thisInstance;
-
-  //   let { isSuccess, data } = await callApi({
-  //     url: "/generic/getListPage",
-  //     method: "post",
-  //     // data: payload,
-  //     params: pageInfo,
-  //     data: searchFilter,
-  //   });
-
-  //   if (isSuccess && data) {
-  //     let values = [];
-  //     if (instance.uiType === "list") {
-  //       values.push({
-  //         key: "instances." + payload.instanceId + "list",
-  //         value: data.list,
-  //       });
-  //       values.push({
-  //         key: "instances." + payload.instanceId + ".listTotalcount",
-  //         value: data.totalcnt,
-  //       });
-  //     } else if (instance.uiType === "detail") {
-  //       values.push({
-  //         key: "instances." + payload.instanceId + ".list",
-  //         value: data.list,
-  //       });
-  //       values.push({
-  //         key: "instances." + payload.instanceId + ".editType",
-  //         value: "edit",
-  //       });
-  //       values.push({
-  //         key: "instances." + payload.instanceId + ".listTotalcount",
-  //         value: data.totalent,
-  //       });
-  //       if (data.list.length > 0) {
-  //         values.push({
-  //           key: "instances." + payload.instanceId + ".form",
-  //           value: data.list[0],
-  //         });
-  //       }
-  //     }
-  //     dispatch(actions.setValues(values));
-  //   }
-  // }, [thisInstance, dispatch]);
-
   const formProps = {
     onFinish: () => {
       search();
     },
   };
-
-
-
 
   const rlcmonchange = () => {
     if (form.getFieldsValue().rlcmdvscd !== "") {
@@ -212,18 +191,19 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
 
         let key = `searchFilter_${i}_${j}`;
         // let defaultValue = getDefaultValueFromInitial(join.childColumn);
-        let selectType = join.childColumn.selectType;
+        let selectType = relation.relationInfo.selectType;
         let component;
         let valueType;
         if (selectType === 'multi-select') {
           valueType = 'list';
           component = (
-            <Col span={8} key={key}>
+            <Col span={8}>
               <Form.Item
+                type="Text"
                 label={join.childColumn.column_comment}
                 name={_.camelCase("" + join.childColumn.column_name)}
               >
-                <SearchInput placeholder={join.childColumn.column_comment + " 을 입력해 주세요."} />
+                <SearchInput join={join} relation={relation} placeholder={join.childColumn.column_comment + " 을 입력해 주세요."} />
               </Form.Item>
             </Col>
           );
@@ -365,6 +345,7 @@ const SearchFilterContainer = ({ instanceId, initParams }, ...restProps) => {
         col: elName,
         dbColumnName: col.column_name,
         value: forms[elName],
+        valueType: _search.valueType,
         joinInfo: _search.join
       };
       filters.push(filter);
