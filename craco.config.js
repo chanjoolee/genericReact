@@ -3,7 +3,7 @@ const cracoAlias = require('craco-alias');
 
 module.exports = {
     devServer: {
-        port: 5000, // Specify your desired port number here
+        port: process.env.PORT || 5000, // Specify your desired port number here
     },
     webpack: {
         alias: {
